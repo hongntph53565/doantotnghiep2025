@@ -24,7 +24,7 @@ return new class extends Migration
 
             $table->string('poster',255)->nullable();
             $table->string('trailer',255)->nullable();
-            $table->decimal('age_rating',3, 2, 1)->nullable()->default(0);
+            $table->string('age_rating', 10);
             $table->enum('format', ['2D', '3D', 'IMAX'])->nullable();
             $table->string('language', 50)->nullable();
             $table->text('description')->nullable();
