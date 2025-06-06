@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Cinema;
 use App\Models\Room;
+use App\Models\Seat;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redis;
@@ -31,6 +32,8 @@ class RoomController extends Controller
         ]);
         try {
             Room::create($data);
+            $room_id = Room::select('room_id')->where('cinema_id', $request->cinema_id)->where('room_name', $request->room_name)->value('room_id');
+            $this->generateSeats($room_id, $request->total_seats);
         } catch (Exception $e) {
             $logPath = storage_path('logs/RoomsLogs');
             if (!file_exists($logPath)) {
@@ -76,16 +79,16 @@ class RoomController extends Controller
         }
     }
 
-    public function delete($id){
+    public function delete($id)
+    {
         try {
-             $room = Room::findOrFail($id);
+            $room = Room::findOrFail($id);
 
             if (!$room) {
                 return redirect()->back()->withErrors(['error' => 'Phòng không tồn tại']);
             }
 
             $room->delete();
-
         } catch (Exception $e) {
             $logPath = storage_path('logs/RoomsLogs');
             if (!file_exists($logPath)) {
@@ -96,8 +99,34 @@ class RoomController extends Controller
         }
     }
 
-    public function dele(){
-               return view('Room    .delete');
+    public function dele()
+    {
+        return view('Room    .delete');
+    }
 
+    protected function generateSeats($roomID, $quantity)
+    {
+        $letters = range('A', 'Z');
+        $rows = ceil($quantity / 16);
+        if ($rows > count($letters)) return;
+
+        for ($i = 0; $i < $quantity; $i++) {
+            $row = floor($i / 16);
+            $number = ($i % 16) + 1;
+            $seat_code = $letters[$row] . $number;
+            if (in_array($letters[$row], ['A', 'B'])) {
+                $seat_type = 'standard';
+            } elseif ($row == $rows - 1) {
+                $seat_type = 'couple';
+            } else {
+                $seat_type = 'vip';
+            }
+
+            Seat::create([
+                'room_id' => $roomID,
+                'seat_code' => $seat_code,
+                'seat_type' => $seat_type,
+            ]);
+        }
     }
 }

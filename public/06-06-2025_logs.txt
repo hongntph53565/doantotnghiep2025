@@ -1,0 +1,1 @@
+SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry '5-A1' for key 'seats.seats_room_id_seat_code_unique' (Connection: mysql, SQL: insert into `seats` (`room_id`, `seat_code`, `seat_type`, `updated_at`, `created_at`) values (5, A1, standard, 2025-06-06 03:39:08, 2025-06-06 03:39:08))
