@@ -1,7 +1,12 @@
 <?php
 
+use App\Http\Controllers\EmailTemplateController;
+use App\Http\Controllers\MailController;
 use App\Http\Controllers\RoomController;
+use App\Http\Controllers\SendMailController;
 use App\Http\Controllers\ShowtimeController;
+use App\Models\EmailTemplate;
+use App\Models\Room;
 use App\Models\Showtime;
 use Illuminate\Support\Facades\Route;
 
@@ -19,7 +24,7 @@ Route::prefix('Room')->name('rooms.')->group(function () {
 });
 
 Route::prefix('Showtime')->name('showtime.')->group(function () {
-    route::get('/',               [ShowtimeController::class, "index"])->name("index");
+    Route::get('/',               [ShowtimeController::class, 'index'])->name("index");
     Route::get('/create',         [ShowtimeController::class, 'create'])->name('create');
     Route::post('/store',         [ShowtimeController::class, 'store'])->name('store');
     Route::get('/edit/{id}',      [ShowtimeController::class, 'edit'])->name('edit');
@@ -27,5 +32,16 @@ Route::prefix('Showtime')->name('showtime.')->group(function () {
     Route::delete('/delete/{id}', [ShowtimeController::class, 'delete'])->name('delete');
 });
 
-    Route::get('/dele',     [ShowtimeController::class, 'dele'])->name('dele');
-    Route::get('/delet',    [RoomController::class, 'dele'])->name('delet');
+Route::prefix('Mail')->name('mail.')->group(function () {
+    Route::get('/send-form', [SendMailController::class, 'create'])->name('create');
+    Route::post('/send-mail', [SendMailController::class, 'send'])->name('send');
+});
+
+Route::prefix('Template')->name('template.')->group(function (){
+    Route::get('/',               [EmailTemplateController::class, 'index'])->name('index');
+    Route::get('/create',         [EmailTemplateController::class, 'create'])->name('create');
+    Route::post('/store',         [EmailTemplateController::class, 'store'])->name('store');
+    Route::get('/edit/{id}',      [EmailTemplateController::class, 'edit'])->name('edit');
+    Route::post('/update/{id}',   [EmailTemplateController::class, 'update'])->name('update');
+    Route::delete('/delete/{id}', [EmailTemplateController::class, 'delete'])->name('delete');
+});
