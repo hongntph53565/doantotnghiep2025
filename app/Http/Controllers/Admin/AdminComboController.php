@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Models\Combo;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class AdminComboController extends Controller
 {
@@ -30,8 +31,27 @@ class AdminComboController extends Controller
     public function store(Request $request)
     {
         try {
-            $combo = Combo::create($request->all());
-            return response()->json($combo, 201);
+            $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
+            'discount_percent' => 'required|numeric|min:0|max:100',
+            'start_date' => 'required|date',
+            'end_date' => 'required|date|after_or_equal:start_date',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+
+        $promotion = Combo::create($request->all());
+
+        return response()->json([
+            'success' => true,
+            'data' => $promotion,
+            'message' => 'Tạo khuyến mãi thành công'
+        ]);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Failed to create combo: ' . $e->getMessage()], 500);
         }
