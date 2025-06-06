@@ -24,6 +24,7 @@ class DatabaseSeeder extends Seeder
         CinemasTableSeeder::class,
         RoomsTableSeeder::class,
         GenreSeeder::class,
+        BookingSeeder::class,
         MovieSeeder::class
     ]);
     }
