@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\UserController;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\CinemaController;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
@@ -15,5 +16,14 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('/{id}', [UserController::class, 'update']);
         Route::delete('/{id}', [UserController::class, 'delete']);//Xóa mềm
     });
+
+    Route::prefix('cinemas')->group(function () {
+    Route::get('/', [CinemaController::class, 'index']);
+    Route::post('/', [CinemaController::class, 'store']);
+    Route::get('/{id}', [CinemaController::class, 'show']);
+    Route::patch('/{id}', [CinemaController::class, 'update']);
+    Route::delete('/{id}', [CinemaController::class, 'destroy']);
+    });
     Route::post('/logout', [AuthController::class, 'logout']);
 });
+
