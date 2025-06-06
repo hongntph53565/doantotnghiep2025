@@ -37,7 +37,7 @@
 
         <div>
             <label for="total_seats">Tổng số ghế:</label>
-            <input type="number" name="total_seats" id="total_seats" value="{{ $oldValue->total_seats }}" required
+            <input type="number" name="total_seats" id="total_seats" value="{{ $oldValue->total_seats }}" required readonly
                 min="1">
             @error('total_seats')
                 <div style="color:red">{{ $message }}</div>
