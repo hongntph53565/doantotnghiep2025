@@ -1,5 +1,4 @@
 <?php
-session_start();
 
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\EmailTemplateController;
@@ -12,7 +11,7 @@ use App\Http\Controllers\ShowtimeController;
 use App\Models\EmailTemplate;
 use App\Models\Room;
 use App\Models\Showtime;
-use App\Services\PayOSService;
+
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
