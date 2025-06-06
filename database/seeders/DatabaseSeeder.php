@@ -16,8 +16,14 @@ class DatabaseSeeder extends Seeder
         // User::factory(10)->create();
 
         User::factory()->create([
-            'name' => 'Test User',
+            'username' => 'testuser',
+            'full_name' => 'Test User',
             'email' => 'test@example.com',
+            'phone' => '0912345678',
+        ]);
+
+        $this->call([
+            CinemaSeeder::class,
         ]);
     }
 }
