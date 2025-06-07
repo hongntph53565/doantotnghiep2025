@@ -29,7 +29,6 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->timestamps();
             $table->softDeletes();
-
             $table->foreign('genre_id')->references('genre_id')->on('genres')->onDelete('cascade');
         });
     }
