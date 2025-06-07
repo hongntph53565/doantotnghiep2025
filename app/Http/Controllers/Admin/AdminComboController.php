@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Models\Combo;
 use App\Http\Controllers\Controller;
+use App\Models\Promotion;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -45,7 +46,7 @@ class AdminComboController extends Controller
             ], 422);
         }
 
-        $promotion = Combo::create($request->all());
+        $promotion = Promotion::create($request->all());
 
         return response()->json([
             'success' => true,

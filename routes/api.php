@@ -27,9 +27,6 @@ Route::middleware('auth:sanctum')->group(function () {
     //     Route::delete('/{id}', [AdminComboController::class, 'delete']);//Xóa mềm
     // });
 
-    Route::post('/logout', [AuthController::class, 'logout']);
-});
-
 Route::prefix('promotions')->group(function () {
         Route::get('/', [PromotionController::class, 'index']);
         Route::get('/{id}', [PromotionController::class, 'show']);
