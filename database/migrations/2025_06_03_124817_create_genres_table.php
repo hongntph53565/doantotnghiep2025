@@ -12,11 +12,14 @@ return new class extends Migration {
             $table->string('genre_name', 100)->collation('utf8mb4_unicode_ci'); 
             $table->text('description')->nullable(); 
             $table->timestamps(); 
+            $table->softDeletes();
         });
     }
 
     public function down(): void
     {
         Schema::dropIfExists('genres');
+        Schema::dropSoftDeletes();
+
     }
 };
