@@ -35,9 +35,11 @@ class BookingController extends Controller
             'booking_status' => 'required|in:pending,confirmed,cancelled',
             'payment_method' => 'required|in:cash,payos,momo',
             'payment_status' => 'required|in:unpaid,paid',
-            'booking_code' => 'required|unique:bookings,booking_code',
+            'booking_code' => 'unique:bookings,booking_code',
             'total_price' => 'required|numeric|min:1',
         ]);
+
+        $data['booking_code'] = strtoupper(substr(md5(time()),0,9));
 
         Booking::create($data);
 

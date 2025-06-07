@@ -36,18 +36,21 @@ public function store(Request $request)
     return redirect()->route('template.index')->with('success', 'Đã tạo template mới');
 }
 
-    public function edit(EmailTemplate $template)
-    {
-        return view('template.edit', compact('template'));
+    public function edit($id)
+    {   
+        $template = EmailTemplate::findOrFail($id);
+        return view('templates.edit', compact('template'));
     }
 
-public function update(Request $request, EmailTemplate $template)
+public function update(Request $request, $id)
 {
     $request->validate([
         'template_name' => 'required',
         'subject' => 'required',
         'content' => 'required',
     ]);
+
+    $template = EmailTemplate::findOrFail($id);
 
     $template->update([
         'template_name' => $request->template_name,
@@ -57,6 +60,7 @@ public function update(Request $request, EmailTemplate $template)
 
     return redirect()->route('template.index')->with('success', 'Đã cập nhật template');
 }
+
     public function destroy(EmailTemplate $template)
     {
         $template->delete();

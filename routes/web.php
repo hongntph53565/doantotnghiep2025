@@ -1,16 +1,16 @@
 <?php
 
-use App\Http\Controllers\BookingController;
 use App\Http\Controllers\EmailTemplateController;
-use App\Http\Controllers\MailController;
-use App\Http\Controllers\PayosController;
-use App\Http\Controllers\RoomController;
-use App\Http\Controllers\SeatController;
 use App\Http\Controllers\SendMailController;
 use App\Http\Controllers\ShowtimeController;
+use App\Http\Controllers\BookingController;
+use App\Http\Controllers\PayosController;
+use App\Http\Controllers\MailController;
+use App\Http\Controllers\RoomController;
+use App\Http\Controllers\SeatController;
 use App\Models\EmailTemplate;
-use App\Models\Room;
 use App\Models\Showtime;
+use App\Models\Room;
 
 use Illuminate\Support\Facades\Route;
 
@@ -51,12 +51,12 @@ Route::prefix('booking')->name('booking.')->group(function (){
     Route::post('/store',         [BookingController::class, 'store'])->name('store');
     Route::get('/edit/{id}',      [BookingController::class, 'edit'])->name('edit');
     Route::post('/update/{id}',   [BookingController::class, 'update'])->name('update');
-    Route::get('/show/{id}',   [BookingController::class, 'show'])->name('show');
+    Route::get('/show/{id}',      [BookingController::class, 'show'])->name('show');
     Route::delete('/delete/{id}', [BookingController::class, 'delete'])->name('delete');
 });
 
 Route::prefix('mail')->name('mail.')->group(function () {
-    Route::get('/send-form', [SendMailController::class, 'create'])->name('create');
+    Route::get('/send-form',  [SendMailController::class, 'create'])->name('create');
     Route::post('/send-mail', [SendMailController::class, 'send'])->name('send');
 });
 
@@ -68,5 +68,5 @@ Route::prefix('seat')->name('seat.')->group(function () {
 
 Route::prefix('payos')->name('payos.')->group(function () {
     Route::get('/create-link/{amount}/{description}', [PayosController::class, 'createLink'])->name('create');
-    Route::get('/return-link/{description}', [PayosController::class, 'returnPage'])->name('return');
+    Route::get('/return-link/{description}',          [PayosController::class, 'returnPage'])->name('return');
 });

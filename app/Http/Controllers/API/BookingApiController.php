@@ -33,11 +33,12 @@ class BookingApiController extends Controller
             'booking_code' => 'required|unique:bookings,booking_code',
             'total_price' => 'required|numeric|min:1',
         ]);
+        
+        $data['booking_code'] = strtoupper(substr(md5(time()),0,9));
 
         $booking = Booking::create($data);
 
         if ($data["payment_method"] == "payos") {
-            // Trả link redirect hoặc data cần thiết cho client gọi thanh toán PayOS
             return response()->json([
                 'message' => 'Redirect to PayOS',
                 'redirect_url' => route('payos.create', [
