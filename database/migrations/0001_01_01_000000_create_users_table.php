@@ -22,6 +22,7 @@ return new class extends Migration
             $table->tinyInteger('role')->default(2);
             $table->rememberToken();
             $table->timestamps();
+            $table->softDeletes();
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
@@ -48,5 +49,6 @@ return new class extends Migration
         Schema::dropIfExists('users');
         Schema::dropIfExists('password_reset_tokens');
         Schema::dropIfExists('sessions');
+        Schema::dropSoftDeletes();
     }
 };

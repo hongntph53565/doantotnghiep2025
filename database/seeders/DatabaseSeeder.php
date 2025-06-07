@@ -21,11 +21,14 @@ class DatabaseSeeder extends Seeder
         //     'email' => 'test@example.com',
         // ]);
         $this->call([
-        CinemasTableSeeder::class,
-        RoomsTableSeeder::class,
-        GenreSeeder::class,
-        BookingSeeder::class,
-        MovieSeeder::class
-    ]);
+            UserSeeder::class,
+            GenreSeeder::class,
+            MovieSeeder::class,
+            CinemasTableSeeder::class,
+            RoomsTableSeeder::class,
+            GenreSeeder::class,
+            BookingSeeder::class,
+            MovieSeeder::class
+        ]);
     }
 }
