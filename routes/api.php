@@ -3,8 +3,8 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\UserController;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\API\CenimaController;
 use App\Http\Controllers\API\PromotionController;
-
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
@@ -16,7 +16,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('/{id}', [UserController::class, 'update']);
         Route::delete('/{id}', [UserController::class, 'delete']);//Xóa mềm
     });
-
+    Route::post('/logout', [AuthController::class, 'logout']);
+});
 
     // Route::prefix('combos')->group(function () {
     //     Route::get('/', [AdminComboController::class, 'index']);
