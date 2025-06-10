@@ -99,12 +99,12 @@ class RoomApiController extends Controller
     protected function generateSeats($roomID, $quantity)
     {
         $letters = range('A', 'Z');
-        $rows = ceil($quantity / 16);
+        $rows = ceil($quantity / 10);
         if ($rows > count($letters)) return;
 
         for ($i = 0; $i < $quantity; $i++) {
-            $row = floor($i / 16);
-            $number = ($i % 16) + 1;
+            $row = floor($i / 10);
+            $number = ($i % 10) + 1;
             $seat_code = $letters[$row] . $number;
             if (in_array($letters[$row], ['A', 'B'])) {
                 $seat_type = 'standard';

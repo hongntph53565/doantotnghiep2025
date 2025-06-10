@@ -26,7 +26,7 @@ class SendWelcomeEmail
     public function handle(UserRegistered $event): void
     {   
         $data = array();
-        $template = EmailTemplate::where('subject', 'Chào mừng đăng ký')->first();
+        $template = EmailTemplate::where('subject', 'Chào mừng đến với Lumistar')->first();
         $this->mailService->send($event->user->email,$template->template_id,$data);
     }
 }

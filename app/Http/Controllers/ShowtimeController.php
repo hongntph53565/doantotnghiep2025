@@ -5,129 +5,125 @@ namespace App\Http\Controllers;
 use App\Models\Cinema;
 use App\Models\Movie;
 use App\Models\Room;
+use App\Models\Seat;
 use App\Models\Showtime;
+use App\Models\ShowtimeSeat;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class ShowtimeController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        $showTime = Showtime::all();
+        $showTime = Showtime::with(['movie', 'room'])->get();
         return view('Showtime.list', compact('showTime'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        $movies = Movie::select('movie_id', 'title')->get();
-        $rooms = Room::select('room_id', 'room_name', 'cinema_id')->get();
         $cinemas = Cinema::all();
-        return view('Showtime.create', compact('movies', 'rooms', 'cinemas'));
+        $rooms = Room::all();
+        $movies = Movie::all();
+        return view('Showtime.create', compact('cinemas', 'rooms', 'movies'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+
+
     public function store(Request $request)
     {
         $data = $request->validate([
             'movie_id'   => 'required|exists:movies,movie_id',
-            'cinema_id'  => 'required|exists:cinemas,cinema_id',
             'room_id'    => 'required|exists:rooms,room_id',
-            'show_date'  => 'required|date|after_or_equal:today',
+            'start_time' => 'required|date|after_or_equal:now',
+            'end_time'   => 'nullable|date|after:start_time',
             'price'      => 'required|integer|min:1000',
-            'status'     => 'required|in:active,inactive',
+            'status'     => 'required|in:active,cancelled,sold_out',
         ]);
 
         try {
-            Showtime::create($data);
-            return redirect("/Showtime");
-        } catch (Exception $e) {
-            $logPath = storage_path('logs/RoomsLogs');
-            if (!file_exists($logPath)) {
-                mkdir($logPath, 0755, true);
+            $seats = Seat::where('room_id', $data['room_id'])->get();
+
+            $showtime = Showtime::create($data);
+
+            foreach ($seats as $seat) {
+                ShowtimeSeat::create([
+                    'showtime_id' => $showtime->showtime_id,
+                    'seat_id'     => $seat->seat_id,
+                    'status'      => 'available',
+                ]);
             }
-            $dateName = date("d-m-Y");
-            file_put_contents($dateName . '_logs.txt', $e->getMessage() . "\n", FILE_APPEND);
+            return redirect("/showtime")->with('success', 'Tạo suất chiếu thành công');
+        } catch (Exception $e) {
+            Log::error('[Showtime Store] ' . $e->getMessage());
+            return back()->withErrors(['error' => 'Lỗi khi tạo suất chiếu']);
         }
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit($id)
-    {
-        $movies = Movie::select('movie_id', 'title')->get();
-        $rooms = Room::select('room_id', 'room_name', 'cinema_id')->get();
-        $cinemas = Cinema::all();
-        $showtime = Showtime::with(['room.cinema'])->find($id);
-        return view('Showtime.edit', compact('movies', 'rooms', 'cinemas', 'showtime'));
-    }
+public function edit($id)
+{
+    $movies = Movie::select('movie_id', 'title')->get();
+    $rooms = Room::select('room_id', 'room_name', 'cinema_id')->get(); // Thêm cinema_id để dùng trong view
+    $cinemas = Cinema::select('cinema_id', 'name')->get(); // BỔ SUNG DÒNG NÀY
+    $showtime = Showtime::with('room.cinema')->findOrFail($id); // Load cinema từ room
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        $data = $request->validate([
-            'movie_id'   => 'required|exists:movies,movie_id',
-            'cinema_id'  => 'required|exists:cinemas,cinema_id',
-            'room_id'    => 'required|exists:rooms,room_id',
-            'show_date'  => 'required|date|after_or_equal:today',
-            'price'      => 'required|integer|min:1000',
-            'status'     => 'required|in:active,inactive',
-        ]);
+    return view('Showtime.edit', compact('movies', 'rooms', 'cinemas', 'showtime'));
+}
 
-        try {
-             $showtime = Showtime::find($id);
 
-            if (!$showtime) {
-                return redirect()->back()->withErrors(['error' => 'Phòng không tồn tại']);
+public function update(Request $request, string $id)
+{
+    $data = $request->validate([
+        'movie_id'   => 'required|exists:movies,movie_id',
+        'room_id'    => 'required|exists:rooms,room_id',
+        'start_time' => 'required|date|after_or_equal:now',
+        'end_time'   => 'nullable|date|after:start_time',
+        'price'      => 'required|integer|min:1000',
+        'status'     => 'required|in:active,cancelled,sold_out',
+    ]);
+
+    try {
+        $showtime = Showtime::findOrFail($id);
+        $oldRoomID = $showtime->room_id;
+
+        $showtime->update($data);
+
+        if ($oldRoomID != $data['room_id']) {
+
+            ShowtimeSeat::where('showtime_id', $showtime->showtime_id)->delete();
+
+            $seats = Seat::where('room_id', $data['room_id'])->get();
+            foreach ($seats as $seat) {
+                ShowtimeSeat::create([
+                    'showtime_id' => $showtime->showtime_id,
+                    'seat_id'     => $seat->seat_id,
+                    'status'      => 'available',
+                ]);
             }
-
-            $showtime->update($data);
-
-        } catch (Exception $e) {
-            $logPath = storage_path('logs/RoomsLogs');
-            if (!file_exists($logPath)) {
-                mkdir($logPath, 0755, true);
-            }
-            $dateName = date("d-m-Y");
-            file_put_contents($dateName . '_logs.txt', $e->getMessage() . "\n", FILE_APPEND);
         }
-    }
 
-    /**
-     * Remove the specified resource from storage.
-     */
+        return redirect("/Showtime")->with('success', 'Cập nhật suất chiếu thành công');
+    } catch (Exception $e) {
+        Log::error('[Showtime Update] ' . $e->getMessage());
+        return back()->withErrors(['error' => 'Lỗi khi cập nhật suất chiếu']);
+    }
+}
+
+
     public function delete(string $id)
     {
         try {
-             $showtime = Showtime::findOrFail($id);
-
-            if (!$showtime) {
-                return redirect()->back()->withErrors(['error' => 'Phòng không tồn tại']);
-            }
-
+            $showtime = Showtime::findOrFail($id);
             $showtime->delete();
-
+            return redirect("/Showtime")->with('success', 'Xóa suất chiếu thành công');
         } catch (Exception $e) {
-            $logPath = storage_path('logs/RoomsLogs');
-            if (!file_exists($logPath)) {
-                mkdir($logPath, 0755, true);
-            }
-            $dateName = date("d-m-Y");
-            file_put_contents($dateName . '_logs.txt', $e->getMessage() . "\n", FILE_APPEND);
+            Log::error('[Showtime Delete] ' . $e->getMessage());
+            return back()->withErrors(['error' => 'Lỗi khi xóa suất chiếu']);
         }
     }
 
-    public function dele(){
-               return view('Showtime.delete');
+    public function dele()
+    {
+        return view('Showtime.delete');
     }
 }

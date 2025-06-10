@@ -3,124 +3,118 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\Showtime;
+use App\Models\Cinema;
 use App\Models\Movie;
 use App\Models\Room;
-use App\Models\Cinema;
+use App\Models\Seat;
+use App\Models\Showtime;
+use App\Models\ShowtimeSeat;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class ShowtimeApiController extends Controller
 {
     public function index()
     {
-        $showtimes = Showtime::with(['room.cinema', 'movie'])->get();
-        return response()->json($showtimes);
-    }
-
-    public function create()
-    {
-        // API không cần view, nhưng nếu muốn trả dữ liệu dùng cho form thì trả json
-        $movies = Movie::select('movie_id', 'title')->get();
-        $rooms = Room::select('room_id', 'room_name', 'cinema_id')->get();
-        $cinemas = Cinema::all();
-
-        return response()->json(compact('movies', 'rooms', 'cinemas'));
+        $showTimes = Showtime::with(['movie', 'room'])->get();
+        return response()->json($showTimes);
     }
 
     public function store(Request $request)
     {
         $data = $request->validate([
             'movie_id'   => 'required|exists:movies,movie_id',
-            'cinema_id'  => 'required|exists:cinemas,cinema_id',
             'room_id'    => 'required|exists:rooms,room_id',
-            'show_date'  => 'required|date|after_or_equal:today',
+            'start_time' => 'required|date|after_or_equal:now',
+            'end_time'   => 'nullable|date|after:start_time',
             'price'      => 'required|integer|min:1000',
-            'status'     => 'required|in:active,inactive',
+            'status'     => 'required|in:active,cancelled,sold_out',
         ]);
 
         try {
             $showtime = Showtime::create($data);
-            return response()->json([
-                'message' => 'Tạo suất chiếu thành công',
-                'showtime' => $showtime,
-            ], 201);
+
+            $seats = Seat::where('room_id', $data['room_id'])->get();
+            foreach ($seats as $seat) {
+                ShowtimeSeat::create([
+                    'showtime_id' => $showtime->showtime_id,
+                    'seat_id'     => $seat->seat_id,
+                    'status'      => 'available',
+                ]);
+            }
+
+            return response()->json(['message' => 'Tạo suất chiếu thành công', 'showtime' => $showtime], 201);
         } catch (Exception $e) {
-            $this->logError($e);
-            return response()->json(['error' => 'Lỗi hệ thống, vui lòng thử lại'], 500);
+            Log::error('[API Showtime Store] ' . $e->getMessage());
+            return response()->json(['error' => 'Lỗi khi tạo suất chiếu'], 500);
         }
     }
 
-    public function edit($id)
+    public function show($id)
     {
-        // API không cần view, trả dữ liệu sửa
-        $movies = Movie::select('movie_id', 'title')->get();
-        $rooms = Room::select('room_id', 'room_name', 'cinema_id')->get();
-        $cinemas = Cinema::all();
-        $showtime = Showtime::with(['room.cinema'])->find($id);
-
+        $showtime = Showtime::with(['movie', 'room'])->find($id);
         if (!$showtime) {
-            return response()->json(['error' => 'Suất chiếu không tồn tại'], 404);
+            return response()->json(['error' => 'Không tìm thấy suất chiếu'], 404);
         }
-
-        return response()->json(compact('movies', 'rooms', 'cinemas', 'showtime'));
+        return response()->json($showtime);
     }
 
     public function update(Request $request, $id)
     {
         $data = $request->validate([
             'movie_id'   => 'required|exists:movies,movie_id',
-            'cinema_id'  => 'required|exists:cinemas,cinema_id',
             'room_id'    => 'required|exists:rooms,room_id',
-            'show_date'  => 'required|date|after_or_equal:today',
+            'start_time' => 'required|date|after_or_equal:now',
+            'end_time'   => 'nullable|date|after:start_time',
             'price'      => 'required|integer|min:1000',
-            'status'     => 'required|in:active,inactive',
+            'status'     => 'required|in:active,cancelled,sold_out',
         ]);
 
         try {
-            $showtime = Showtime::find($id);
-
-            if (!$showtime) {
-                return response()->json(['error' => 'Suất chiếu không tồn tại'], 404);
-            }
+            $showtime = Showtime::findOrFail($id);
+            $oldRoomID = $showtime->room_id;
 
             $showtime->update($data);
 
-            return response()->json([
-                'message' => 'Cập nhật suất chiếu thành công',
-                'showtime' => $showtime,
-            ]);
-        } catch (Exception $e) {
-            $this->logError($e);
-            return response()->json(['error' => 'Lỗi hệ thống, vui lòng thử lại'], 500);
-        }
-    }
+            if ($oldRoomID != $data['room_id']) {
+                ShowtimeSeat::where('showtime_id', $showtime->showtime_id)->delete();
 
-    public function delete($id)
-    {
-        try {
-            $showtime = Showtime::find($id);
-
-            if (!$showtime) {
-                return response()->json(['error' => 'Suất chiếu không tồn tại'], 404);
+                $seats = Seat::where('room_id', $data['room_id'])->get();
+                foreach ($seats as $seat) {
+                    ShowtimeSeat::create([
+                        'showtime_id' => $showtime->showtime_id,
+                        'seat_id'     => $seat->seat_id,
+                        'status'      => 'available',
+                    ]);
+                }
             }
 
-            $showtime->delete();
-
-            return response()->json(['message' => 'Xóa suất chiếu thành công']);
+            return response()->json(['message' => 'Cập nhật suất chiếu thành công', 'showtime' => $showtime]);
         } catch (Exception $e) {
-            $this->logError($e);
-            return response()->json(['error' => 'Lỗi hệ thống, vui lòng thử lại'], 500);
+            Log::error('[API Showtime Update] ' . $e->getMessage());
+            return response()->json(['error' => 'Lỗi khi cập nhật suất chiếu'], 500);
         }
     }
 
-    protected function logError(Exception $e)
+    public function destroy($id)
     {
-        $logPath = storage_path('logs/RoomsLogs');
-        if (!file_exists($logPath)) {
-            mkdir($logPath, 0755, true);
+        try {
+            $showtime = Showtime::findOrFail($id);
+            $showtime->delete();
+            return response()->json(['message' => 'Xóa suất chiếu thành công']);
+        } catch (Exception $e) {
+            Log::error('[API Showtime Delete] ' . $e->getMessage());
+            return response()->json(['error' => 'Lỗi khi xóa suất chiếu'], 500);
         }
-        $dateName = date("d-m-Y");
-        file_put_contents($logPath . '/' . $dateName . '_logs.txt', $e->getMessage() . "\n", FILE_APPEND);
+    }
+
+    public function getFormData()
+    {
+        return response()->json([
+            'movies'  => Movie::select('movie_id', 'title')->get(),
+            'rooms'   => Room::select('room_id', 'room_name', 'cinema_id')->get(),
+            'cinemas' => Cinema::select('cinema_id', 'name')->get(),
+        ]);
     }
 }

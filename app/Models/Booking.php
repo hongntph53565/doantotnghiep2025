@@ -10,7 +10,13 @@ class Booking extends Model
     protected $primaryKey = 'booking_id';
 
     protected $fillable = [
-        'user_id', 'showtime_id', 'booking_status', 'payment_status','payment_method', 'booking_code','total_price'
+        'user_id',
+        'showtime_id',
+        'booking_status',
+        'payment_status',
+        'payment_method',
+        'booking_code',
+        'total_price'
     ];
 
     public function user()

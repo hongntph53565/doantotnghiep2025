@@ -14,7 +14,12 @@ class AppServiceProvider extends ServiceProvider
     protected $listen = [
         \App\Events\UserRegistered::class => [
             \App\Listeners\SendWelcomeEmail::class,
+            \App\Listeners\CreateMemberShipCard::class,
         ],
+        \App\Events\PaymentEvents::class => [
+            \App\Listeners\UpdateMemberCard::class,
+        ],
+
     ];
 
     public function register(): void

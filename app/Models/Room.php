@@ -22,5 +22,10 @@ class Room extends Model
     public function cinema() {
     return $this->belongsTo(Cinema::class, 'cinema_id');
 }
+public function seats()
+{
+    return $this->hasMany(Seat::class, 'room_id');
+}
+
 }
 
