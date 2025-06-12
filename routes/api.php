@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CinemaController;
+use App\Http\Controllers\API\PromotionController;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
@@ -31,3 +32,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
 });
 
+Route::prefix('promotions')->group(function () {
+    Route::get('/', [PromotionController::class, 'index']);
+    Route::get('/{id}', [PromotionController::class, 'show']);
+    Route::post('/', [PromotionController::class, 'store']);
+    Route::put('/{id}', [PromotionController::class, 'update']);
+    Route::delete('/{id}', [PromotionController::class, 'destroy']); // xóa mềm
+    Route::post('/restore/{id}', [PromotionController::class, 'restore']);
+    Route::delete('/force/{id}', [PromotionController::class, 'forceDelete']);
+});

@@ -21,7 +21,7 @@
                         {{ old('movie_id') == $movie->movie_id || (isset($oldValue) && $oldValue->movie_id == $movie->movie_id) ? 'selected' : '' }}>
                         {{ $movie->title }}
                     </option>
-                @endforeach
+                @endforeachPto
             </select>
             @error('movie_id')
                 <div style="color:red">{{ $message }}</div>
