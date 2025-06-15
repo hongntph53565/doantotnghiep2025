@@ -76,12 +76,6 @@
                     value="{{ old('total_price') }}" required>
             </div>
 
-            <div class="mb-3">
-                <label for="booking_code" class="form-label">Booking Code</label>
-                <input type="text" name="booking_code" id="booking_code" class="form-control"
-                    value="{{ old('booking_code') }}" required>
-            </div>
-
             <button type="submit" class="btn btn-primary">Lưu</button>
             <a href="{{ route('booking.index') }}" class="btn btn-secondary">Hủy</a>
         </form>

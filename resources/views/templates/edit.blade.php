@@ -1,6 +1,5 @@
-<form method="POST" action="{{ route('templates.update', $template->template_id) }}">
+<form method="POST" action="{{ route('template.update', ['id' => $template->template_id]) }}">
     @csrf
-    @method('PUT')
 
     <label>Tiêu đề:</label><br>
     <input name="template_name" value="{{ old('template_name', $template->template_name) }}"><br>

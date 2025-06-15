@@ -10,12 +10,9 @@ return new class extends Migration
     {
         Schema::create('combo_items', function (Blueprint $table) {
             $table->bigIncrements('combo_item_id');
-            $table->unsignedBigInteger('combo_id');
             $table->unsignedBigInteger('item_id');
             $table->integer('quantity');
             $table->timestamps();
-
-            $table->foreign('combo_id')->references('item_id')->on('menu_items')->onDelete('cascade');
             $table->foreign('item_id')->references('item_id')->on('menu_items')->onDelete('cascade');
         });
     }
@@ -25,4 +22,3 @@ return new class extends Migration
         Schema::dropIfExists('combo_items');
     }
 };
- 
