@@ -65,7 +65,7 @@
                 <select name="payment_method" class="form-select" required>
                     <option value="cash">Tiền mặt</option>
                     <option value="payos">PayOS</option>
-                    <option value="momo">MoMo</option>
+                    <option value="zalopay">zalo pay</option>
                 </select>
             </div>
 

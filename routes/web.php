@@ -8,10 +8,12 @@ use App\Http\Controllers\PayosController;
 use App\Http\Controllers\MailController;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\SeatController;
+use App\Http\Controllers\VnpayController;
+use App\Http\Controllers\ZalopayController;
 use App\Models\EmailTemplate;
 use App\Models\Showtime;
 use App\Models\Room;
-
+use App\Services\ZalopayService;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -69,6 +71,16 @@ Route::prefix('seat')->name('seat.')->group(function () {
 Route::prefix('payos')->name('payos.')->group(function () {
     Route::get('/create-link/{amount}/{description}', [PayosController::class, 'createLink'])->name('create');
     Route::get('/return-link/{description}',          [PayosController::class, 'returnPage'])->name('return');
+});
+
+Route::prefix('zalopay')->name('zalopay.')->group(function () {
+    Route::get('/create-link/{amount}/{description}', [ZalopayController::class, 'createLink'])->name('create');
+    Route::get('/return-link/{description}',          [ZalopayController::class, 'returnPage'])->name('return');
+});
+
+Route::prefix('vnpay')->name('vnpay.')->group(function () {
+    Route::get('/create-link/{amount}/{description}', [VnpayController::class, 'createLink'])->name('create');
+    Route::get('/return-link/{description}',          [VnpayController::class, 'returnPage'])->name('return');
 });
 
 Route::get('/seats/{showtime_id}', [BookingController::class, 'getSeatsByShowtime']);

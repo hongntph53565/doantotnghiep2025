@@ -17,10 +17,9 @@ class BookingService
         }
 
         foreach ($seatIds as $seatId) {
-            $showtimeSeat = ShowtimeSeat::where('seat_id', $seatId)
+            $showtimeSeat = ShowtimeSeat::where( 'seat_id', $seatId)
                 ->where('showtime_id', $booking->showtime_id)
                 ->first();
-
 
             if ($showtimeSeat->status === 'booked') {
                 throw new \Exception("Seat ID $seatId is already booked.");

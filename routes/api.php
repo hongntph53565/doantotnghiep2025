@@ -16,6 +16,8 @@ use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\API\PromotionController;
 use App\Http\Controllers\PayosController;
+use App\Http\Controllers\VnpayController;
+use App\Http\Controllers\ZalopayController;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
@@ -55,14 +57,14 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
 
-Route::prefix('bookings')->group(function () {
-    Route::get('/', [BookingApiController::class, 'index']);
-    Route::post('/', [BookingApiController::class, 'store']);
-    Route::get('/{id}', [BookingApiController::class, 'show']);
-    Route::put('/{id}', [BookingApiController::class, 'update']);
-    Route::delete('/{id}', [BookingApiController::class, 'destroy']);
-    Route::get('/showtime/{showtime_id}/seats', [BookingApiController::class, 'getSeatsByShowtime']);
-});
+    Route::prefix('bookings')->group(function () {
+        Route::get('/', [BookingApiController::class, 'index']);
+        Route::post('/', [BookingApiController::class, 'store']);
+        Route::get('/{id}', [BookingApiController::class, 'show']);
+        Route::put('/{id}', [BookingApiController::class, 'update']);
+        Route::delete('/{id}', [BookingApiController::class, 'destroy']);
+        Route::get('/showtime/{showtime_id}/seats', [BookingApiController::class, 'getSeatsByShowtime']);
+    });
 
 
     Route::prefix('showtimes')->group(function () {
@@ -133,4 +135,14 @@ Route::prefix('bookings')->group(function () {
 Route::prefix('payos')->name('payosapi.')->group(function () {
     Route::get('/{amount}/{description}',    [PayosController::class, 'createLink']);
     Route::get('/return-link/{description}', [PayosController::class, 'returnPage']);
+});
+
+Route::prefix('zalopay')->name('zalopayapi.')->group(function () {
+    Route::post('/{amount}/{description}', [ZalopayController::class, 'createLink']);
+    Route::get('/return-link/{description}', [ZalopayController::class, 'returnPage']);
+});
+
+Route::prefix('vnpay')->name('vnpayapi.')->group(function () {
+    Route::post('/{amount}/{description}', [VnpayController::class, 'createLink']);
+    Route::get('/return-link/{description}', [VnpayController::class, 'returnPage']);
 });
