@@ -70,3 +70,4 @@ Route::prefix('payos')->name('payos.')->group(function () {
     Route::get('/create-link/{amount}/{description}', [PayosController::class, 'createLink'])->name('create');
     Route::get('/return-link/{description}',          [PayosController::class, 'returnPage'])->name('return');
 });
+
