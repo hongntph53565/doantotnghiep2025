@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Events\UserRegistered;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
@@ -10,7 +11,6 @@ use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
 {
-    // Đăng ký
     public function register(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -34,6 +34,8 @@ class AuthController extends Controller
             'role' => 2,
         ]);
 
+        event(New UserRegistered($user));
+        
         $token = $user->createToken('api_token')->plainTextToken;
 
         return response()->json([
@@ -43,7 +45,6 @@ class AuthController extends Controller
         ], 201);
     }
 
-    // Đăng nhập
     public function login(Request $request)
     {
         $user = User::where('email', $request->email)->first();
@@ -61,7 +62,6 @@ class AuthController extends Controller
         ]);
     }
 
-    // Đăng xuất
     public function logout(Request $request)
     {
         $request->user()->tokens()->delete();

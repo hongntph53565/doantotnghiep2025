@@ -15,10 +15,11 @@ return new class extends Migration
             $table->bigIncrements('seat_id');
             $table->unsignedBigInteger('room_id');
             $table->string('seat_code', 10); // VD: A1, B3
-            $table->string('seat_type', 50); // VIP, thường
+            $table->enum('seat_type', ['standard', 'vip', 'couple'])->default('standard');
             $table->timestamps();
 
             $table->foreign('room_id')->references('room_id')->on('rooms')->onDelete('cascade');
+            $table->unique(['room_id', 'seat_code']);
         });
     }
 
