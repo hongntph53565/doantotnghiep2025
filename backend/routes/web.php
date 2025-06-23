@@ -8,6 +8,7 @@ use App\Http\Controllers\PayosController;
 use App\Http\Controllers\MailController;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\SeatController;
+use App\Http\Controllers\Api\AuthController;
 use App\Models\EmailTemplate;
 use App\Models\Showtime;
 use App\Models\Room;
@@ -15,8 +16,10 @@ use App\Models\Room;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return view('welcome');
+    return response()->json(['message' => 'Backend OK']);
 });
+Route::post('/login', [AuthController::class, 'login']);
+
 
 Route::prefix('room')->name('rooms.')->group(function () {
     Route::get('/',               [RoomController::class, 'index'])->name('index');
@@ -36,7 +39,7 @@ Route::prefix('showtime')->name('showtime.')->group(function () {
     Route::delete('/delete/{id}', [ShowtimeController::class, 'delete'])->name('delete');
 });
 
-Route::prefix('template')->name('template.')->group(function (){
+Route::prefix('template')->name('template.')->group(function () {
     Route::get('/',               [EmailTemplateController::class, 'index'])->name('index');
     Route::get('/create',         [EmailTemplateController::class, 'create'])->name('create');
     Route::post('/store',         [EmailTemplateController::class, 'store'])->name('store');
@@ -45,7 +48,7 @@ Route::prefix('template')->name('template.')->group(function (){
     Route::delete('/delete/{id}', [EmailTemplateController::class, 'delete'])->name('delete');
 });
 
-Route::prefix('booking')->name('booking.')->group(function (){
+Route::prefix('booking')->name('booking.')->group(function () {
     Route::get('/',               [BookingController::class, 'index'])->name('index');
     Route::get('/create',         [BookingController::class, 'create'])->name('create');
     Route::post('/store',         [BookingController::class, 'store'])->name('store');
@@ -70,4 +73,3 @@ Route::prefix('payos')->name('payos.')->group(function () {
     Route::get('/create-link/{amount}/{description}', [PayosController::class, 'createLink'])->name('create');
     Route::get('/return-link/{description}',          [PayosController::class, 'returnPage'])->name('return');
 });
-
