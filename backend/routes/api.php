@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\EmailTemplateApiController;
 use App\Http\Controllers\Api\SendMailApiController;
 use App\Http\Controllers\Api\ShowtimeApiController;
 use App\Http\Controllers\Api\BookingApiController;
+use App\Http\Controllers\Api\PromotionController;
 use App\Http\Controllers\Api\RoomApiController;
 use App\Http\Controllers\Api\SeatApiController;
 use App\Http\Controllers\Api\CinemaController;
@@ -14,21 +15,29 @@ use App\Http\Controllers\Api\GenreController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\PayosController;
+use App\Http\Controllers\Api\ReviewController;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
-
+Route::prefix('users')->group(function () {
+    Route::get('/',              [UserController::class, 'index']);
+    Route::get('/{id}',          [UserController::class, 'show']);
+    Route::post('/',             [UserController::class, 'store']);
+    Route::put('/{id}',          [UserController::class, 'update']);
+    Route::delete('/{id}',       [UserController::class, 'delete']);
+    Route::post('/restore/{id}', [UserController::class, 'restore']);
+    Route::delete('/force/{id}', [UserController::class, 'forceDelete']);
+});
+Route::prefix('promotions')->group(function () {
+    Route::get('/',              [PromotionController::class, 'index']);
+    Route::get('/{id}',          [PromotionController::class, 'show']);
+    Route::post('/',             [PromotionController::class, 'store']);
+    Route::put('/{id}',          [PromotionController::class, 'update']);
+    Route::delete('/{id}',       [PromotionController::class, 'destroy']);
+    Route::post('/restore/{id}', [PromotionController::class, 'restore']);
+});
+Route::apiResource('reviews', ReviewController::class);
 Route::middleware('auth:sanctum')->group(function () {
-
-    Route::prefix('users')->group(function () {
-        Route::get('/',              [UserController::class, 'index']);
-        Route::get('/{id}',          [UserController::class, 'show']);
-        Route::post('/',             [UserController::class, 'store']);
-        Route::put('/{id}',          [UserController::class, 'update']);
-        Route::delete('/{id}',       [UserController::class, 'delete']);
-        Route::post('/restore/{id}', [UserController::class, 'restore']);
-        Route::delete('/force/{id}', [UserController::class, 'forceDelete']);
-    });
 
     Route::prefix('cinemas')->group(function () {
         Route::get('/',        [CinemaController::class, 'index']);

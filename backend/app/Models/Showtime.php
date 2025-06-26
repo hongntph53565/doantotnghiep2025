@@ -3,13 +3,14 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Showtime extends Model
 {
     protected $primaryKey = 'showtime_id';
     public $incrementing = true;
     protected $keyType = 'int';
-
+    use HasFactory;
     protected $fillable = [
         'movie_id',
         'room_id',

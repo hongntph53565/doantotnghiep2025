@@ -1,9 +1,14 @@
 <script setup>
 const props = defineProps({
+  breadcrumbParent: {
+    type: String,
+    required: true,
+    default: "Quản lý",
+  },
   titleHeader: {
     type: String,
     required: true,
-    default: "Admin",
+    default: "Quản lý",
   }
 })
 
@@ -22,7 +27,7 @@ const emit = defineEmits(['toggleSidebar'])
       <img src="https://i.pravatar.cc/40" class="rounded-circle me-2" width="36" height="36" alt="Avatar">
       <div class="d-flex flex-column">
         <strong>Admin</strong>
-        <small class="text-muted">NGUYỄN SƠN QUÂN</small>
+        <small class="text-muted">NGUYỄN THỊ HỒNG</small>
       </div>
     </div>
   </div>
@@ -32,7 +37,7 @@ const emit = defineEmits(['toggleSidebar'])
 
   <!-- Tiêu đề & breadcrumb -->
   <div class="d-flex justify-content-between align-items-center mb-3">
-    <h5 class="fw-bold text-uppercase mb-0">{{ titleHeader }}ssss</h5>
-    <span class="text-muted">Quản lý &nbsp; > &nbsp; <strong>{{ titleHeader }}</strong></span>
+    <h5 class="fw-bold text-uppercase mb-0">{{ titleHeader }}</h5>
+    <span class="text-muted">{{ breadcrumbParent }} &nbsp; > &nbsp; <strong>{{ titleHeader }}</strong></span>
   </div>
 </template>

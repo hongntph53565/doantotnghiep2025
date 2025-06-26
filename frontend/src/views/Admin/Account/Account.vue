@@ -9,26 +9,26 @@ import Cookies from 'js-cookie';
 
 const listAccount = ref([]);
 
-fetch('http://localhost:8000/sanctum/csrf-cookie', {
-    credentials: 'include'
-})
-    .then(res => console.log('✅ OK', res))
-    .catch(err => console.error('❌ Lỗi', err));
+// fetch('http://localhost:8000/sanctum/csrf-cookie', {
+//     credentials: 'include'
+// })
+//     .then(res => console.log('✅ OK', res))
+//     .catch(err => console.error('❌ Lỗi', err));
 
 onMounted(async () => {
     try {
         // Bước 1: Lấy CSRF
-        await axios.get('http://localhost:8000/sanctum/csrf-cookie', {
-            withCredentials: true,
-        });
+        // await axios.get('http://localhost:8000/sanctum/csrf-cookie', {
+        //     withCredentials: true,
+        // });
 
-        // Bước 2: Gửi login
-        await axios.post('http://localhost:8000/login', {
-            email: 'andre.bashirian@example.org',
-            password: 'password',
-        }, {
-            withCredentials: true
-        });
+        // // Bước 2: Gửi login
+        // await axios.post('http://localhost:8000/login', {
+        //     email: 'andre.bashirian@example.org',
+        //     password: 'password',
+        // }, {
+        //     withCredentials: true
+        // });
 
         // Bước 3: Gọi API cần auth
         const res = await axios.get('http://localhost:8000/api/users', {
@@ -49,7 +49,7 @@ console.log('Token:', Cookies.get("XSRF-TOKEN"));
 </script>
 
 <template>
-    <div>
+    <div class="mt-4">
         <div class="card p-3">
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <div>
@@ -77,7 +77,7 @@ console.log('Token:', Cookies.get("XSRF-TOKEN"));
                 <tbody>
                     <tr v-for="(account, index) in listAccount" :key="index">
                         <td>{{ index + 1 }}</td>
-                        <td>{{ account.fullname }}</td>
+                        <td>{{ account.full_name }}</td>
                         <td>{{ account.email }}</td>
                         <td>{{ account.phone }}</td>
                         <td>{{ account.role }}</td>
@@ -88,17 +88,13 @@ console.log('Token:', Cookies.get("XSRF-TOKEN"));
                     </tr>
                 </tbody>
             </table>
-
-            <div class="d-flex justify-content-between align-items-center mt-3">
-                <div>Showing 8 of 1 Results</div>
-                <nav>
-                    <ul class="pagination mb-0">
-                        <li class="page-item disabled"><a class="page-link">Previous</a></li>
-                        <li class="page-item active"><a class="page-link">1</a></li>
-                        <li class="page-item"><a class="page-link">Next</a></li>
-                    </ul>
-                </nav>
-            </div>
         </div>
     </div>
 </template>
+<style lang="css">
+.table td,
+.table th {
+    border-bottom: 1px solid #ccc !important;
+
+}
+</style>

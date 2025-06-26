@@ -5,7 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use App\Models\Room;
 
-class RoomsTableSeeder extends Seeder
+class RoomSeeder extends Seeder
 {
     public function run(): void
     {
