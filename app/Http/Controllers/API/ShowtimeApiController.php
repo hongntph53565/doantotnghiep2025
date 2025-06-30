@@ -28,10 +28,9 @@ class ShowtimeApiController extends Controller
             'room_id'    => 'required|exists:rooms,room_id',
             'start_time' => 'required|date|after_or_equal:now',
             'end_time'   => 'nullable|date|after:start_time',
-            'price'      => 'required|integer|min:1000',
             'status'     => 'required|in:active,cancelled,sold_out',
         ]);
-
+        
         try {
             $showtime = Showtime::create($data);
 
@@ -67,7 +66,6 @@ class ShowtimeApiController extends Controller
             'room_id'    => 'required|exists:rooms,room_id',
             'start_time' => 'required|date|after_or_equal:now',
             'end_time'   => 'nullable|date|after:start_time',
-            'price'      => 'required|integer|min:1000',
             'status'     => 'required|in:active,cancelled,sold_out',
         ]);
 

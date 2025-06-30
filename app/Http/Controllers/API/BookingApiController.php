@@ -8,16 +8,15 @@ use App\Models\Movie;
 use App\Models\Showtime;
 use App\Models\ShowtimeSeat;
 use App\Services\BookingService;
+use App\Services\PriceCalculator;
 use Illuminate\Http\Request;
-use App\Services\PayOSService;
+
 use Illuminate\Support\Facades\DB;
 
 class BookingApiController extends Controller
 {
 
-    public function __construct()
-    {
-    }
+    public function __construct() {}
 
     public function index()
     {
@@ -27,56 +26,30 @@ class BookingApiController extends Controller
 
     public function createData()
     {
-        // API version của create() chỉ đơn giản trả về dữ liệu cần thiết
         $movies = Movie::all();
         $showtimes = Showtime::with('room')->get();
         $seats = ShowtimeSeat::all();
         return response()->json(compact('movies', 'showtimes', 'seats'), 200);
     }
 
-    public function store(Request $request, BookingService $bookingService)
+    public function store(Request $request, BookingService $bookingService, PriceCalculator $priceCalculator)
     {
         try {
             $data = $request->validate([
                 'user_id' => 'required|exists:users,user_id',
                 'showtime_id' => 'required|exists:showtimes,showtime_id',
                 'booking_status' => 'required|in:pending,confirmed,cancelled',
-                'payment_method' => 'required|in:cash,payos,zalopay,vnpay',
-                'payment_status' => 'required|in:unpaid,paid',
-                'booking_code' => 'nullable|unique:bookings,booking_code',
-                'total_price' => 'required|numeric|min:1',
                 'seats_id' => 'required|array',
             ]);
+            do {
+                $data['booking_code'] = strtoupper(uniqid('LM_'));
+            } while (Booking::where('booking_code', $data['booking_code'])->exists());
 
-            $data['booking_code'] = strtoupper(substr(md5(time()), 0, 9));
+            $data['total_price'] = $priceCalculator->Calculator($data['seats_id'], $data['showtime_id']);
+
             $booking = Booking::create($data);
 
             $bookingService->createSeats($booking, $data['seats_id']);
-
-            // Trả về thông tin thanh toán nếu cần redirect
-            if ($data["payment_method"] == "payos") {
-                $payosUrl = route('payos.create', [
-                    'amount' => $data['total_price'],
-                    'description' => $data['booking_code']
-                ]);
-                return response()->json(['payment_url' => $payosUrl], 200);
-            }
-
-            if ($data["payment_method"] == "zalopay") {
-                $zalopayUrl = route('zalopay.create', [
-                    'amount' => $data['total_price'],
-                    'description' => $data['booking_code']
-                ]);
-                return response()->json(['payment_url' => $zalopayUrl], 200);
-            }
-
-            if ($data["payment_method"] == "vnpay") {
-                $VnpayUrl = route('vnpay.create', [
-                    'amount' => $data['total_price'],
-                    'description' => $data['booking_code']
-                ]);
-                return response()->json(['payment_url' => $VnpayUrl], 200);
-            }
 
             return response()->json($booking, 201);
         } catch (\Exception $e) {

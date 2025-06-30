@@ -1,0 +1,4 @@
+SQLSTATE[HY000]: General error: 1364 Field 'seat_type_id' doesn't have a default value (Connection: mysql, SQL: insert into `seats` (`room_id`, `seat_code`, `updated_at`, `created_at`) values (2, A1, 2025-06-28 01:18:34, 2025-06-28 01:18:34))
+SQLSTATE[HY000]: General error: 1364 Field 'seat_type_id' doesn't have a default value (Connection: mysql, SQL: insert into `seats` (`room_id`, `seat_code`, `updated_at`, `created_at`) values (2, A1, 2025-06-28 01:19:24, 2025-06-28 01:19:24))
+SQLSTATE[HY000]: General error: 1364 Field 'seat_type_id' doesn't have a default value (Connection: mysql, SQL: insert into `seats` (`room_id`, `seat_code`, `updated_at`, `created_at`) values (4, A1, 2025-06-28 01:19:38, 2025-06-28 01:19:38))
+SQLSTATE[HY000]: General error: 1364 Field 'seat_type_id' doesn't have a default value (Connection: mysql, SQL: insert into `seats` (`room_id`, `seat_code`, `updated_at`, `created_at`) values (5, A1, 2025-06-28 01:21:26, 2025-06-28 01:21:26))

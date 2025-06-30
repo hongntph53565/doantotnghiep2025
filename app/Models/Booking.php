@@ -33,4 +33,11 @@ class Booking extends Model
     {
         return $this->hasOne(Payment::class, 'booking_id');
     }
+
+    public function foods()
+{
+    return $this->belongsToMany(Food::class, 'booking_food')
+                ->withPivot('quantity')
+                ->withTimestamps();
+}
 }

@@ -9,8 +9,9 @@ return new class extends Migration {
     {
         Schema::create('genres', function (Blueprint $table) {
             $table->bigIncrements('genre_id');
-            $table->string('genre_name', 100)->collation('utf8mb4_unicode_ci'); 
-            $table->text('description')->nullable(); 
+            $table->string('genre_name', 100)->collation('utf8mb4_unicode_ci');
+            $table->text('description')->nullable();
+            $table->enum('status', ['active', 'inactive'])->default('active');
             $table->timestamps(); 
             $table->softDeletes();
         });

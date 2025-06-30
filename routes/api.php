@@ -14,6 +14,7 @@ use App\Http\Controllers\Api\MovieController;
 use App\Http\Controllers\Api\GenreController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\CinemaSeatTypePriceApiController;
 use App\Http\Controllers\API\PromotionController;
 use App\Http\Controllers\PayosController;
 use App\Http\Controllers\VnpayController;
@@ -128,6 +129,13 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/{id}/restore', [PromotionController::class, 'restore']); // Khôi phục khuyến mãi
     });
 
+Route::prefix('cinema-seat-type-prices')->group(function () {
+    Route::get('/',        [CinemaSeatTypePriceApiController::class, 'index']);
+    Route::post('/',       [CinemaSeatTypePriceApiController::class, 'store']);
+    Route::get('/{id}',    [CinemaSeatTypePriceApiController::class, 'show']);
+    Route::patch('/{id}',  [CinemaSeatTypePriceApiController::class, 'update']);
+    Route::delete('/{id}', [CinemaSeatTypePriceApiController::class, 'destroy']);
+});
 
     Route::post('/logout', [AuthController::class, 'logout']);
 });

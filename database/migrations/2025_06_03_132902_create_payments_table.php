@@ -8,16 +8,23 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('payments', function (Blueprint $table) {
-            $table->bigIncrements('payment_id');
-            $table->unsignedBigInteger('booking_id');
-            $table->enum('payment_method', ['cash', 'payos', 'zalopay', 'vnpay']);
-            $table->decimal('price_amount', 10, 2);
-            $table->enum('status', ['paid', 'unpaid'])->default('unpaid');
-            $table->timestamps();
+Schema::create('payments', function (Blueprint $table) {
+    $table->bigIncrements('payment_id');
+    $table->unsignedBigInteger('booking_id');
+    
+    $table->enum('payment_method', ['cash', 'payos', 'zalopay', 'vnpay']);
+    $table->decimal('price_amount', 10, 2);
+    $table->enum('status', ['unpaid', 'paid', 'failed', 'cancelled'])->default('unpaid');
 
-            $table->foreign('booking_id')->references('booking_id')->on('bookings')->onDelete('cascade');
-        });
+    $table->string('transaction_id')->nullable(); // Mã bạn sinh ra (vnp_TxnRef, orderCode, etc.)
+    $table->string('gateway_transaction_id')->nullable(); // Mã thật từ cổng thanh toán
+    $table->string('payment_url')->nullable(); // Link redirect (nếu có)
+    $table->timestamp('paid_at')->nullable(); // Thời điểm thanh toán thành công
+
+    $table->timestamps();
+
+    $table->foreign('booking_id')->references('booking_id')->on('bookings')->onDelete('cascade');
+});
     }
 
     public function down(): void

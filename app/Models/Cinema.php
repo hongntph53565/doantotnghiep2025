@@ -18,8 +18,7 @@ class Cinema extends Model
         'city',
         'phone',
         'email',
-        'created_at',
-        'updated_at'
+        'status',
     ];
 
         public function rooms()

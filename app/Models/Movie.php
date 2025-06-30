@@ -22,9 +22,9 @@ class Movie extends Model
         'poster',
         'trailer',
         'age_rating',
-        'format',
         'language',
         'description',
+        'status'
     ];
 
     protected $dates = ['deleted_at'];

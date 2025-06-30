@@ -21,7 +21,7 @@ class BookingService
                 ->where('showtime_id', $booking->showtime_id)
                 ->first();
 
-            if ($showtimeSeat->status === 'booked') {
+            if ($showtimeSeat->status === 'pending') {
                 throw new \Exception("Seat ID $seatId is already booked.");
             }
 
@@ -31,7 +31,7 @@ class BookingService
                 'price' => $booking->total_price / count($seatIds),
             ]);
 
-            $showtimeSeat->status = 'booked';
+            $showtimeSeat->status = "pending";
             $showtimeSeat->save();
         }
     }

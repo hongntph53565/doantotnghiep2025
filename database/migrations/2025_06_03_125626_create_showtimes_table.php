@@ -20,7 +20,6 @@ return new class extends Migration
             $table->dateTime('start_time');
             $table->dateTime('end_time')->nullable();
 
-            $table->decimal('price', 8, 2);
             $table->enum('status', ['active', 'cancelled', 'sold_out'])->default('active');
 
             $table->timestamps();

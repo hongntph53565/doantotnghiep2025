@@ -107,17 +107,17 @@ class RoomApiController extends Controller
             $number = ($i % 10) + 1;
             $seat_code = $letters[$row] . $number;
             if (in_array($letters[$row], ['A', 'B'])) {
-                $seat_type = 'standard';
+                $seat_type = 1;
             } elseif ($row == $rows - 1) {
-                $seat_type = 'couple';
+                $seat_type = 3;
             } else {
-                $seat_type = 'vip';
+                $seat_type = 2;
             }
 
             Seat::create([
                 'room_id' => $roomID,
                 'seat_code' => $seat_code,
-                'seat_type' => $seat_type,
+                'seat_type_id' => $seat_type,
             ]);
         }
     }
