@@ -91,7 +91,9 @@
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <h5 class="card-title mb-0">Danh sách phim</h5>
                 <div>
-                    <button class="btn btn-sm btn-outline-primary" onclick="window.location.href='{{ route('movies.create') }}'"><i class="fas fa-plus"></i> Thêm phim</button>
+                    <button class="btn btn-sm btn-outline-primary"
+                        onclick="window.location.href='{{ route('movies.create') }}'"><i class="fas fa-plus"></i> Thêm
+                        phim</button>
                 </div>
             </div>
             <div class="genre-tabs">
@@ -112,7 +114,11 @@
                             <h6>{{ $value->title }}</h6>
                             <p class="small">{{ $value->duration }} phút | {{ $value->age_rating }}</p>
                             <div class="d-flex justify-content-between">
-                                <span class="small">{{ $value->status == 'active' ? 'Đang chiếu' : 'Ngưng chiếu' }}</span>
+                                <span class="small">{{ $value->status == 'active' ? 'Đang chiếu' : 'Ngưng chiếu' }}
+                                    @if (isset($averageRatings[$value->movie_id]))
+                                        <small>({{ number_format($averageRatings[$value->movie_id], 1) }}/5★)</small>
+                                    @endif
+                                </span>
                             </div>
                         </div>
                     </div>
@@ -124,19 +130,24 @@
                         <div class="movie-card bg-primary">
                             <span class="badge badge-genre">{{ $genreName }}</span>
                             @foreach ($movies as $value)
-                            <h6>{{ $value->title }}</h6>
-                            <p class="small">{{ $value->duration }} phút | {{ $value->age_rating }}</p>
-                            <div class="d-flex justify-content-between">
-                                <span class="small">{{ $value->status == 'active' ? 'Đang chiếu' : 'Ngưng chiếu' }}</span>
-                            </div>
+                                <h6>{{ $value->title }}</h6>
+                                <p class="small">{{ $value->duration }} phút | {{ $value->age_rating }}</p>
+                                <div class="d-flex justify-content-between">
+                                    <span class="small">{{ $value->status == 'active' ? 'Đang chiếu' : 'Ngưng chiếu' }}
+                                        @if (isset($averageRatings[$value->movie_id]))
+                                            <small>({{ number_format($averageRatings[$value->movie_id], 1) }}/5★)</small>
+                                        @endif
+                                        </small>
+                                    </span>
+                                </div>
                             @endforeach
                         </div>
                     </div>
-
                 </div>
             @endforeach
         </div>
     </div>
+    <div style="height: 50px"></div>
 @endsection
 
 @push('styles')

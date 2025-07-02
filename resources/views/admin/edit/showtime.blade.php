@@ -1,131 +1,309 @@
 @extends('layouts.admin')
 
 @section('content')
-<div class="card shadow-sm border-0 rounded-3 mt-3">
-    <div class="card-header bg-light py-3">
-        <h5 class="mb-0 fw-bold text-primary">
-            <i class="bi bi-film me-2"></i>Thông tin suất chiếu
-        </h5>
-    </div>
-    
-    <div class="card-body p-4">
-        <form action="#" method="POST">
-            <div class="row g-3">
-                <!-- Movie Information -->
-                <div class="col-md-6">
-                    <label for="movie" class="form-label fw-semibold">Tên phim <span class="text-danger">*</span></label>
-                    <div class="input-group">
-                        <input type="text" class="form-control" id="movie" name="movie" placeholder="Nhập tên phim" required>
-                        <button class="btn btn-outline-secondary" type="button" data-bs-toggle="modal" data-bs-target="#movieModal">
-                            <i class="bi bi-search"></i>
-                        </button>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-light py-3">
+                        <h5 class="mb-0 fw-bold text-primary">
+                            <i class="bi bi-pencil-square me-2"></i>Chỉnh sửa suất chiếu
+                        </h5>
                     </div>
-                </div>
-                
-                <div class="col-md-6">
-                    <label for="genre" class="form-label fw-semibold">Thể loại</label>
-                    <select class="form-select" id="genre" name="genre" multiple>
-                        <option value="action">Hành động</option>
-                        <option value="comedy">Hài</option>
-                        <option value="horror">Kinh dị</option>
-                        <option value="drama">Tâm lý</option>
-                        <option value="sci-fi">Khoa học viễn tưởng</option>
-                    </select>
-                    <div class="form-text">Chọn một hoặc nhiều thể loại</div>
-                </div>
-                
-                <!-- Location Information -->
-                <div class="col-md-6">
-                    <label for="cinema" class="form-label fw-semibold">Rạp chiếu <span class="text-danger">*</span></label>
-                    <select class="form-select" id="cinema" name="cinema" required>
-                        <option value="" selected disabled>-- Chọn rạp --</option>
-                        <option value="1">LumiStar Gò Vấp</option>
-                        <option value="2">LumiStar Quận 1</option>
-                    </select>
-                </div>
-                
-                <div class="col-md-6">
-                    <label for="room" class="form-label fw-semibold">Phòng chiếu <span class="text-danger">*</span></label>
-                    <select class="form-select" id="room" name="room" required>
-                        <option value="" selected disabled>-- Chọn phòng --</option>
-                        <option value="101">Phòng 101 (120 chỗ)</option>
-                        <option value="102">Phòng 102 (80 chỗ)</option>
-                        <option value="vip">Phòng VIP (50 chỗ)</option>
-                    </select>
-                </div>
-                
-                <!-- Schedule Information -->
-                <div class="col-md-4">
-                    <label for="startdate" class="form-label fw-semibold">Ngày chiếu <span class="text-danger">*</span></label>
-                    <div class="input-group">
-                        <span class="input-group-text"><i class="bi bi-calendar"></i></span>
-                        <input type="date" class="form-control" id="startdate" name="startdate" required>
-                    </div>
-                </div>
-                
-                <div class="col-md-4">
-                    <label for="showtime" class="form-label fw-semibold">Giờ bắt đầu <span class="text-danger">*</span></label>
-                    <div class="input-group">
-                        <span class="input-group-text"><i class="bi bi-clock"></i></span>
-                        <input type="time" class="form-control" id="showtime" name="showtime" required>
-                    </div>
-                </div>
-                
-                <div class="col-md-4">
-                    <label for="endtime" class="form-label fw-semibold">Giờ kết thúc</label>
-                    <div class="input-group">
-                        <span class="input-group-text"><i class="bi bi-clock"></i></span>
-                        <input type="time" class="form-control" id="endtime" name="endtime" readonly>
-                    </div>
-                    <div class="form-text">Tự động tính theo thời lượng phim</div>
-                </div>
-                
-                <!-- Additional Options -->
-                <div class="col-12">
-                    <div class="form-check form-switch">
-                        <input class="form-check-input" type="checkbox" id="repeatSchedule" name="repeatSchedule">
-                        <label class="form-check-label fw-semibold" for="repeatSchedule">
-                            Lặp lại suất chiếu hàng tuần
-                        </label>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Form Actions -->
-            <div class="d-flex justify-content-between mt-4 pt-3 border-top">
-                <a href="list_xuatchieu.html" class="btn btn-outline-secondary px-4">
-                    <i class="bi bi-arrow-left me-2"></i>Danh sách
-                </a>
-                <div class="d-flex gap-2">
-                    <button type="reset" class="btn btn-outline-danger px-4">
-                        <i class="bi bi-x-circle me-2"></i>Hủy
-                    </button>
-                    <button type="submit" class="btn btn-primary px-4">
-                        <i class="bi bi-check-circle me-2"></i>Cập nhật
-                    </button>
-                </div>
-            </div>
-        </form>
-    </div>
-</div>
 
-<!-- Movie Search Modal -->
-<div class="modal fade" id="movieModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Chọn phim</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <div class="card-body">
+                        <form action="{{ route('showtimes.update', $showtime->showtime_id) }}" method="POST">
+                            @csrf
+                            <div class="row g-3">
+                                <!-- Movie -->
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold">Tên phim <span
+                                            class="text-danger">*</span></label>
+                                    <select class="form-select" name="movie_id" id="movie_id" required>
+                                        <option value="" disabled>--- Chọn phim ---</option>
+                                        @foreach ($movies as $movie)
+                                            <option value="{{ $movie->movie_id }}" data-duration="{{ $movie->duration }}"
+                                                {{ $showtime->movie_id == $movie->movie_id ? 'selected' : '' }}>
+                                                {{ $movie->title }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                <!-- Phiên bản -->
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold">Định dạng</label>
+                                    <input type="text" id="format" class="form-control bg-light"
+                                        value="{{ $showtime->room->format }}" readonly>
+                                </div>
+
+                                <!-- Khu vực -->
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold">Khu vực <span class="text-danger">*</span></label>
+                                    <select class="form-select" id="district" required>
+                                        <option value="" disabled>--- Chọn khu vực ---</option>
+                                        @foreach ($districts as $district)
+                                            <option value="{{ $district->city }}"
+                                                {{ $showtime->room->cinema->city == $district->city ? 'selected' : '' }}>
+                                                {{ $district->city }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                <!-- Cinema -->
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold">Rạp chiếu <span
+                                            class="text-danger">*</span></label>
+                                    <select class="form-select" id="rapChieu" required>
+                                        <option value="" disabled>--- Chọn rạp ---</option>
+                                        @foreach ($cinemas as $cinema)
+                                            <option value="{{ $cinema->cinema_id }}" district-data="{{ $cinema->city }}"
+                                                {{ $showtime->room->cinema_id == $cinema->cinema_id ? 'selected' : '' }}>
+                                                {{ $cinema->name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                <!-- Phòng -->
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold">Phòng chiếu <span
+                                            class="text-danger">*</span></label>
+                                    <select class="form-select" id="room" name="room_id" required>
+                                        <option value="" disabled>--- Chọn phòng ---</option>
+                                        @foreach ($rooms as $room)
+                                            <option value="{{ $room->room_id }}" cinema-data="{{ $room->cinema_id }}"
+                                                data-format="{{ $room->format }}"
+                                                {{ $showtime->room_id == $room->room_id ? 'selected' : '' }}>
+                                                {{ $room->room_name }} ({{ $room->total_seats }} chỗ)
+                                                ({{ $room->format }})
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                <!-- Ngày -->
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold">Ngày chiếu <span
+                                            class="text-danger">*</span></label>
+                                    <input type="date" class="form-control" name="date"
+                                        value="{{ \Carbon\Carbon::parse($showtime->start_time)->format('Y-m-d') }}"
+                                        required>
+                                </div>
+
+                                <div class="col-12">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="status" name="status"
+                                            {{ $showtime->status == 'active' ? 'checked' : '' }}>
+                                        <label class="form-check-label fw-semibold" for="status">Kích hoạt</label>
+                                    </div>
+                                </div>
+
+                                <!-- Giờ -->
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold">Giờ bắt đầu</label>
+                                    <input type="time" class="form-control" name="start_time" id="start_time"
+                                        value="{{ \Carbon\Carbon::parse($showtime->start_time)->format('H:i') }}">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold">Giờ kết thúc</label>
+                                    <input type="time" class="form-control bg-light" name="end_time" id="end_time"
+                                        value="{{ \Carbon\Carbon::parse($showtime->end_time)->format('H:i') }}" readonly>
+                                    <small class="form-text text-muted">Tính theo thời lượng phim</small>
+                                </div>
+                            </div>
+
+                            <div class="d-flex justify-content-between mt-4">
+                                <a href="{{ route('showtimes.index') }}" class="btn btn-outline-secondary">
+                                    <i class="bi bi-arrow-left me-2"></i>Quay lại
+                                </a>
+                                <button type="submit" class="btn btn-primary px-4">
+                                    <i class="bi bi-check-circle me-2"></i>Cập nhật
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
             </div>
-            <div class="modal-body">
-                <!-- Movie search results would go here -->
-                <p class="text-center py-4">Danh sách phim sẽ được hiển thị tại đây</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-                <button type="button" class="btn btn-primary">Chọn phim</button>
+
+            <!-- Right sidebar -->
+            <div class="col-lg-4">
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-light py-3">
+                        <h6 class="mb-0 fw-bold">Thông tin suất chiếu</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <h6 class="fw-bold">Phim:</h6>
+                            <p>{{ $showtime->movie->title }}</p>
+                        </div>
+                        <div class="mb-3">
+                            <h6 class="fw-bold">Rạp:</h6>
+                            <p>{{ $showtime->room->cinema->name }}</p>
+                        </div>
+                        <div class="mb-3">
+                            <h6 class="fw-bold">Phòng:</h6>
+                            <p>{{ $showtime->room->room_name }}</p>
+                        </div>
+                        <div class="mb-3">
+                            <h6 class="fw-bold">Thời gian:</h6>
+                            <p>{{ \Carbon\Carbon::parse($showtime->start_time)->format('H:i') }} -
+                                {{ \Carbon\Carbon::parse($showtime->end_time)->format('H:i') }}</p>
+                        </div>
+                        <div class="mb-3">
+                            <h6 class="fw-bold">Trạng thái:</h6>
+                            <span class="badge {{ $showtime->status ? 'bg-success' : 'bg-secondary' }}">
+                                {{ $showtime->status == "active" ? 'Kích hoạt' : 'Tắt' }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-</div>
 @endsection
+
+@push('scripts')
+    <script>
+        // Khởi tạo các giá trị khi load trang
+        document.addEventListener('DOMContentLoaded', function() {
+            // Kích hoạt lọc rạp theo khu vực đã chọn
+            const districtSelect = document.getElementById('district');
+            if (districtSelect.value) {
+                districtSelect.dispatchEvent(new Event('change'));
+            }
+
+            // Kích hoạt lọc phòng theo rạp đã chọn
+            const cinemaSelect = document.getElementById('rapChieu');
+            if (cinemaSelect.value) {
+                cinemaSelect.dispatchEvent(new Event('change'));
+            }
+        });
+
+        // Các hàm xử lý lọc và tính toán giờ kết thúc giữ nguyên như trước
+        const districtSelect = document.getElementById('district');
+        const cinemaSelect = document.getElementById('rapChieu');
+        const roomSelect = document.getElementById('room');
+        const formatInput = document.getElementById('format');
+        const movieSelect = document.getElementById('movie_id');
+        const startTimeInput = document.getElementById('start_time');
+        const endTimeInput = document.getElementById('end_time');
+
+        // Ẩn tất cả các rạp và phòng ban đầu (trừ option đầu tiên)
+        Array.from(cinemaSelect.options).forEach((option, index) => {
+            if (index !== 0 && option.value !== cinemaSelect.value) {
+                option.hidden = true;
+                option.disabled = true;
+            }
+        });
+
+        Array.from(roomSelect.options).forEach((option, index) => {
+            if (index !== 0 && option.value !== roomSelect.value) {
+                option.hidden = true;
+                option.disabled = true;
+            }
+        });
+
+        // Lọc rạp theo khu vực
+        districtSelect.addEventListener('change', function() {
+            const selectedDistrict = this.value;
+
+            Array.from(cinemaSelect.options).forEach(option => {
+                const city = option.getAttribute('district-data');
+
+                if (!city || option.value === cinemaSelect.value) {
+                    option.hidden = false;
+                    option.disabled = false;
+                    return;
+                }
+
+                option.hidden = city !== selectedDistrict;
+                option.disabled = city !== selectedDistrict;
+            });
+
+            // Giữ nguyên giá trị đã chọn nếu vẫn hợp lệ
+            if (cinemaSelect.value && cinemaSelect.options[cinemaSelect.selectedIndex].hidden) {
+                cinemaSelect.selectedIndex = 0;
+                roomSelect.selectedIndex = 0;
+                Array.from(roomSelect.options).forEach((option, index) => {
+                    if (index !== 0) option.hidden = option.disabled = true;
+                });
+                formatInput.value = '';
+            }
+        });
+
+        // Lọc phòng theo rạp
+        cinemaSelect.addEventListener('change', function() {
+            const selectedCinemaId = this.value;
+
+            Array.from(roomSelect.options).forEach(option => {
+                const cinemaId = option.getAttribute('cinema-data');
+
+                if (!cinemaId || option.value === roomSelect.value) {
+                    option.hidden = false;
+                    option.disabled = false;
+                    return;
+                }
+
+                option.hidden = cinemaId !== selectedCinemaId;
+                option.disabled = cinemaId !== selectedCinemaId;
+            });
+
+            // Giữ nguyên giá trị đã chọn nếu vẫn hợp lệ
+            if (roomSelect.value && roomSelect.options[roomSelect.selectedIndex].hidden) {
+                roomSelect.selectedIndex = 0;
+                formatInput.value = '';
+            }
+        });
+
+        // Cập nhật format khi chọn phòng
+        roomSelect.addEventListener('change', function() {
+            const selectedOption = this.options[this.selectedIndex];
+            const format = selectedOption.getAttribute('data-format');
+            formatInput.value = format || '';
+        });
+
+        // Tính giờ kết thúc tự động
+        function calculateEndTime() {
+            const selectedMovie = movieSelect.options[movieSelect.selectedIndex];
+            if (!selectedMovie || selectedMovie.value === "") {
+                endTimeInput.value = '';
+                return;
+            }
+
+            const durationMinutes = parseInt(selectedMovie.getAttribute('data-duration')) || 0;
+            const startTime = startTimeInput.value;
+
+            if (!durationMinutes || !startTime) {
+                endTimeInput.value = '';
+                return;
+            }
+
+            try {
+                const durHours = Math.floor(durationMinutes / 60);
+                const durMins = durationMinutes % 60;
+
+                const [startHours, startMins] = startTime.split(':').map(Number);
+
+                let endHours = startHours + durHours;
+                let endMins = startMins + durMins;
+
+                if (endMins >= 60) {
+                    endHours += Math.floor(endMins / 60);
+                    endMins = endMins % 60;
+                }
+
+                endHours = endHours % 24;
+
+                endTimeInput.value = `${String(endHours).padStart(2, '0')}:${String(endMins).padStart(2, '0')}`;
+            } catch (e) {
+                console.error("Error calculating end time:", e);
+                endTimeInput.value = '';
+            }
+        }
+
+        movieSelect.addEventListener('change', calculateEndTime);
+        startTimeInput.addEventListener('input', calculateEndTime);
+    </script>
+@endpush

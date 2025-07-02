@@ -8,44 +8,129 @@ use App\Models\Room;
 use App\Models\Seat;
 use App\Models\Showtime;
 use App\Models\ShowtimeSeat;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
 class ShowtimeController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $showTime = Showtime::with(['movie', 'room'])->get();
-        return view('Showtime.list', compact('showTime'));
+        $query = Showtime::with(['movie', 'room', 'room.cinema']);
+
+        // Lọc theo rạp
+        if ($request->cinema_id) {
+            $query->whereHas('room', function ($q) use ($request) {
+                $q->where('cinema_id', $request->cinema_id);
+            });
+        }
+
+        // Lọc theo ngày
+        if ($request->from_date) {
+            $query->whereDate('start_time', '>=', $request->from_date);
+        }
+
+        if ($request->to_date) {
+            $query->whereDate('end_time', '<=', $request->to_date);
+        }
+
+        // Lọc theo trạng thái
+        if ($request->status) {
+            $now = now();
+            $query->where(function ($q) use ($request, $now) {
+                if ($request->status === 'Đang chiếu') {
+                    $q->where('start_time', '<=', $now)->where('end_time', '>=', $now);
+                } elseif ($request->status === 'Sắp chiếu') {
+                    $q->where('start_time', '>', $now);
+                } elseif ($request->status === 'Đã chiếu') {
+                    $q->where('status', 'cancelled');
+                }
+            });
+        }
+
+        $showtimes = $query->orderBy('start_time')->paginate(10);
+        $districts = Cinema::select('city')->distinct()->get();
+        $cinemas = Cinema::all();
+        $now = now();
+
+        return view('admin.list.showtime', compact('showtimes', 'districts', 'cinemas', 'now'));
     }
+
+
 
     public function create()
     {
+        $districts = Cinema::select('city')->distinct()->get();
         $cinemas = Cinema::all();
         $rooms = Room::all();
         $movies = Movie::all();
-        return view('Showtime.create', compact('cinemas', 'rooms', 'movies'));
+        $showtimes = Showtime::with('room')
+            ->orderBy('start_time', 'asc')
+            ->paginate(5);
+        return view('admin.create.showtime', compact('cinemas', 'rooms', 'movies', 'districts', 'showtimes'));
     }
-
-
 
     public function store(Request $request)
     {
+        $request->merge([
+            'status' => $request->boolean('status') ? 'active' : 'inactive',
+        ]);
         $data = $request->validate([
-            'movie_id'   => 'required|exists:movies,movie_id',
-            'room_id'    => 'required|exists:rooms,room_id',
-            'start_time' => 'required|date|after_or_equal:now',
-            'end_time'   => 'nullable|date|after:start_time',
-            'price'      => 'required|integer|min:1000',
-            'status'     => 'required|in:active,cancelled,sold_out',
+            'movie_id' => 'required|exists:movies,movie_id',
+            'room_id' => 'required|exists:rooms,room_id',
+            'date' => 'required|date',
+            'start_time' => 'nullable|date_format:H:i',
+            'status' => 'in:active,inactive'
         ]);
 
-        try {
+        $movie = Movie::findOrFail($data['movie_id']);
+        $duration = $movie->duration;
+        $date = $data['date'];
+
+        if ($request->has('auto_create')) {
+            $firstStart = $request->input('start_time') ?? '09:00';
+            $start = Carbon::createFromFormat('Y-m-d H:i', "$date $firstStart");
+            $end = $start->copy()->setTime(22, 0);
+
+            while ($start->lt($end)) {
+                $newStart = $start->copy();
+                $newEnd = $newStart->copy()->addMinutes($duration);
+
+                $showtime = Showtime::create([
+                    'movie_id' => $movie->movie_id,
+                    'room_id' => $data['room_id'],
+                    'date' => $data['date'],
+                    'start_time' => $newStart,
+                    'end_time' => $newEnd,
+                    'status' => $data['status']
+                ]);
+
+                $seats = Seat::where('room_id', $data['room_id'])->get();
+                foreach ($seats as $seat) {
+                    ShowtimeSeat::create([
+                        'showtime_id' => $showtime->showtime_id,
+                        'seat_id'     => $seat->seat_id,
+                        'status'      => 'available',
+                    ]);
+                }
+
+                $start = $newEnd->copy()->addMinutes(30);
+            }
+        } else {
+            $startTime = Carbon::createFromFormat('Y-m-d H:i', "$date " . $data['start_time']);
+            $endTime = $startTime->copy()->addMinutes($duration);
+
+            $showtime = Showtime::create([
+                'movie_id' => $data['movie_id'],
+                'room_id' => $data['room_id'],
+                'date' => $data['date'],
+                'start_time' => $startTime,
+                'end_time' => $endTime,
+                'status' => $data['status'] ?? 'inactive',
+            ]);
+
             $seats = Seat::where('room_id', $data['room_id'])->get();
-
-            $showtime = Showtime::create($data);
-
             foreach ($seats as $seat) {
                 ShowtimeSeat::create([
                     'showtime_id' => $showtime->showtime_id,
@@ -53,46 +138,71 @@ class ShowtimeController extends Controller
                     'status'      => 'available',
                 ]);
             }
-            return redirect("/showtime")->with('success', 'Tạo suất chiếu thành công');
-        } catch (Exception $e) {
-            Log::error('[Showtime Store] ' . $e->getMessage());
-            return back()->withErrors(['error' => 'Lỗi khi tạo suất chiếu']);
         }
+
+        return redirect()->route('showtimes.index')->with('success', 'Đã tạo suất chiếu thành công');
     }
 
-public function edit($id)
-{
-    $movies = Movie::select('movie_id', 'title')->get();
-    $rooms = Room::select('room_id', 'room_name', 'cinema_id')->get(); // Thêm cinema_id để dùng trong view
-    $cinemas = Cinema::select('cinema_id', 'name')->get(); // BỔ SUNG DÒNG NÀY
-    $showtime = Showtime::with('room.cinema')->findOrFail($id); // Load cinema từ room
 
-    return view('Showtime.edit', compact('movies', 'rooms', 'cinemas', 'showtime'));
-}
+    public function edit($id)
+    {
+        $showtime = Showtime::with(['movie', 'room.cinema'])->findOrFail($id);
+
+        $movies = Movie::all();
+        $rooms = Room::with('cinema')->get();
+        $cinemas = Cinema::all();
+        $districts = Cinema::select('city')->distinct()->get();
+
+        return view('admin.edit.showtime', compact(
+            'showtime',
+            'movies',
+            'rooms',
+            'cinemas',
+            'districts'
+        ));
+    }
 
 
-public function update(Request $request, string $id)
-{
-    $data = $request->validate([
-        'movie_id'   => 'required|exists:movies,movie_id',
-        'room_id'    => 'required|exists:rooms,room_id',
-        'start_time' => 'required|date|after_or_equal:now',
-        'end_time'   => 'nullable|date|after:start_time',
-        'price'      => 'required|integer|min:1000',
-        'status'     => 'required|in:active,cancelled,sold_out',
-    ]);
+    public function update(Request $request, $id)
+    {
+        $request->merge([
+            'status' => $request->boolean('status') ? 'active' : 'inactive',
+        ]);
+        $request->validate([
+            'movie_id' => 'required|exists:movies,movie_id',
+            'room_id' => 'required|exists:rooms,room_id',
+            'date' => 'required|date',
+            'start_time' => 'required',
+            'end_time' => 'required',
+            'status' => 'in:active,inactive                                                                                                                                                                                 '
+        ]);
 
-    try {
         $showtime = Showtime::findOrFail($id);
-        $oldRoomID = $showtime->room_id;
 
-        $showtime->update($data);
+        // Kết hợp ngày và giờ
+        $startDateTime = Carbon::parse($request->date . ' ' . $request->start_time);
+        $endDateTime = Carbon::parse($request->date . ' ' . $request->end_time);
 
-        if ($oldRoomID != $data['room_id']) {
+        // Xử lý trường hợp qua đêm
+        if ($endDateTime <= $startDateTime) {
+            $endDateTime->addDay();
+        }
 
-            ShowtimeSeat::where('showtime_id', $showtime->showtime_id)->delete();
+        $roomChanged = $showtime->room_id != $request->room_id;
 
-            $seats = Seat::where('room_id', $data['room_id'])->get();
+        $showtime->update([
+            'movie_id' => $request->movie_id,
+            'room_id' => $request->room_id,
+            'start_time' => $startDateTime,
+            'end_time' => $endDateTime,
+            'status' => $request->status ?? false
+        ]);
+
+        if ($roomChanged) {
+
+            $showtime->seats()->delete();
+
+            $seats = Seat::where('room_id', $request->room_id)->get();
             foreach ($seats as $seat) {
                 ShowtimeSeat::create([
                     'showtime_id' => $showtime->showtime_id,
@@ -102,12 +212,9 @@ public function update(Request $request, string $id)
             }
         }
 
-        return redirect("/Showtime")->with('success', 'Cập nhật suất chiếu thành công');
-    } catch (Exception $e) {
-        Log::error('[Showtime Update] ' . $e->getMessage());
-        return back()->withErrors(['error' => 'Lỗi khi cập nhật suất chiếu']);
+        return redirect()->route('showtimes.index')
+            ->with('success', 'Cập nhật suất chiếu thành công!');
     }
-}
 
 
     public function delete(string $id)

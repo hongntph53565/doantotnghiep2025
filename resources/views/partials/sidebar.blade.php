@@ -20,8 +20,8 @@
         <div class="collapse submenu" id="phimXuatChieu">
             <a href="{{ route('genres.index') }}"><span class="menu-text">Thể Loại</span></a>
             <a href="{{ route('movies.index') }}"><span class="menu-text">Quản lý phim</span></a>
-            <a href="#"><span class="menu-text">Quản lý xuất chiếu</span></a>
-            <a href="#"><span class="menu-text">Quản lý hóa đơn</span></a>
+            <a href="{{ route('showtimes.index') }}"><span class="menu-text">Quản lý xuất chiếu</span></a>
+            <a href="{{ route('cinemaseatprices.index') }}"><span class="menu-text">Quản lý giá ghế</span></a>
         </div>
 
         <a data-bs-toggle="collapse" href="#sidebarfood" role="button">
@@ -37,7 +37,7 @@
         </a>
         <div class="collapse submenu" id="sidebarpromoption">
             <a href="{{ route('promotions.index') }}"><span class="menu-text">Mã giảm giá</span></a>
-            <a href="{{ route('movies.index') }}"><span class="menu-text">Quản lý </span></a>
+            <a href="{{ route('extraprices.index') }}"><span class="menu-text">Ngày lễ</span></a>
         </div>
 
         <a href="#"><i class="bi bi-journal-text"></i><span class="menu-text">Nội dung</span></a>

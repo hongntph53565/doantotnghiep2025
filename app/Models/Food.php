@@ -16,6 +16,7 @@ class Food extends Model
         'cinema_id',
         'name',
         'type',
+        'description',
         'price',
         'image',
     ];

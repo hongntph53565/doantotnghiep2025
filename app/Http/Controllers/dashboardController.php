@@ -7,6 +7,7 @@ use App\Models\Cinema;
 use App\Models\Payment;
 use App\Models\Movie;
 use App\Models\Genre;
+use App\Models\Review;
 use App\Models\Showtime;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
@@ -76,6 +77,11 @@ class DashboardController extends Controller
             ->get();
         $moviesByGenre = $movies->groupBy(fn($movie) => $movie->genre->genre_name);
 
+        $averageRatings = Review::selectRaw('movie_id, AVG(rating) as average_rating')
+            ->where('status', 'active')
+            ->groupBy('movie_id')
+            ->pluck('average_rating', 'movie_id');
+
         return view('admin.dashboard', [
             'totalRevenue' => $totalRevenue,
             'revenueChange' => $change,
@@ -88,7 +94,8 @@ class DashboardController extends Controller
             'genresstart' => $genresstart,
             'showtime' => $showtime,
             'movie' => $movies,
-            'moviesByGenre' => $moviesByGenre
+            'moviesByGenre' => $moviesByGenre,
+            'averageRatings' => $averageRatings
         ]);
     }
 }

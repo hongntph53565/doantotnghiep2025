@@ -5,13 +5,16 @@ use App\Http\Controllers\EmailTemplateController;
 use App\Http\Controllers\SendMailController;
 use App\Http\Controllers\ShowtimeController;
 use App\Http\Controllers\BookingController;
+use App\Http\Controllers\CinemaSeatTypePriceController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EmailLogController;
+use App\Http\Controllers\ExtraPriceController;
 use App\Http\Controllers\FoodController;
 use App\Http\Controllers\GenreController;
 use App\Http\Controllers\MovieController;
 use App\Http\Controllers\PayosController;
 use App\Http\Controllers\PromotionController;
+use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\SeatController;
 use App\Http\Controllers\StaticController;
@@ -21,7 +24,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [DashboardController::class, 'index'])->name('admin.dashboard');
 
-Route::get('/static', [StaticController::class, 'index'])->name('admin.dashboard');
+Route::get('/static', [StaticController::class, 'index'])->name('admin.static');
 
 Route::prefix('cinema')->name('cinemas.')->group(function () {
     Route::get('/',              [CinemaController::class, 'index'])->name('index');
@@ -62,6 +65,14 @@ Route::prefix('movie')->name('movies.')->group(function () {
     Route::delete('/delete/{id}', [MovieController::class, 'destroy'])->name('destroy');
 });
 
+Route::prefix('review')->name('reviews.')->group(function () {
+    Route::get('/{id}',           [ReviewController::class, 'index'])->name('index');
+    Route::post('/store',         [ReviewController::class, 'store'])->name('store');
+    Route::post('/update/{id}',   [ReviewController::class, 'update'])->name('update');
+    Route::get('/show/{id}',      [ReviewController::class, 'show'])->name('show');
+    Route::delete('/delete/{id}', [ReviewController::class, 'destroy'])->name('destroy');
+});
+
 Route::prefix('food')->name('foods.')->group(function () {
     Route::get('/',               [FoodController::class, 'index'])->name('index');
     Route::post('/store',         [FoodController::class, 'store'])->name('store');
@@ -71,7 +82,7 @@ Route::prefix('food')->name('foods.')->group(function () {
     Route::delete('/delete/{id}', [FoodController::class, 'destroy'])->name('destroy');
 });
 
-Route::prefix('showtime')->name('showtime.')->group(function () {
+Route::prefix('showtime')->name('showtimes.')->group(function () {
     Route::get('/',               [ShowtimeController::class, 'index'])->name("index");
     Route::get('/create',         [ShowtimeController::class, 'create'])->name('create');
     Route::post('/store',         [ShowtimeController::class, 'store'])->name('store');
@@ -98,10 +109,25 @@ Route::prefix('emaillog')->name('emaillog.')->group(function () {
 Route::prefix('promotion')->name('promotions.')->group(function () {
     Route::get('/',               [PromotionController::class, 'index'])->name('index');
     Route::post('/store',         [PromotionController::class, 'store'])->name('store');
-    Route::get('/edit/{id}',      [PromotionController::class, 'edit'])->name('edit');
     Route::post('/update/{id}',   [PromotionController::class, 'update'])->name('update');
     Route::get('/show/{id}',      [PromotionController::class, 'show'])->name('show');
     Route::delete('/delete/{id}', [PromotionController::class, 'destroy'])->name('destroy');
+});
+
+Route::prefix('extraprice')->name('extraprices.')->group(function () {
+    Route::get('/',               [ExtraPriceController::class, 'index'])->name('index');
+    Route::post('/store',         [ExtraPriceController::class, 'store'])->name('store');
+    Route::post('/update/{id}',   [ExtraPriceController::class, 'update'])->name('update');
+    Route::get('/show/{id}',      [ExtraPriceController::class, 'show'])->name('show');
+    Route::delete('/delete/{id}', [ExtraPriceController::class, 'destroy'])->name('destroy');
+});
+
+Route::prefix('cinemaseatprice')->name('cinemaseatprices.')->group(function () {
+    Route::get('/',               [CinemaSeatTypePriceController::class, 'index'])->name('index');
+    Route::post('/store',         [CinemaSeatTypePriceController::class, 'store'])->name('store');
+    Route::post('/update/{id}',   [CinemaSeatTypePriceController::class, 'update'])->name('update');
+    Route::get('/show/{id}',      [CinemaSeatTypePriceController::class, 'show'])->name('show');
+    Route::delete('/delete/{id}', [CinemaSeatTypePriceController::class, 'destroy'])->name('destroy');
 });
 
 Route::prefix('booking')->name('booking.')->group(function () {
@@ -141,3 +167,4 @@ Route::prefix('vnpay')->name('vnpay.')->group(function () {
 });
 
 Route::get('/seats/{showtime_id}', [BookingController::class, 'getSeatsByShowtime']);
+

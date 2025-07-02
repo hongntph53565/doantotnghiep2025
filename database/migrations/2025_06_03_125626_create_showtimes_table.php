@@ -13,14 +13,13 @@ return new class extends Migration
     {
         Schema::create('showtimes', function (Blueprint $table) {
             $table->bigIncrements('showtime_id');
-
             $table->unsignedBigInteger('movie_id');
             $table->unsignedBigInteger('room_id');
+            $table->date('date');
+            $table->time('start_time');
+            $table->time('end_time');
 
-            $table->dateTime('start_time');
-            $table->dateTime('end_time')->nullable();
-
-            $table->enum('status', ['active', 'cancelled', 'sold_out'])->default('active');
+            $table->enum('status', ['active', 'inactive', 'sold_out'])->default('active');
 
             $table->timestamps();
 
