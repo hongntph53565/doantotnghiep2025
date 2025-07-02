@@ -18,13 +18,7 @@ use App\Http\Controllers\PayosController;
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
-Route::prefix('cinemas')->group(function () {
-    Route::get('/',        [CinemaController::class, 'index']);
-    Route::post('/',       [CinemaController::class, 'store']);
-    Route::get('/{id}',    [CinemaController::class, 'show']);
-    Route::patch('/{id}',  [CinemaController::class, 'update']);
-    Route::delete('/{id}', [CinemaController::class, 'destroy']);
-});
+
 
 Route::middleware('auth:sanctum')->group(function () {
 
@@ -38,7 +32,13 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('/force/{id}', [UserController::class, 'forceDelete']);
     });
 
-
+    Route::prefix('cinemas')->group(function () {
+        Route::get('/',        [CinemaController::class, 'index']);
+        Route::post('/',       [CinemaController::class, 'store']);
+        Route::get('/{id}',    [CinemaController::class, 'show']);
+        Route::patch('/{id}',  [CinemaController::class, 'update']);
+        Route::delete('/{id}', [CinemaController::class, 'destroy']);
+    });
 
     Route::prefix('rooms')->group(function () {
         Route::get('/',        [RoomApiController::class, 'index']);

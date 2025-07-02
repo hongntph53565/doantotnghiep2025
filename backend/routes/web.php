@@ -8,12 +8,21 @@ use App\Http\Controllers\PayosController;
 use App\Http\Controllers\MailController;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\SeatController;
+use App\Http\Controllers\Client\MovieController;
+use App\Http\Controllers\Client\TheaterController;
+use App\Http\Controllers\Client\BookingController as ClientBookingController;
+use App\Http\Controllers\Client\AuthController as ClientAuthController;
 use App\Http\Controllers\Api\AuthController;
 use App\Models\EmailTemplate;
 use App\Models\Showtime;
 use App\Models\Room;
-
 use Illuminate\Support\Facades\Route;
+
+
+Route::get('/login', [ClientAuthController::class, 'showLoginForm'])->name('client.auth');
+Route::get('/movie_details', [MovieController::class, 'show'])->name('movie_details');
+Route::get('/theater_details', [TheaterController::class, 'show'])->name('theater_details');
+Route::get('/booking/step1', [ClientBookingController::class, 'step1'])->name('booking.step1');
 
 Route::get('/', function () {
     return response()->json(['message' => 'Backend OK']);
