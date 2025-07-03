@@ -9,5 +9,10 @@ class Genre extends Model
 {
     use SoftDeletes;
     protected $primaryKey = 'genre_id';
-    protected $fillable = ['genre_name', 'description'];
+    protected $fillable = ['genre_name', 'description', 'status'];
+
+        public function movies()
+    {
+        return $this->hasMany(Movie::class, 'genre_id');
+    }
 }

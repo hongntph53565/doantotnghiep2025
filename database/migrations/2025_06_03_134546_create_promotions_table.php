@@ -9,6 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('promotions', function (Blueprint $table) {
+<<<<<<< HEAD
             $table->bigIncrements('pro_id');
             $table->string('pro_code')->unique(); // Mã voucher
 
@@ -20,6 +21,16 @@ return new class extends Migration
             $table->integer('used')->default(0); // Đã sử dụng bao nhiêu lượt
             $table->integer('limit_per_user')->nullable(); // Giới hạn số lượt mỗi người
 
+=======
+            $table->id('promo_id');
+            $table->string('discount_code')->unique();
+            $table->enum('type_discount', ['percent', 'amount']);
+            $table->unsignedInteger('discount_value'); // phần trăm hoặc số tiền
+            $table->unsignedInteger('max_uses')->nullable(); // Số lần sử dụng tối đa
+            $table->unsignedInteger('max_discount')->nullable(); // Số tiền giảm tối đa (nếu là phần trăm)
+            $table->unsignedInteger('min_order_value')->nullable(); // Trị giá đơn hàng tối thiểu
+            $table->enum('status', ['active', 'inactive'])->default('active');
+>>>>>>> Dev-KieuDat
             $table->date('start_date');
             $table->date('end_date');
 

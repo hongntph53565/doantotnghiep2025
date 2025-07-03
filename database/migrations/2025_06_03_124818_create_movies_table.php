@@ -16,7 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('genre_id'); // Khóa ngoại
 
             $table->string('title', 255);
-            $table->integer('duration')->unsigned(); // thời lượng phút, không âm
+            $table->integer('duration')->unsigned();
             $table->string('director', 100)->nullable();
             $table->text('cast')->nullable();
             $table->date('release_date');
@@ -24,9 +24,9 @@ return new class extends Migration
             $table->string('poster', 255)->nullable();
             $table->string('trailer', 255)->nullable();
             $table->enum('age_rating', ['P', 'T13', 'T18']);
-            $table->enum('format', ['2D', '3D', 'IMAX'])->nullable();
             $table->enum('language', ['Tiếng Việt', 'Tiếng Anh', 'Tiếng Hàn', 'Tiếng Nhật']);
             $table->text('description')->nullable();
+            $table->enum('status', ['active', 'inactive'])->default('active');
             $table->timestamps();
             $table->softDeletes();
             $table->foreign('genre_id')->references('genre_id')->on('genres')->onDelete('cascade');

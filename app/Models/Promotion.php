@@ -12,17 +12,17 @@ class Promotion extends Model
     use HasFactory;
     use SoftDeletes;
 
+    protected $dates = ['deleted_at'];
 
     protected $fillable = [
-        'pro_code',
-        'min_order_amount',
-        'discount_percentage',
-        'quantity',
-        'used',
-        'limit_per_user',
+        'discount_code',
+        'type_discount',
+        'discount_value',
+        'max_uses',
+        'max_discount',
+        'min_order_value',
+        'status',
         'start_date',
         'end_date',
-        'status',
     ];
-    protected $dates = ['deleted_at'];
 }

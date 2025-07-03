@@ -14,7 +14,7 @@ class SendWelcomeEmail
      * Create the event listener.
      */
     protected $mailService;
-    
+
     public function __construct(MailService $mailService)
     {
         $this->mailService = $mailService;
@@ -24,9 +24,12 @@ class SendWelcomeEmail
      * Handle the event.
      */
     public function handle(UserRegistered $event): void
-    {   
-        $data = array();
-        $template = EmailTemplate::where('subject', 'Chào mừng đăng ký')->first();
-        $this->mailService->send($event->user->email,$template->template_id,$data);
+    {
+        $data = [
+            'user_name' => $event->user->username
+        ];
+
+        $template = EmailTemplate::where('subject', 'Chào mừng đến với Lumistar')->first();
+        $this->mailService->send($event->user->email, $template->template_id, $data);
     }
 }
