@@ -10,7 +10,13 @@ class Booking extends Model
     protected $primaryKey = 'booking_id';
 
     protected $fillable = [
-        'user_id', 'showtime_id', 'booking_status', 'payment_status','payment_method', 'booking_code','total_price'
+        'user_id',
+        'showtime_id',
+        'booking_status',
+        'payment_status',
+        'payment_method',
+        'booking_code',
+        'total_price'
     ];
 
     public function user()
@@ -27,4 +33,11 @@ class Booking extends Model
     {
         return $this->hasOne(Payment::class, 'booking_id');
     }
+
+    public function foods()
+{
+    return $this->belongsToMany(Food::class, 'booking_food')
+                ->withPivot('quantity')
+                ->withTimestamps();
+}
 }

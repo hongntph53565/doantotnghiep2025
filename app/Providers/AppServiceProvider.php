@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Services\MailService;
+use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\ServiceProvider;
 
@@ -14,7 +15,12 @@ class AppServiceProvider extends ServiceProvider
     protected $listen = [
         \App\Events\UserRegistered::class => [
             \App\Listeners\SendWelcomeEmail::class,
+            \App\Listeners\CreateMemberShipCard::class,
         ],
+        \App\Events\PaymentEvents::class => [
+            \App\Listeners\UpdateMemberCard::class,
+        ],
+
     ];
 
     public function register(): void
@@ -29,6 +35,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        Paginator::useBootstrap();
     }
 }

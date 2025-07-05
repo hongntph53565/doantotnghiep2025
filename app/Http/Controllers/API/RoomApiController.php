@@ -99,25 +99,25 @@ class RoomApiController extends Controller
     protected function generateSeats($roomID, $quantity)
     {
         $letters = range('A', 'Z');
-        $rows = ceil($quantity / 16);
+        $rows = ceil($quantity / 10);
         if ($rows > count($letters)) return;
 
         for ($i = 0; $i < $quantity; $i++) {
-            $row = floor($i / 16);
-            $number = ($i % 16) + 1;
+            $row = floor($i / 10);
+            $number = ($i % 10) + 1;
             $seat_code = $letters[$row] . $number;
             if (in_array($letters[$row], ['A', 'B'])) {
-                $seat_type = 'standard';
+                $seat_type = 1;
             } elseif ($row == $rows - 1) {
-                $seat_type = 'couple';
+                $seat_type = 3;
             } else {
-                $seat_type = 'vip';
+                $seat_type = 2;
             }
 
             Seat::create([
                 'room_id' => $roomID,
                 'seat_code' => $seat_code,
-                'seat_type' => $seat_type,
+                'seat_type_id' => $seat_type,
             ]);
         }
     }

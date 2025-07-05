@@ -1,9 +1,10 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use App\Events\PaymentEvents;
 use App\Models\Booking;
 use App\Models\Payment;
+use App\Services\BookingService;
 use Illuminate\Http\Request;
 use App\Services\PayOSService;
 use Illuminate\Support\Facades\Log;
@@ -11,10 +12,12 @@ use Illuminate\Support\Facades\Log;
 class PayosController extends Controller
 {
     protected $payos;
+    public BookingService $bookingService;
 
-    public function __construct(PayOSService $payos)
+    public function __construct(PayOSService $payos, BookingService $bookingService)
     {
         $this->payos = $payos;
+        $this->bookingService = $bookingService;
     }
 
     public function createLink($amount, $description)
@@ -45,7 +48,7 @@ class PayosController extends Controller
     }
 
     if ($booking['payment_method'] === "payos") {
-        Payment::create([
+        $payment = Payment::create([
             'booking_id'     => $booking['booking_id'],
             'payment_method' => $booking['payment_method'],
             'price_amount'   => $booking->total_price,
@@ -61,7 +64,8 @@ class PayosController extends Controller
     } elseif (($allParams['cancel'] ?? 'false') === 'true' && $booking['payment_method'] === "payos") {
         $booking->update([
             'booking_status' => 'cancelled'
-        ]); 
+        ]);
+        $this->bookingService->cancelSeats($booking);
     }
 
     return response()->json([
