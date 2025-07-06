@@ -40,6 +40,18 @@ Route::get('/profile', function () {
 Route::get('/thong-tin-rap', function () {
     return view('Client.thongtinrap');
 });
+Route::get('/dat-ve', function () {
+    return view('Client.booking.home');
+});
+Route::get('/chon-ghe', function () {
+    return view('Client.chonghe');
+});
+Route::get('/chon-do-an', function () {
+    return view('Client.chondoan');
+});
+Route::get('/thanh-toan', function () {
+    return view('Client.thanhtoan');
+});
 
 Route::post('/login', [AuthController::class, 'login']);
 

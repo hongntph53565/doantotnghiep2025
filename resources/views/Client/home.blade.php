@@ -3,8 +3,8 @@
 @section('title', 'Trang chủ')
 
 @push('styles')
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.css" />
-  <link rel="stylesheet" href="{{ asset('css/home.css') }}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.css" />
+    <link rel="stylesheet" href="{{ asset('css/home.css') }}">
 @endpush
 
 
@@ -75,8 +75,7 @@
 
 
 
-                            <!-- Nút mua vé -->
-                            <a href="dat-ve.html" class="buy-button">
+                            <a href="{{ url('/dat-ve') }}" class="buy-button">
                                 MUA VÉ NGAY
                                 <img src="{{ asset('images/ticket-svgrepo-com.svg') }}" alt="vé">
                             </a>
@@ -108,7 +107,7 @@
 
 
                             <!-- Nút mua vé -->
-                            <a href="dat-ve.html" class="buy-button">
+                            <a href="{{ url('/dat-ve') }}" class="buy-button">
                                 MUA VÉ NGAY
                                 <img src="{{ asset('images/ticket-svgrepo-com.svg') }}" alt="vé">
                             </a>
@@ -163,7 +162,6 @@
 
                         <div class="movie-img">
                             <img src="{{ asset('images/banner-2.jpg') }}" alt="Út Lan">
-                            <!-- Nút play - dẫn đến trailer -->
                             <a href="javascript:void(0);" class="play-button" onclick="openTrailer(this)"
                                 data-trailer="https://www.youtube.com/embed/YOUR_TRAILER_ID"></a>
 
@@ -194,13 +192,13 @@
 
                         <div class="movie-img">
                             <img src="{{ asset('images/slide3.jpg') }}" alt="Út Lan">
-                            <!-- Nút play - dẫn đến trailer -->
+
                             <a href="javascript:void(0);" class="play-button" onclick="openTrailer(this)"
                                 data-trailer="https://www.youtube.com/embed/YOUR_TRAILER_ID"></a>
 
 
 
-                            <!-- Nút mua vé -->
+
                             <a href="dat-ve.html" class="buy-button">
                                 MUA VÉ NGAY
                                 <img src="{{ asset('images/ticket-svgrepo-com.svg') }}" alt="vé">
@@ -218,13 +216,12 @@
                         </div>
                     </div>
                 </div>
-                <!-- Slide 6 -->
+
                 <div class="swiper-slide">
                     <div class="movie-box">
 
                         <div class="movie-img">
                             <img src="{{ asset('images/web-phim-thang-6.jpg') }}" alt="Út Lan">
-                            <!-- Nút play - dẫn đến trailer -->
                             <a href="javascript:void(0);" class="play-button" onclick="openTrailer(this)"
                                 data-trailer="https://www.youtube.com/embed/YOUR_TRAILER_ID"></a>
 
@@ -249,7 +246,6 @@
                     </div>
                 </div>
 
-                <!-- Slide 7 -->
                 <div class="swiper-slide">
                     <div class="movie-box">
 
@@ -261,7 +257,7 @@
 
 
 
-                            <!-- Nút mua vé -->
+
                             <a href="dat-ve.html" class="buy-button">
                                 MUA VÉ NGAY
                                 <img src="{{ asset('images/ticket-svgrepo-com.svg') }}" alt="vé">
@@ -282,7 +278,6 @@
 
             </div>
 
-            <!-- Buttons and Pagination -->
             <div class="swiper-button-next"></div>
             <div class="swiper-button-prev"></div>
             <div class="swiper-pagination"></div>

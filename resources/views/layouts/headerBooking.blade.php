@@ -12,6 +12,56 @@
             background-color: #f8f9fa;
         }
 
+        /* HEADER SUMMER STYLE */
+        .summer-banner {
+            background-color: #dff6fd;
+            border-bottom: 1px solid #ccc;
+        }
+
+        .summer-banner img {
+            width: 100%;
+            height: auto;
+            object-fit: cover;
+        }
+
+        .header-bar {
+            padding-top: 1rem;
+            padding-bottom: 1rem;
+        }
+
+        .steps .step {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            border: 2px dashed #ccc;
+            color: #888;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            background-color: #fefefe;
+            font-size: 15px;
+        }
+
+        .steps .step.active {
+            border-color: #28a745;
+            color: #28a745;
+            background-color: #e7f8ec;
+        }
+
+        @media (max-width: 768px) {
+            .header-bar {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .steps {
+                justify-content: center;
+                margin-top: 10px;
+            }
+        }
+
+        /* Các style còn lại bạn đã có sẵn */
         .section-title {
             background-color: white;
             border: 2px solid #00cc66;
@@ -77,30 +127,25 @@
             background: white;
             display: flex;
             align-items: flex-start;
-            /* ← chỉnh từ center thành flex-start nếu bạn muốn chữ bắt đầu từ top */
             margin-bottom: 30px;
             width: 100%;
             max-width: 100%;
             box-sizing: border-box;
             flex-wrap: wrap;
             gap: 12px;
-            /* thêm chút khoảng cách tự nhiên */
         }
 
         .cinema-box img {
             width: 120px;
-            /* ← nhỏ lại để khớp chiều cao nội dung */
             height: auto;
             border-radius: 8px;
             margin: 0;
-            /* ← bỏ margin-right nếu bạn dùng gap trong flex */
             object-fit: cover;
         }
 
         .cinema-box>div {
             flex: 1;
             padding-top: 4px;
-            /* ← nếu cần dịch xuống một chút cho cân */
         }
 
         .cinema-box h6 {
@@ -116,13 +161,6 @@
             line-height: 1.4;
         }
 
-
-        .cinema-name {
-            margin: 10px 0;
-            font-weight: 500;
-            color: #333;
-        }
-
         .btn-detail {
             background-color: #7bc043;
             color: white;
@@ -132,53 +170,6 @@
 
         .btn-detail:hover {
             background-color: #5fa334;
-        }
-
-        .topbar {
-            background-color: #f8f8f8;
-            padding: 10px 0;
-        }
-
-        .topbar .nav-link {
-            color: black;
-            font-weight: 500;
-        }
-
-        .topbar .btn-location {
-            background-color: #d9f3cc;
-            border: 1px solid #a8e38b;
-            font-weight: 600;
-            color: black;
-        }
-
-        .navbar-nav .nav-link:hover,
-        .navbar-nav .dropdown-toggle:hover {
-            color: #7bc043 !important;
-            font-weight: 600;
-        }
-
-        /* Dropdown custom style */
-        .dropdown-menu.custom-dropdown {
-            background-color: rgba(0, 0, 0, 0.6);
-            border: none;
-            border-radius: 10px;
-            padding: 10px;
-        }
-
-        .dropdown-menu.custom-dropdown a {
-            color: #f1f1f1;
-            font-weight: 500;
-        }
-
-        .dropdown-menu.custom-dropdown a:hover {
-            color: #7bc043;
-            background-color: transparent;
-        }
-
-        .navbar {
-            background-color: transparent !important;
-            box-shadow: none !important;
-            padding: 0;
         }
 
         footer a:hover {
@@ -201,10 +192,8 @@
             color: white;
             text-decoration: none;
             background-color: gray;
-            /* fallback nếu class riêng không có */
         }
 
-        /* Màu cố định theo mạng xã hội */
         .social-icon.facebook {
             background-color: #1877f2;
         }
@@ -219,10 +208,8 @@
 
         .social-icon.youtube {
             background-color: #ff0000;
-
         }
 
-        /* Loại bỏ mọi hiệu ứng hover/focus/active */
         .social-icon:hover,
         .social-icon:focus,
         .social-icon:active {
@@ -233,90 +220,71 @@
             outline: none;
             box-shadow: none;
         }
+
+        .header-divider {
+            border: none;
+            border-top: 1px solid #000;
+            margin: 0 auto;
+            width: 100%;
+            max-width: 1140px;
+        }
     </style>
     @stack('styles')
 </head>
 
 <body>
 
-    {{-- Navbar --}}
-    <div class="topbar">
-        <div class="topbar">
-            <div class="container d-flex justify-content-between align-items-center">
-                <div class="d-flex align-items-center">
-                    <img style=" width: 100px; height: 100px;" src="{{ asset('images/logo.jpg') }}" alt="Logo">
-                    <nav class="navbar navbar-expand-lg">
-                        <div class="container">
-                            <a class="navbar-brand" href="{{ url('/home') }}">LumiStar</a>
+    {{-- HEADER MÙA HÈ --}}
+    <header class="summer-header">
+        <div class="summer-banner">
+            <img src="{{ asset('images/Z1-1748x155-1.jpg') }}" alt="Hello Summer" class="w-100">
+        </div>
 
-
-                            <div class="collapse navbar-collapse">
-                                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                                    <li class="nav-item dropdown">
-                                        <a class="nav-link dropdown-toggle active" href="#" role="button"
-                                            data-bs-toggle="dropdown">
-                                            NOW SHOWING
-                                        </a>
-                                        <ul class="dropdown-menu custom-dropdown">
-                                            <li>
-                                                <a class="dropdown-item" href="{{ url('/lich-chieu-theo-rap') }}">LỊCH
-                                                    CHIẾU RẠP</a>
-                                            </li>
-                                            <li>
-                                                <a class="dropdown-item" href="{{ url('/lich-chieu-phim') }}">LỊCH CHIẾU
-                                                    PHIM</a>
-                                            </li>
-                                        </ul>
-
-                                    </li>
-                                    <li class="nav-item"><a class="nav-link" href="#">ĐỒ ĂN/COMBO</a></li>
-                                    <li class="nav-item"><a class="nav-link" href="#">KHUYẾN MÃI</a></li>
-                                    <li class="nav-item"><a class="nav-link" href="#">DỊCH VỤ</a></li>
-                                    <li class="nav-item dropdown">
-                                        <a class="nav-link dropdown-toggle active" href="#" role="button"
-                                            data-bs-toggle="dropdown">
-                                            VỀ BHD STAR
-                                        </a>
-                                        <ul class="dropdown-menu custom-dropdown">
-                                            <li><a class="dropdown-item" href="{{ url('/he-thong-rap') }}">HỆ THỐNG
-                                                    RẠP</a></li>
-                                            <li><a class="dropdown-item" href="#">VỀ CHÚNG TÔI</a></li>
-                                            <li><a class="dropdown-item" href="#">TUYỂN DỤNG</a></li>
-                                        </ul>
-                                    </li>
-                                </ul>
-                            </div>
+        <div class="header-bar container d-flex justify-content-between align-items-center flex-wrap">
+            <div class="d-flex align-items-center flex-wrap">
+                <a href="{{ url('/home') }}">
+                    <img src="{{ asset('images/z6776223534015_3ec1a499b9bb824d97c41f77d3a677be-removebg-preview.png') }}"
+                        alt="Logo" class="me-3" style="width: 180px; height: auto;">
+                </a>
+                <div class="steps d-flex gap-4">
+                    @for ($i = 1; $i <= 4; $i++)
+                        <div class="step {{ $i == 1 ? 'active' : '' }}">
+                            {{ sprintf('%02d', $i) }}
                         </div>
-                    </nav>
-                </div>
-                <div class="d-flex align-items-center">
-                    <div class="dropdown">
-                        <button class="btn btn-outline-success dropdown-toggle" type="button" id="dropdownLocation"
-                            data-bs-toggle="dropdown" aria-expanded="false">
-                            Hà Nội
-                        </button>
-                        <ul class="dropdown-menu custom-dropdown" aria-labelledby="dropdownLocation">
-                            <li><a class="dropdown-item" href="#">Hà Nội</a></li>
-                            <li><a class="dropdown-item" href="#">TP. Hồ Chí Minh</a></li>
-                            <li><a class="dropdown-item" href="#">Đà Nẵng</a></li>
-                        </ul>
-                    </div>
-                    <a href="{{ url('/profile') }}" class="text-decoration-none text-dark">
-                        <div class="d-flex align-items-center ms-3">
-                            <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" width="24"
-                                class="me-1">
-                            <span>Gia Hưng / <strong>Thoát</strong></span>
-                        </div>
-                    </a>
+                    @endfor
                 </div>
             </div>
+
+            <div class="d-flex align-items-center mt-3 mt-md-0 flex-wrap justify-content-end gap-3">
+                <a href="#" class="text-decoration-none text-dark fw-semibold">Quy định</a>
+                <a href="#" class="text-decoration-none text-dark fw-semibold">FAQ</a>
+
+                <div class="dropdown">
+                    <button class="btn btn-outline-success dropdown-toggle" type="button" id="locationDropdown"
+                        data-bs-toggle="dropdown" aria-expanded="false">
+                        HÀ NỘI
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="locationDropdown">
+                        <li><a class="dropdown-item" href="#">Hà Nội</a></li>
+                        <li><a class="dropdown-item" href="#">TP. Hồ Chí Minh</a></li>
+                        <li><a class="dropdown-item" href="#">Đà Nẵng</a></li>
+                    </ul>
+                </div>
+
+                <a href="{{ url('/profile') }}" class="text-decoration-none text-dark d-flex align-items-center">
+                    <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" width="24" class="me-2">
+                    <span>Gia Hưng / <strong>Thoát</strong></span>
+                </a>
+            </div>
         </div>
-    </div>
+    </header>
+
+    <hr class="header-divider my-0">
 
     {{-- Nội dung động --}}
     @yield('content')
 
-    {{-- Footer --}}
+    {{-- FOOTER --}}
     <footer class="bg-dark text-white pt-5">
         <div class="container">
             <div class="row">
@@ -388,6 +356,7 @@
             </div>
         </div>
     </footer>
+
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     @stack('scripts')
