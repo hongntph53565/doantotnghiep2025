@@ -10,10 +10,15 @@ class Seat extends Model
     public $incrementing = true;
     protected $keyType = 'int';
 
-    protected $fillable = ['room_id', 'seat_code', 'seat_type'];
+    protected $fillable = ['room_id', 'seat_code', 'seat_type_id'];
 
     public function room()
     {
-        return $this->belongsTo(Room::class);
+        return $this->belongsTo(Room::class, 'room_id');
     }
+
+    public function seatType()
+{
+    return $this->belongsTo(SeatType::class, 'seat_type_id');
+}
 }

@@ -22,9 +22,9 @@ class Movie extends Model
         'poster',
         'trailer',
         'age_rating',
-        'format',
         'language',
         'description',
+        'status'
     ];
 
     protected $dates = ['deleted_at'];
@@ -33,4 +33,9 @@ class Movie extends Model
     {
         return $this->belongsTo(Genre::class, 'genre_id', 'genre_id');
     }
+
+public function showtimes()
+{
+    return $this->hasMany(Showtime::class, 'movie_id', 'movie_id');
+}
 }

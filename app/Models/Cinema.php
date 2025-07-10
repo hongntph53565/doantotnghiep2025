@@ -26,4 +26,9 @@ class Cinema extends Model
     {
         return $this->hasMany(Room::class, 'cinema_id');
     }
+    
+public function getFullAddressAttribute()
+{
+    return "{$this->address_detail}, {$this->ward}, {$this->district}, {$this->city}";
+}
 }

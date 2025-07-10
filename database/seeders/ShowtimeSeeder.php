@@ -6,7 +6,7 @@ use App\Models\Showtime;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
-class UserSeeder extends Seeder
+class ShowtimeSeeder extends Seeder
 {
     /**
      * Run the database seeds.

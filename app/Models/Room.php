@@ -11,7 +11,7 @@ class Room extends Model
     public $incrementing = true;
     protected $keyType = 'int';
 
-        protected $fillable = [
+    protected $fillable = [
         'cinema_id',
         'room_name',
         'total_seats',
@@ -19,8 +19,12 @@ class Room extends Model
         'updated_at'
     ];
 
-    public function cinema() {
-    return $this->belongsTo(Cinema::class, 'cinema_id');
+    public function cinema()
+    {
+        return $this->belongsTo(Cinema::class, 'cinema_id');
+    }
+    public function seats()
+    {
+        return $this->hasMany(Seat::class, 'room_id');
+    }
 }
-}
-

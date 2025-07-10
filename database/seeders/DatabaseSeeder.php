@@ -23,6 +23,7 @@ class DatabaseSeeder extends Seeder
             PromotionSeeder::class,
             BookingSeeder::class,
             ReviewSeeder::class,
+            EmailTemplateSeeder::class,
         ]);
     }
 }
