@@ -61,7 +61,7 @@ Route::get('/', [HomeController::class, 'home'])->name('home');
 
 Route::get('/dat-ve/{movie_id}', [HomeController::class, 'booking'])->name('Client.booking.home');
 Route::get('/chon-ghe/{movie_id}', [HomeController::class, 'booking'])->name('Client.booking.select-seat');
-Route::get('/ajax/showtimes', action: [HomeController::class, 'loadShowtimes'])->name('Client.booking.ajaxShowtimes');
+// Route::get('/ajax/showtimes', action: [HomeController::class, 'loadShowtimes'])->name('Client.booking.ajaxShowtimes');
 Route::get('/ajax/showtimes', [HomeController::class, 'ajaxShowtimes']);
 Route::get('/booking/select-combo/{showtime_id}', [HomeController::class, 'showCombo'])->name('Client.booking.select-combo');
 

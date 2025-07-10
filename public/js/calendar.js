@@ -234,26 +234,21 @@ function goBackStep() {
     if (current > 0) goToStep(current - 1);
 }
 
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", function () { 
     const urlParams = new URLSearchParams(window.location.search);
     const fromURL = urlParams.get("showtime_id");
 
     if (fromURL) {
         localStorage.setItem("selectedShowtimeId", fromURL);
+        localStorage.setItem("currentStep", 1); 
         goToStep(1);
-
-//         urlParams.delete("showtime_id");
-// const newUrl = `${window.location.pathname}?${urlParams.toString()}`;
-// window.history.replaceState({}, "", newUrl);
-
     } else {
-        const step = parseInt(localStorage.getItem("currentStep")) || 0;
-        goToStep(step);
+        localStorage.setItem("currentStep", 0);
+        goToStep(0);
     }
 
     renderCalendar(currentMonth, currentYear);
 
-    
     const offsetDate = new Date(selectedDate.getTime() - selectedDate.getTimezoneOffset() * 60000);
     const selectedDateString = offsetDate.toISOString().split("T")[0];
 
@@ -272,5 +267,6 @@ document.addEventListener("DOMContentLoaded", function () {
             });
         });
 });
+
 
 
