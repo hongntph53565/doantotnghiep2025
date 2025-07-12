@@ -1,119 +1,72 @@
 <div class="container mb-5">
     <div class="container-combo">
-            <div class="left-box">
-                <div class="tag-button">Concession</div>
-                <hr>
+        <div class="left-box">
+            <div class="tag-button">Concession</div>
+            <hr>
 
-                <div class="combo-item">
-                    <div class="col">
-                        <img src="{{ asset('images/662722.png') }}" alt="combo1">
-                        <div class="row">
-                            <div class="combo-title">OL Combo1 - Sweet 22Oz</div>
-                            <div class="quantity-control">
-                                <button class="minus">-</button>
-                                <span class="number">0</span>
-                                <button class="plus">+</button>
+            @if (isset($foods) && count($foods))
+                @foreach ($foods as $type => $items)
+                    @foreach ($items as $food)
+                        <div class="combo-item mb-3" data-price="{{ $food->price }}">
+                            <div class="col">
+                                <img src="{{ asset('storage/' . $food->image) }}" alt="{{ $food->name }}">
+                                <div class="row">
+                                    <div class="combo-title">{{ $food->name }}</div>
+                                    <div class="quantity-control">
+                                        <button class="minus" data-id="{{ $food->food_id }}">-</button>
+                                        <span class="number" id="combo-qty-{{ $food->food_id }}">0</span>
+                                        <button class="plus" data-id="{{ $food->food_id }}">+</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="combo-price">
+                                <p>{{ number_format($food->price, 0, ',', '.') }} VND</p>
                             </div>
                         </div>
-
-                    </div>
-
-                    <div class="combo-price">
-                        <del>85.000 VND</del>
-                        <p>76.500 VND</p>
-                    </div>
-
-                </div>
-                <div class="combo-item">
-                    <div class="col">
-                        <img src="{{ asset('images/662722.png') }}" alt="combo1">
-                        <div class="row">
-                            <div class="combo-title">OL Combo1 - Sweet 22Oz</div>
-                            <div class="quantity-control">
-                                <button class="minus">-</button>
-                                <span class="number">0</span>
-                                <button class="plus">+</button>
-                            </div>
-                        </div>
-
-                    </div>
-
-                    <div class="combo-price">
-                        <del>85.000 VND</del>
-                        <p>76.500 VND</p>
-                    </div>
-
-                </div>
-                <div class="combo-item">
-                    <div class="col">
-                        <img src="{{ asset('images/662722.png') }}" alt="combo1">
-                        <div class="row">
-                            <div class="combo-title">OL Combo1 - Sweet 22Oz</div>
-                            <div class="quantity-control">
-                                <button class="minus">-</button>
-                                <span class="number">0</span>
-                                <button class="plus">+</button>
-                            </div>
-                        </div>
-
-                    </div>
-
-                    <div class="combo-price">
-                        <del>85.000 VND</del>
-                        <p>76.500 VND</p>
-                    </div>
-
-                </div>
-                <div class="combo-item">
-                    <div class="col">
-                        <img src="{{ asset('images/662722.png') }}" alt="combo1">
-                        <div class="row">
-                            <div class="combo-title">OL Combo1 - Sweet 22Oz</div>
-                            <div class="quantity-control">
-                                <button class="minus">-</button>
-                                <span class="number">0</span>
-                                <button class="plus">+</button>
-                            </div>
-                        </div>
-
-                    </div>
-
-                    <div class="combo-price">
-                        <del>85.000 VND</del>
-                        <p>76.500 VND</p>
-                    </div>
-
-                </div>
-
-
-            </div>
-
-            <div class="right-box">
-                <h3 style="font-weight: bold;">BHD Star The Garden</h3>
-                <p><strong style="color: #67B72F;">Screen 6</strong> <span> - 13/6/2025 - Suất chiếu: 14h40</span></p>
-                <p class="title">DORAEMON: NOBITA'S ART WORLD TALES</p>
-                <p>
-                    <span
-                        style="background: #0096FF; color: white; padding: 2px 6px; border-radius: 4px; font-size: 12px;">P</span>
-                    <span
-                        style="background: black; color: white; padding: 2px 6px; border-radius: 4px; font-size: 12px;">PHỤ
-                        ĐỀ</span>
-                    <span
-                        style="background: green; color: white; padding: 2px 6px; border-radius: 4px; font-size: 12px;">2D</span>
-                </p>
-                <p class="info">1 x Adult - Stand - 2D<br>Ghế: C15 <strong style="float:right">100.000 VND</strong></p>
-                <hr>
-                <div class="total">
-                    <span>Tổng tiền</span>
-                    <span>100.000</span>
-                </div>
-                <p class="note">(Đã bao gồm phụ thu)</p>
-                <a href="javascript:void(0);" class="btn-checkout" onclick="goToStep(3)" >THANH TOÁN (3/4)</a>
-                <div class="btn-back-wrapper">
-    <a href="javascript:void(0);" class="btn-back" onclick="goBackStep()">← Trở lại</a>
-</div>
-
-            </div>
-
+                    @endforeach
+                @endforeach
+            @else
+                <p>Không có combo phù hợp cho rạp này.</p>
+            @endif
         </div>
-          </div>
+
+        <div class="right-box">
+            <h3 style="font-weight: bold;">
+                {{ $selectedShowtime->room->cinema->name ?? 'Tên rạp' }}
+            </h3>
+            <p>
+                <strong style="color: #67B72F;">{{ $selectedShowtime->room->room_name ?? 'Phòng chiếu' }}</strong>
+                <span>
+                    -
+                    {{ optional($selectedShowtime)->date ? \Carbon\Carbon::parse($selectedShowtime->date)->format('d/m/Y') : 'Ngày chiếu' }}
+                    - Suất chiếu:
+                    {{ optional($selectedShowtime)->start_time ? \Carbon\Carbon::parse($selectedShowtime->start_time)->format('H:i') : 'Giờ' }}
+                </span>
+            </p>
+            <p class="title">{{ $movie->title ?? 'Tên phim' }}</p>
+            <p>
+                <span
+                    style="background: #0096FF; color: white; padding: 2px 6px; border-radius: 4px; font-size: 12px;">{{ $movie->rated ?? 'P' }}</span>
+                <span
+                    style="background: black; color: white; padding: 2px 6px; border-radius: 4px; font-size: 12px;">PHỤ
+                    ĐỀ</span>
+                <span
+                    style="background: green; color: white; padding: 2px 6px; border-radius: 4px; font-size: 12px;">2D</span>
+            </p>
+            <p class="info" id="seat-info">Đang tải ghế...</p>
+            <p class="info">Tiền vé: <strong id="ticket-total">0 VND</strong></p>
+            <div id="food-selected-list" style="margin-bottom: 10px;"></div>
+            <p class="info">Tiền đồ ăn: <strong id="food-total">0 VND</strong></p>
+            <hr>
+            <div class="total">
+                <span>Tổng tiền</span>
+                <span id="final-total">0 VND</span>
+            </div>
+            <p class="note">(Đã bao gồm phụ thu)</p>
+            <a href="javascript:void(0);" class="btn-checkout" onclick="goToStep(3)">THANH TOÁN (3/4)</a>
+            <div class="btn-back-wrapper">
+                <a href="javascript:void(0);" class="btn-back" onclick="goBackStep()">← Trở lại</a>
+            </div>
+        </div>
+    </div>
+</div>

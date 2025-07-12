@@ -207,9 +207,7 @@ window.selectShowtime = function (showtimeId) {
 };
 
 window.goToStep = function (step) {
-    document
-        .querySelectorAll(".booking-step")
-        .forEach((el) => (el.style.display = "none"));
+    document.querySelectorAll(".booking-step").forEach(el => el.style.display = "none");
     document.querySelectorAll(".steps .step")?.forEach((el, index) => {
         el.classList.toggle("active", index === step);
     });
@@ -227,6 +225,12 @@ window.goToStep = function (step) {
     if (titleEl) titleEl.textContent = titles[step] || "";
 
     localStorage.setItem("currentStep", step);
+
+    if (step === 2) {
+        setTimeout(() => {
+            if (typeof renderSeatInfo === "function") renderSeatInfo();
+        }, 0);
+    }
 };
 
 function goBackStep() {
@@ -234,13 +238,107 @@ function goBackStep() {
     if (current > 0) goToStep(current - 1);
 }
 
-document.addEventListener("DOMContentLoaded", function () { 
+function renderSeatInfo() {
+    const selectedSeats = JSON.parse(sessionStorage.getItem("selectedSeats")) || [];
+    const ticketTotal = parseInt(sessionStorage.getItem("ticketTotal")) || 0;
+    const seatInfo = document.getElementById("seat-info");
+
+    if (!seatInfo) return;
+
+    if (selectedSeats.length === 0) {
+        seatInfo.innerHTML = "Chưa chọn ghế";
+        return;
+    }
+
+    const seatList = selectedSeats.map(seat => {
+        if (seat.type === "couple" && Array.isArray(seat.codes)) {
+            return seat.codes.join(" & ");
+        } else {
+            return seat.code;
+        }
+    });
+
+    seatInfo.innerHTML = `Ghế đã chọn: ${seatList.join(", ")} <strong style="float:right">${ticketTotal.toLocaleString("vi-VN")} VND</strong>`;
+}
+
+
+function updateFoodTotalAndList() {
+    let foodTotal = 0;
+    const foodList = [];
+
+    document.querySelectorAll(".combo-item").forEach(combo => {
+        const qty = parseInt(combo.querySelector(".number").textContent);
+        const price = parseInt(combo.dataset.price);
+        const name = combo.querySelector(".combo-title")?.textContent.trim();
+
+        if (qty > 0) {
+            foodList.push({ name, qty, price, total: qty * price });
+            foodTotal += qty * price;
+        }
+    });
+
+    const ticketTotal = parseInt(sessionStorage.getItem("ticketTotal")) || 0;
+    const finalTotal = foodTotal + ticketTotal;
+
+    document.getElementById("food-total").textContent = foodTotal.toLocaleString("vi-VN") + " VND";
+    document.getElementById("ticket-total").textContent = ticketTotal.toLocaleString("vi-VN") + " VND";
+    document.getElementById("final-total").textContent = finalTotal.toLocaleString("vi-VN") + " VND";
+
+    renderSelectedFoodList(foodList);
+
+    sessionStorage.setItem("foodTotal", foodTotal);
+    sessionStorage.setItem("finalTotal", finalTotal);
+}
+
+function renderSelectedFoodList(foodList) {
+    const container = document.getElementById("food-selected-list");
+    if (!container) return;
+
+    if (foodList.length === 0) {
+        container.innerHTML = "<p>Chưa chọn đồ ăn.</p>";
+        return;
+    }
+
+    container.innerHTML = foodList.map(item => {
+        return `
+            <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                <span>${item.qty} x ${item.name}</span>
+                <strong>${item.total.toLocaleString("vi-VN")} VND</strong>
+            </div>
+        `;
+    }).join("");
+}
+
+
+document.addEventListener("DOMContentLoaded", function () {
+    const combos = document.querySelectorAll(".combo-item");
+
+    combos.forEach(combo => {
+        const plusBtn = combo.querySelector(".plus");
+        const minusBtn = combo.querySelector(".minus");
+        const quantitySpan = combo.querySelector(".number");
+
+        plusBtn.onclick = () => {
+            let qty = parseInt(quantitySpan.textContent);
+            qty++;
+            quantitySpan.textContent = qty;
+            updateFoodTotalAndList();
+        };
+
+        minusBtn.onclick = () => {
+            let qty = parseInt(quantitySpan.textContent);
+            if (qty > 0) qty--;
+            quantitySpan.textContent = qty;
+            updateFoodTotalAndList();
+        };
+    });
+
     const urlParams = new URLSearchParams(window.location.search);
     const fromURL = urlParams.get("showtime_id");
 
     if (fromURL) {
         localStorage.setItem("selectedShowtimeId", fromURL);
-        localStorage.setItem("currentStep", 1); 
+        localStorage.setItem("currentStep", 1);
         goToStep(1);
     } else {
         localStorage.setItem("currentStep", 0);
@@ -256,7 +354,6 @@ document.addEventListener("DOMContentLoaded", function () {
         .then(res => res.text())
         .then(html => {
             document.querySelector(".schedule-box").innerHTML = html;
-
             document.querySelectorAll(".showtime-btn").forEach(button => {
                 button.addEventListener("click", function () {
                     const showtimeId = this.getAttribute("data-showtime-id");
@@ -266,7 +363,12 @@ document.addEventListener("DOMContentLoaded", function () {
                 });
             });
         });
+
+    renderSeatInfo();
+    updateFoodTotalAndList();
 });
+
+
 
 
 

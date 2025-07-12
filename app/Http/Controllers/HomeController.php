@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Movie;
 use App\Models\Showtime;
-use App\Models\Seat;
+use App\Models\Food;
 
 use Illuminate\Http\Request;
 use Carbon\Carbon;
@@ -23,7 +23,6 @@ class HomeController extends Controller
 public function booking(Request $request, $movie_id)
 {
     $movie = Movie::with('genre')->findOrFail($movie_id);
-
     $date = $request->input('date', now()->toDateString());
 
     $query = Showtime::with('room.cinema')
@@ -34,28 +33,35 @@ public function booking(Request $request, $movie_id)
     $showtimes = $query
         ->orderBy('start_time')
         ->get()
-        ->groupBy(function ($item) {
-            return $item->room->cinema->cinema_id;
-        });
+        ->groupBy(fn($item) => $item->room->cinema->cinema_id);
 
     $selectedShowtimeId = $request->input('showtime_id');
     $selectedShowtime = null;
     $seats = collect();
+    $foods = collect();
     $step = 0;
 
     if ($selectedShowtimeId) {
-        $selectedShowtime = Showtime::with('room.cinema', 'room.seats.seatType')->find($selectedShowtimeId);
+        $selectedShowtime = Showtime::with(['room.cinema', 'room.seats.seatType', 'movie'])->find($selectedShowtimeId);
 
         if ($selectedShowtime && $selectedShowtime->room) {
             $seats = $selectedShowtime->room->seats;
-            $step = 1; // ✅ Đã chọn suất chiếu → sang bước chọn ghế
+            $step = 1;
+
+            // 👉 Lấy combo theo cinema_id
+            $cinemaId = $selectedShowtime->room->cinema_id;
+            $foods = Food::where('cinema_id', $cinemaId)
+                         ->where('status', 'active')
+                         ->get()
+                         ->groupBy('type');
         }
     }
 
     return view('Client.booking.home', compact(
-        'movie', 'showtimes', 'selectedShowtimeId', 'selectedShowtime', 'seats', 'step'
+        'movie', 'showtimes', 'selectedShowtimeId', 'selectedShowtime', 'seats', 'step', 'foods'
     ));
 }
+
 
 public function lichChieu()
 {
@@ -125,5 +131,42 @@ public function ajaxShowtimes(Request $request)
 
 
 
+// public function booking(Request $request, $movie_id)
+// {
+//     $movie = Movie::with('genre')->findOrFail($movie_id);
+
+//     $date = $request->input('date', now()->toDateString());
+
+//     $showtimes = Showtime::with('room.cinema')
+//         ->where('movie_id', $movie_id)
+//         ->where('status', 'active')
+//         ->whereDate('date', Carbon::parse($date)->toDateString())
+//         ->orderBy('start_time')
+//         ->get()
+//         ->groupBy(fn($item) => $item->room->cinema->cinema_id);
+
+//     $selectedShowtimeId = $request->input('showtime_id');
+//     $selectedShowtime = null;
+//     $seats = collect();
+//     $foods = collect();
+
+//     if ($selectedShowtimeId) {
+//         $selectedShowtime = Showtime::with(['room.cinema', 'room.seats.seatType', 'movie'])->find($selectedShowtimeId);
+
+//         if ($selectedShowtime && $selectedShowtime->room) {
+//             $seats = $selectedShowtime->room->seats;
+
+//             $cinemaId = $selectedShowtime->room->cinema_id;
+//             $foods = Food::where('cinema_id', $cinemaId)
+//                 ->where('status', 'active')
+//                 ->get()
+//                 ->groupBy('type');
+//         }
+//     }
+
+//     return view('Client.booking.home', compact(
+//         'movie', 'showtimes', 'selectedShowtimeId', 'selectedShowtime', 'seats', 'foods'
+//     ));
+// }
 
 }
