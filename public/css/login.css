@@ -1,0 +1,34 @@
+body {
+  background: #fff;
+  padding: 50px 15px;
+  font-family: Arial, sans-serif;
+}
+
+h2 {
+  font-weight: bold;
+  margin-bottom: 20px;
+  font-size: 24px;
+}
+
+.btn-green {
+  background-color: #6cc24a;
+  color: white;
+  font-weight: bold;
+  border: none;
+}
+
+.btn-green:hover {
+  background-color: #5cb245;
+}
+
+.forgot-password {
+  display: block;
+  margin-bottom: 15px;
+  font-size: 14px;
+  color: #6cc24a;
+  text-decoration: none;
+}
+
+.forgot-password:hover {
+  text-decoration: underline;
+}

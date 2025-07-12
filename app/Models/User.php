@@ -13,13 +13,18 @@ class User extends Authenticatable
     protected $primaryKey = 'user_id'; // nếu khóa chính không phải 'id'
 
     protected $fillable = [
-        'username',
-        'full_name',
-        'email',
-        'password',
-        'phone',
-        'role',
-    ];
+    'last_name',
+    'first_name',
+    'gender',
+    'email',
+    'password',
+    'phone',
+    'birth_day',
+    'birth_month',
+    'birth_year',
+    'role', // Thêm trường role nếu cần
+];
+
 
     protected $hidden = [
         'password',

@@ -12,6 +12,8 @@ use App\Models\EmailTemplate;
 use App\Models\Showtime;
 use App\Models\Room;
 
+use App\Http\Controllers\Client\AuthController;
+use App\Controllers\Client\PromotionController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -70,3 +72,9 @@ Route::prefix('payos')->name('payos.')->group(function () {
     Route::get('/create-link/{amount}/{description}', [PayosController::class, 'createLink'])->name('create');
     Route::get('/return-link/{description}',          [PayosController::class, 'returnPage'])->name('return');
 });
+
+
+Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login.form');
+Route::post('/login', [AuthController::class, 'login'])->name('login');
+Route::post('/register', [AuthController::class, 'register'])->name('register');
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
