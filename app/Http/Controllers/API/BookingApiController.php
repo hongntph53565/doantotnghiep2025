@@ -55,6 +55,7 @@ class BookingApiController extends Controller
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }
+
     }
 
     public function show($id)
@@ -66,6 +67,7 @@ class BookingApiController extends Controller
         }
 
         return response()->json($booking, 200);
+
     }
 
     public function update(Request $request, $id)
@@ -73,6 +75,7 @@ class BookingApiController extends Controller
         $booking = Booking::find($id);
         if (!$booking) {
             return response()->json(['error' => 'Booking not found'], 404);
+
         }
 
         $validated = $request->validate([
@@ -123,5 +126,6 @@ class BookingApiController extends Controller
         });
 
         return response()->json($seats, 200);
+
     }
 }

@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Booking extends Model
 {
     protected $primaryKey = 'booking_id';
-
+    
     protected $fillable = [
         'user_id',
         'showtime_id',
@@ -40,4 +40,5 @@ class Booking extends Model
                 ->withPivot('quantity')
                 ->withTimestamps();
 }
+
 }

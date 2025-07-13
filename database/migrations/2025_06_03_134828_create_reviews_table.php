@@ -10,11 +10,18 @@ return new class extends Migration
     {
         Schema::create('reviews', function (Blueprint $table) {
             $table->bigIncrements('review_id');
+<<<<<<< HEAD
             $table->unsignedBigInteger('user_id');  
             $table->unsignedBigInteger('movie_id');
             $table->tinyInteger('rating');
             $table->text('comment')->nullable();
             $table->enum('status', ['active', 'inactive'])->default('active');
+=======
+            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('movie_id');
+            $table->integer('rating');
+            $table->text('comment')->nullable();
+>>>>>>> origin/hung
             $table->timestamps();
 
             $table->foreign('user_id')->references('user_id')->on('users')->onDelete('cascade');

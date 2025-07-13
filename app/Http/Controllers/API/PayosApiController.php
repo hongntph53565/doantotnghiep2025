@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Events\PaymentEvents;
+
 use App\Http\Controllers\Controller;
 use App\Models\Booking;
 use App\Models\Payment;
@@ -54,6 +55,7 @@ class PayosApiController extends Controller
 
         if ($booking->payment_method == "payos") {
             $payment = Payment::create([
+
                 'booking_id'     => $booking->booking_id,
                 'payment_method' => $booking->payment_method,
                 'price_amount'   => $booking->total_price,
@@ -61,6 +63,7 @@ class PayosApiController extends Controller
             ]);
             $payment['user_id'] = $booking->user_id;
             event(new PaymentEvents($payment));
+
         }
 
         if (($allParams['cancel'] ?? 'false') !== 'true' && $booking->payment_method == "payos") {

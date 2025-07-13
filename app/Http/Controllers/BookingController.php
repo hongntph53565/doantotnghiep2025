@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Http\Controllers;
-
 use App\Models\Booking;
 use App\Models\Movie;
 use App\Models\Showtime;
@@ -15,6 +14,7 @@ class BookingController extends Controller
 {
     public function __construct()
     {
+
     }
 
     public function index()
@@ -32,6 +32,7 @@ class BookingController extends Controller
     }
 
     public function store(Request $request, BookingService $bookingService)
+
     {
         $data = $request->validate([
             'user_id' => 'required|exists:users,user_id',
@@ -48,6 +49,7 @@ class BookingController extends Controller
         $booking = Booking::create($data);
 
         $bookingService->createSeats($booking, $data['seats_id']);
+
 
         if ($data["payment_method"] == "payos") {
             return redirect()->route('payos.create', [
@@ -67,6 +69,7 @@ class BookingController extends Controller
                 'description' => $data['booking_code']
             ]);
         }
+
     }
 
 
@@ -132,4 +135,5 @@ class BookingController extends Controller
 
         return response()->json($seats);
     }
+
 }

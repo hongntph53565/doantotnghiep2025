@@ -2,6 +2,10 @@
 
 namespace Database\Seeders;
 
+<<<<<<< HEAD
+=======
+use App\Models\Booking;
+>>>>>>> origin/hung
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -11,6 +15,7 @@ class BookingSeeder extends Seeder
 {
     public function run(): void
     {
+<<<<<<< HEAD
         for ($i = 1; $i <= 10; $i++) {
             DB::table('bookings')->insert([
                 'user_id' => 1,
@@ -22,5 +27,8 @@ class BookingSeeder extends Seeder
                 'updated_at' => Carbon::now(),
             ]);
         }
+=======
+        Booking::factory(10)->create();
+>>>>>>> origin/hung
     }
 }

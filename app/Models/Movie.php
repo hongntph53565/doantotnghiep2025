@@ -25,6 +25,7 @@ class Movie extends Model
         'language',
         'description',
         'status'
+
     ];
 
     protected $dates = ['deleted_at'];
@@ -38,4 +39,5 @@ public function showtimes()
 {
     return $this->hasMany(Showtime::class, 'movie_id', 'movie_id');
 }
+
 }

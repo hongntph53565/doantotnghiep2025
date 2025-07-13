@@ -37,6 +37,7 @@ public function create()
     return view('admin.create.room', compact('cinemas','districts'));
 }
 
+
     public function store(Request $request)
     {
         $data = $request->validate([
@@ -62,6 +63,7 @@ public function edit($id)
 
     return view('admin.edit.room', compact('room', 'cinemas', 'districts'));
 }
+
 
 
     public function update(Request $request, $id)

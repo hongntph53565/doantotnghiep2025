@@ -85,4 +85,3 @@ public function index(Request $request)
         return redirect()->route('template.index')->with('success', 'Xoá mẫu email thành công!');
     }
 
-}

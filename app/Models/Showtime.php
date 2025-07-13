@@ -32,6 +32,7 @@ class Showtime extends Model
     /**
      * Liên kết với phim
      */
+
     public function movie()
     {
         return $this->belongsTo(Movie::class, 'movie_id', 'movie_id');
@@ -43,3 +44,4 @@ class Showtime extends Model
     }
 
     }
+

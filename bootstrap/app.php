@@ -22,6 +22,7 @@ return Application::configure(basePath: dirname(__DIR__))
             //     \Illuminate\Routing\Middleware\SubstituteBindings::class,
             // ],
 
+
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

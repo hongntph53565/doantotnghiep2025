@@ -19,12 +19,39 @@ use App\Http\Controllers\RoomController;
 use App\Http\Controllers\SeatController;
 use App\Http\Controllers\StaticController;
 use App\Http\Controllers\VnpayController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ZalopayController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [DashboardController::class, 'index'])->name('admin.dashboard');
 
 Route::get('/static', [StaticController::class, 'index'])->name('admin.static');
+
+Route::get('/home', [HomeController::class, 'home']);
+Route::get('/cart', [HomeController::class, 'index']);
+Route::get('/booking2', [HomeController::class, 'booking2']);
+Route::get('/booking3', [HomeController::class, 'booking3']);
+Route::get('/booking4', [HomeController::class, 'booking4']);
+Route::get('/', function () {
+    // return response()->json(['message' => 'Backend OK']);
+});
+Route::get('/lich-chieu-phim', function () {
+    return view('Client.lichchieuphim');
+});
+
+Route::get('/lich-chieu-theo-rap', function () {
+    return view('Client.lichchieurap');
+});
+Route::get('/he-thong-rap', function () {
+    return view('Client.hethongrap');
+});
+Route::get('/profile', function () {
+    return view('Client.profile');
+});
+Route::get('/thong-tin-rap', function () {
+    return view('Client.thongtinrap');
+});
+
 
 Route::prefix('cinema')->name('cinemas.')->group(function () {
     Route::get('/',              [CinemaController::class, 'index'])->name('index');
@@ -95,6 +122,7 @@ Route::prefix('showtime')->name('showtimes.')->group(function () {
 Route::prefix('template')->name('template.')->group(function () {
     Route::get('/',               [EmailTemplateController::class, 'index'])->name('index');
     Route::get('show/{id}',       [EmailTemplateController::class, 'show'])->name('show');
+
     Route::get('/create',         [EmailTemplateController::class, 'create'])->name('create');
     Route::post('/store',         [EmailTemplateController::class, 'store'])->name('store');
     Route::get('/edit/{id}',      [EmailTemplateController::class, 'edit'])->name('edit');

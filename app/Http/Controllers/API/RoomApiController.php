@@ -112,12 +112,14 @@ class RoomApiController extends Controller
                 $seat_type = 3;
             } else {
                 $seat_type = 2;
+
             }
 
             Seat::create([
                 'room_id' => $roomID,
                 'seat_code' => $seat_code,
                 'seat_type_id' => $seat_type,
+
             ]);
         }
     }

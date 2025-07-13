@@ -18,6 +18,7 @@ class PayosController extends Controller
     {
         $this->payos = $payos;
         $this->bookingService = $bookingService;
+
     }
 
     public function createLink($amount, $description)
@@ -49,6 +50,7 @@ class PayosController extends Controller
 
     if ($booking['payment_method'] === "payos") {
         $payment = Payment::create([
+
             'booking_id'     => $booking['booking_id'],
             'payment_method' => $booking['payment_method'],
             'price_amount'   => $booking->total_price,
@@ -66,6 +68,7 @@ class PayosController extends Controller
             'booking_status' => 'cancelled'
         ]);
         $this->bookingService->cancelSeats($booking);
+
     }
 
     return response()->json([

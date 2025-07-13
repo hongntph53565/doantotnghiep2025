@@ -232,5 +232,6 @@ class ShowtimeController extends Controller
     public function dele()
     {
         return view('Showtime.delete');
+
     }
 }

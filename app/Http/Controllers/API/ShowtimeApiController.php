@@ -13,12 +13,14 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
+
 class ShowtimeApiController extends Controller
 {
     public function index()
     {
         $showTimes = Showtime::with(['movie', 'room'])->get();
         return response()->json($showTimes);
+
     }
 
     public function store(Request $request)
@@ -57,6 +59,7 @@ class ShowtimeApiController extends Controller
             return response()->json(['error' => 'Không tìm thấy suất chiếu'], 404);
         }
         return response()->json($showtime);
+
     }
 
     public function update(Request $request, $id)
@@ -114,5 +117,6 @@ class ShowtimeApiController extends Controller
             'rooms'   => Room::select('room_id', 'room_name', 'cinema_id')->get(),
             'cinemas' => Cinema::select('cinema_id', 'name')->get(),
         ]);
+
     }
 }
