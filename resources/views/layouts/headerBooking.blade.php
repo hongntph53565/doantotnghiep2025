@@ -242,10 +242,10 @@
 
         <div class="header-bar container d-flex justify-content-between align-items-center flex-wrap">
             <div class="d-flex align-items-center flex-wrap">
-                <a href="{{ url('/home') }}">
-                    <img src="{{ asset('images/z6776223534015_3ec1a499b9bb824d97c41f77d3a677be-removebg-preview.png') }}"
-                        alt="Logo" class="me-3" style="width: 180px; height: auto;">
-                </a>
+               <a id="logo-link" href="{{ url('/home') }}">
+    <img src="{{ asset('images/z6776223534015_3ec1a499b9bb824d97c41f77d3a677be-removebg-preview.png') }}"
+        alt="Logo" class="me-3" style="width: 180px; height: auto;">
+</a>
                 <div class="steps d-flex gap-4">
                     @for ($i = 1; $i <= 4; $i++)
                         <div class="step {{ $i == 1 ? 'active' : '' }}">
@@ -359,6 +359,18 @@
 
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const logoLink = document.getElementById("logo-link");
+        if (logoLink) {
+            logoLink.addEventListener("click", function (e) {
+                e.preventDefault();
+                sessionStorage.clear();
+                window.location.href = this.href;
+            });
+        }
+    });
+</script>
     @stack('scripts')
 </body>
 

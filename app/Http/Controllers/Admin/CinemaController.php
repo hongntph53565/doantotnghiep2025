@@ -85,4 +85,16 @@ public function update(Request $request, $id)
 
         return redirect()->route('cinemas.index')->with('success', 'Xoá mẫu email thành công!');
     }
+
+    public function listCinemas()
+{
+    $cinemas = Cinema::latest()->get();
+    return view('Client.lichchieurap', compact('cinemas'));
+}
+
+public function show($id)
+{
+    $cinema = Cinema::findOrFail($id);
+    return view('Client.lichchieuphimtheorap', compact('cinema'));
+}
 }

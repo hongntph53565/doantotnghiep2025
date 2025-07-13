@@ -259,8 +259,7 @@
                                         </a>
                                         <ul class="dropdown-menu custom-dropdown">
                                             <li>
-                                                <a class="dropdown-item" href="{{ url('/lich-chieu-theo-rap') }}">LỊCH
-                                                    CHIẾU RẠP</a>
+                                               <a class="dropdown-item" href="{{ route('Client.lichchieurap') }}">LỊCH CHIẾU RẠP</a>
                                             </li>
                                             <li>
                                                 <a class="dropdown-item" href="{{ url('/lich-chieu-phim') }}">LỊCH CHIẾU

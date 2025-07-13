@@ -54,9 +54,8 @@
                     style="background: green; color: white; padding: 2px 6px; border-radius: 4px; font-size: 12px;">2D</span>
             </p>
             <p class="info" id="seat-info">Đang tải ghế...</p>
-            <p class="info">Tiền vé: <strong id="ticket-total">0 VND</strong></p>
+            <hr>
             <div id="food-selected-list" style="margin-bottom: 10px;"></div>
-            <p class="info">Tiền đồ ăn: <strong id="food-total">0 VND</strong></p>
             <hr>
             <div class="total">
                 <span>Tổng tiền</span>

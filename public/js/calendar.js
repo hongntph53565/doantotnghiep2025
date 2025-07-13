@@ -54,6 +54,8 @@ function renderCalendar(month, year) {
                 selectedDate = thisDate;
                 dayEl.classList.add("selected");
 
+                 fetchShowtimesByDate(thisDate);
+
                 const offsetDate = new Date(thisDate.getTime() - thisDate.getTimezoneOffset() * 60000);
                 const selectedDateString = offsetDate.toISOString().split("T")[0];
 
@@ -207,6 +209,14 @@ window.selectShowtime = function (showtimeId) {
 };
 
 window.goToStep = function (step) {
+    if (step === 2) {
+        const selectedSeats = JSON.parse(sessionStorage.getItem("selectedSeats")) || [];
+        if (selectedSeats.length === 0) {
+            showToast("Vui lòng chọn ít nhất 1 ghế trước khi tiếp tục!");
+            return;
+        }
+    }
+
     document.querySelectorAll(".booking-step").forEach(el => el.style.display = "none");
     document.querySelectorAll(".steps .step")?.forEach((el, index) => {
         el.classList.toggle("active", index === step);
@@ -229,9 +239,42 @@ window.goToStep = function (step) {
     if (step === 2) {
         setTimeout(() => {
             if (typeof renderSeatInfo === "function") renderSeatInfo();
+            if (typeof updateFoodTotalAndList === "function") updateFoodTotalAndList();
+        }, 0);
+    }
+
+    if (step === 3) {
+        setTimeout(() => {
+            if (typeof renderFinalPaymentSummary === "function") renderFinalPaymentSummary();
         }, 0);
     }
 };
+
+function showToast(message) {
+    const existingToast = document.getElementById("custom-toast");
+    if (existingToast) existingToast.remove();
+
+    const toast = document.createElement("div");
+    toast.id = "custom-toast";
+    toast.style.position = "fixed";
+    toast.style.top = "20px"; // chuyển từ bottom lên top
+    toast.style.left = "50%";
+    toast.style.transform = "translateX(-50%)";
+    toast.style.background = "rgba(135, 245, 108, 0.85)";
+    toast.style.color = "#000";
+    toast.style.padding = "10px 20px";
+    toast.style.borderRadius = "8px";
+    toast.style.zIndex = "9999";
+    toast.style.fontSize = "14px";
+    toast.style.boxShadow = "0 4px 8px rgba(0,0,0,0.2)";
+    toast.textContent = message;
+
+    document.body.appendChild(toast);
+
+    setTimeout(() => {
+        toast.remove();
+    }, 3000);
+}
 
 function goBackStep() {
     const current = parseInt(localStorage.getItem("currentStep")) || 0;
@@ -261,7 +304,6 @@ function renderSeatInfo() {
     seatInfo.innerHTML = `Ghế đã chọn: ${seatList.join(", ")} <strong style="float:right">${ticketTotal.toLocaleString("vi-VN")} VND</strong>`;
 }
 
-
 function updateFoodTotalAndList() {
     let foodTotal = 0;
     const foodList = [];
@@ -278,17 +320,17 @@ function updateFoodTotalAndList() {
     });
 
     const ticketTotal = parseInt(sessionStorage.getItem("ticketTotal")) || 0;
-    const finalTotal = foodTotal + ticketTotal;
-
-    document.getElementById("food-total").textContent = foodTotal.toLocaleString("vi-VN") + " VND";
-    document.getElementById("ticket-total").textContent = ticketTotal.toLocaleString("vi-VN") + " VND";
-    document.getElementById("final-total").textContent = finalTotal.toLocaleString("vi-VN") + " VND";
+    const finalTotal = ticketTotal + foodTotal;
 
     renderSelectedFoodList(foodList);
 
+    document.getElementById("final-total").textContent = finalTotal.toLocaleString("vi-VN") + " VND";
+
     sessionStorage.setItem("foodTotal", foodTotal);
     sessionStorage.setItem("finalTotal", finalTotal);
+    sessionStorage.setItem("selectedFoods", JSON.stringify(foodList)); // Bổ sung dòng này
 }
+
 
 function renderSelectedFoodList(foodList) {
     const container = document.getElementById("food-selected-list");
@@ -307,6 +349,38 @@ function renderSelectedFoodList(foodList) {
             </div>
         `;
     }).join("");
+}
+
+
+function renderFinalPaymentSummary() {
+    const selectedSeats = JSON.parse(sessionStorage.getItem("selectedSeats")) || [];
+    const ticketTotal = parseInt(sessionStorage.getItem("ticketTotal")) || 0;
+    const foodList = JSON.parse(sessionStorage.getItem("selectedFoods")) || [];
+    const foodTotal = parseInt(sessionStorage.getItem("foodTotal")) || 0;
+    const finalTotal = parseInt(sessionStorage.getItem("finalTotal")) || (ticketTotal + foodTotal);
+
+    const seatList = selectedSeats.map(seat => {
+        if (seat.type === "couple" && Array.isArray(seat.codes)) {
+            return seat.codes.join(" & ");
+        } else {
+            return seat.code;
+        }
+    });
+
+    let html = "";
+    if (seatList.length) {
+        html += `Ghế: ${seatList.join(", ")} <strong style="float:right">${ticketTotal.toLocaleString("vi-VN")} VND</strong><br>`;
+    }
+
+    foodList.forEach(item => {
+        html += `${item.qty} x ${item.name} <strong style="float:right">${item.total.toLocaleString("vi-VN")} VND</strong><br>`;
+    });
+
+    const seatInfo = document.getElementById("final-seat-info");
+    const totalPayment = document.getElementById("final-total-payment");
+
+    if (seatInfo) seatInfo.innerHTML = html || "Chưa chọn ghế/combo";
+    if (totalPayment) totalPayment.innerText = finalTotal.toLocaleString("vi-VN") + " VND";
 }
 
 
@@ -347,10 +421,26 @@ document.addEventListener("DOMContentLoaded", function () {
 
     renderCalendar(currentMonth, currentYear);
 
-    const offsetDate = new Date(selectedDate.getTime() - selectedDate.getTimezoneOffset() * 60000);
+    fetchShowtimesByDate(selectedDate);
+
+    renderSeatInfo();
+    updateFoodTotalAndList();
+     renderFinalPaymentSummary();
+});
+
+function fetchShowtimesByDate(dateObj) {
+    const offsetDate = new Date(dateObj.getTime() - dateObj.getTimezoneOffset() * 60000);
     const selectedDateString = offsetDate.toISOString().split("T")[0];
 
-    fetch(`/ajax/showtimes?movie_id=${movieIdGlobal}&date=${selectedDateString}`)
+    let fetchUrl = "";
+
+    if (typeof calendarMode !== "undefined" && calendarMode === "cinema") {
+        fetchUrl = `/ajax-showtimes-by-cinema?cinema_id=${cinemaIdGlobal}&date=${selectedDateString}`;
+    } else {
+        fetchUrl = `/ajax/showtimes?movie_id=${movieIdGlobal}&date=${selectedDateString}`;
+    }
+
+    fetch(fetchUrl)
         .then(res => res.text())
         .then(html => {
             document.querySelector(".schedule-box").innerHTML = html;
@@ -363,10 +453,67 @@ document.addEventListener("DOMContentLoaded", function () {
                 });
             });
         });
+}
 
-    renderSeatInfo();
-    updateFoodTotalAndList();
-});
+
+// document.addEventListener("DOMContentLoaded", function () {
+//     const combos = document.querySelectorAll(".combo-item");
+
+//     combos.forEach(combo => {
+//         const plusBtn = combo.querySelector(".plus");
+//         const minusBtn = combo.querySelector(".minus");
+//         const quantitySpan = combo.querySelector(".number");
+
+//         plusBtn.onclick = () => {
+//             let qty = parseInt(quantitySpan.textContent);
+//             qty++;
+//             quantitySpan.textContent = qty;
+//             updateFoodTotalAndList();
+//         };
+
+//         minusBtn.onclick = () => {
+//             let qty = parseInt(quantitySpan.textContent);
+//             if (qty > 0) qty--;
+//             quantitySpan.textContent = qty;
+//             updateFoodTotalAndList();
+//         };
+//     });
+
+//     const urlParams = new URLSearchParams(window.location.search);
+//     const fromURL = urlParams.get("showtime_id");
+
+//     if (fromURL) {
+//         localStorage.setItem("selectedShowtimeId", fromURL);
+//         localStorage.setItem("currentStep", 1);
+//         goToStep(1);
+//     } else {
+//         localStorage.setItem("currentStep", 0);
+//         goToStep(0);
+//     }
+
+//     renderCalendar(currentMonth, currentYear);
+
+//     const offsetDate = new Date(selectedDate.getTime() - selectedDate.getTimezoneOffset() * 60000);
+//     const selectedDateString = offsetDate.toISOString().split("T")[0];
+
+//     fetch(`/ajax/showtimes?movie_id=${movieIdGlobal}&date=${selectedDateString}`)
+//         .then(res => res.text())
+//         .then(html => {
+//             document.querySelector(".schedule-box").innerHTML = html;
+//             document.querySelectorAll(".showtime-btn").forEach(button => {
+//                 button.addEventListener("click", function () {
+//                     const showtimeId = this.getAttribute("data-showtime-id");
+//                     const url = new URL(window.location.href);
+//                     url.searchParams.set("showtime_id", showtimeId);
+//                     window.location.href = url.toString();
+//                 });
+//             });
+//         });
+
+//     renderSeatInfo();
+//     updateFoodTotalAndList();
+// });
+
 
 
 

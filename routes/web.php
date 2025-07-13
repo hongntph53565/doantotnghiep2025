@@ -42,9 +42,7 @@ Route::get('/', function () {
 });
 Route::get('/lich-chieu-phim', [HomeController::class, 'lichChieu'])->name('Client.lichchieuphim');
 
-Route::get('/lich-chieu-theo-rap', function () {
-    return view('Client.lichchieurap');
-});
+
 Route::get('/he-thong-rap', function () {
     return view('Client.hethongrap');
 });
@@ -57,12 +55,19 @@ Route::get('/thong-tin-rap', function () {
 Route::get('/dat-ve', function () {
     return view('Client.booking.home');
 });
+
+Route::get('/lich-chieu-rap', [CinemaController::class, 'listCinemas'])->name('Client.lichchieurap');
+Route::get('/lich-chieu-rap/{cinema_id}', [HomeController::class, 'lichChieuTheoRap'])->name('Client.lichchieuphimtheorap');
+
+
+
 Route::get('/', [HomeController::class, 'home'])->name('home');
 
 Route::get('/dat-ve/{movie_id}', [HomeController::class, 'booking'])->name('Client.booking.home');
 Route::get('/chon-ghe/{movie_id}', [HomeController::class, 'booking'])->name('Client.booking.select-seat');
 // Route::get('/ajax/showtimes', action: [HomeController::class, 'loadShowtimes'])->name('Client.booking.ajaxShowtimes');
 Route::get('/ajax/showtimes', [HomeController::class, 'ajaxShowtimes']);
+Route::get('/ajax-showtimes-by-cinema', [HomeController::class, 'ajaxShowtimesByCinema'])->name('Client.ajaxShowtimesByCinema');
 Route::get('/booking/select-combo/{showtime_id}', [HomeController::class, 'showCombo'])->name('Client.booking.select-combo');
 
 

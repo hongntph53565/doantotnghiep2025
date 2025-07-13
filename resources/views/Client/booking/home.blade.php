@@ -43,8 +43,8 @@
                 <p class="mb-1 cinema-info"><strong>Ngôn ngữ:</strong> {{ $movie->language ?? 'Không rõ' }}</p>
 
                 <button class="btn btn-outline-success btn-sm mt-1" onclick="clearSessionAndGoHome()">
-    → CHỌN PHIM KHÁC
-</button>
+                    → CHỌN PHIM KHÁC
+                </button>
 
             </div>
         </div>
@@ -61,7 +61,6 @@
                 @include('Client.booking.steps.select-seat')
             </div>
 
-            {{-- Các bước sau nếu cần thì thêm sau này --}}
             <div class="booking-step" id="step-2" style="display: none;">
                 @include('Client.booking.steps.select-combo')
             </div>
@@ -77,8 +76,10 @@
 @push('scripts')
     <script src="{{ asset('js/calendar.js') }}"></script>
 
-    <script>  function clearSessionAndGoHome() {
-    sessionStorage.clear(); // hoặc xóa từng key bằng sessionStorage.removeItem('key')
-    window.location.href = '{{ route('home') }}';
-  }</script>
+    <script>
+        function clearSessionAndGoHome() {
+            sessionStorage.clear();
+            window.location.href = '{{ route('home') }}';
+        }
+    </script>
 @endpush
