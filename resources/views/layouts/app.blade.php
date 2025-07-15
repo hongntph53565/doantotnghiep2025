@@ -4,17 +4,26 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>LumiStar</title>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <title>@yield('title', 'LumiStar')</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
     <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    <!-- Nhúng Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
     <link rel="stylesheet" href="{{ asset('css/style.css') }}">
     @stack('styles')
 </head>
 
 <body>
 
-    {{-- <div id="overlay" class="overlay"></div>
+    <div id="overlay" class="overlay"></div>
     <div class="popup" id="popup" style="display:none;">
         <h2>Vui lòng chọn rạp để tiếp tục quá trình đặt hàng</h2>
 
@@ -30,7 +39,7 @@
             Cám ơn bạn đã lựa chọn dịch vụ của
             <span class="highlight">LumiStar</span>!
         </p>
-    </div> --}}
+    </div>
 
     <header class="header">
         <!-- <div class="top-banner">
@@ -144,10 +153,11 @@
     </footer>
 
     @stack('scripts')
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous">
     </script>
-
+    <script></script>
     <script src="{{ asset('js/test.js') }}"></script>
     <script src="{{ asset('js/main.js') }}"></script>
 </body>

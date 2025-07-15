@@ -22,13 +22,30 @@ use App\Http\Controllers\VnpayController;
 use App\Http\Controllers\ZalopayController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\Client\CartController;
+use App\Http\Controllers\Client\ComboController;
 use App\Http\Controllers\Api\AuthController;
 
 Route::get('/home', [HomeController::class, 'home']);
-Route::get('/cart', [HomeController::class, 'index']);
 Route::get('/booking2', [HomeController::class, 'booking2']);
 Route::get('/booking3', [HomeController::class, 'booking3']);
 Route::get('/booking4', [HomeController::class, 'booking4']);
+Route::get('/cua-hang', [ComboController::class, 'getCombos'])->name('combo');
+Route::get('/combo/{id}', [ComboController::class, 'show'])->name('combo.show');
+Route::get('/cart', [CartController::class, 'showCart'])->name('cart');
+Route::post('/add-cart', [CartController::class, 'addToCart'])->name('cart.addCart');
+Route::post('/update-cart', [CartController::class, 'updateCart'])->name('cart.update');
+// Route::post('/cart/remove', [CartController::class, 'removeFromCart'])->name('cart.remove');
+// Route::post('/cart/update', [CartController::class, 'updateQuantity'])->name('cart.update');
+
+
+
+// Route::get('/clear-cart', function () {
+//     session()->forget('cart');
+//     return redirect()->back()->with('success', 'Đã xóa toàn bộ giỏ hàng!');
+// });
+
+
 Route::get('/', [DashboardController::class, 'index'])->name('admin.dashboard');
 
 Route::get('/static', [StaticController::class, 'index'])->name('admin.static');
@@ -175,4 +192,3 @@ Route::prefix('vnpay')->name('vnpay.')->group(function () {
 });
 
 Route::get('/seats/{showtime_id}', [BookingController::class, 'getSeatsByShowtime']);
-

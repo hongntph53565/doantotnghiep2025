@@ -13,6 +13,6 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        Showtime::factory(10)->create();
+        // Showtime::factory(10)->create();
     }
 }

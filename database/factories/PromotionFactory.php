@@ -15,11 +15,11 @@ class PromotionFactory extends Factory
         $endDate = (clone $startDate)->modify('+' . rand(7, 30) . ' days');
 
         return [
-            'pro_code' => strtoupper(Str::random(8)),
-            'min_order_amount' => $faker->numberBetween(50000, 500000),// tiền tối thiểu
-            'discount_percentage' => $faker->numberBetween(5, 50),
-            // giảm 5% – 50%
-            'quantity' => $faker->numberBetween(50, 500), // tổng số lượt phát hành
+            // 'pro_code' => strtoupper(Str::random(8)),
+            // 'min_order_amount' => $faker->numberBetween(50000, 500000),// tiền tối thiểu
+            // 'discount_percentage' => $faker->numberBetween(5, 50),
+            // // giảm 5% – 50%
+            // 'quantity' => $faker->numberBetween(50, 500), // tổng số lượt phát hành
             'used' => $faker->numberBetween(0, 50), // số lượt đã dùng
             'limit_per_user' => $faker->numberBetween(1, 500), // giới hạn lượt mỗi người dùng
             'start_date' => $startDate->format('Y-m-d'),

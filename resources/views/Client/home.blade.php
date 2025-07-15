@@ -1,289 +1,396 @@
 @extends('layouts.app')
 
 @section('content')
-    <div id="bannerCarousel" class="carousel slide mt-4" data-bs-ride="carousel">
+    <div class="container-fuild">
+        <div id="bannerCarousel" class="carousel slide mt-4" data-bs-ride="carousel">
 
-        <!-- ✅ Dot Indicators -->
-        <div class="carousel-indicators">
-            <button type="button" data-bs-target="#bannerCarousel" data-bs-slide-to="0" class="active" aria-current="true"
-                aria-label="Slide 1"></button>
-            <button type="button" data-bs-target="#bannerCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
-            <button type="button" data-bs-target="#bannerCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
-        </div>
-
-        <!-- ✅ Slide nội dung -->
-        <div class="carousel-inner p-0">
-
-            <!-- Slide 1 -->
-            <div class="carousel-item active">
-                <div class="banner"><img src="{{ asset('images/web-phim-thang-6.jpg') }}" class="d-block w-100"
-                        alt="Banner 1"></div>
-                <a href="/phim-thang-6" class="label-phim">PHIM HAY THÁNG 6</a>
-                <a href="/danh-sach-phim" class="btn-xem-them">XEM THÊM<img
-                        src="{{ asset('images/ticket-svgrepo-com.svg') }}" alt=""></a>
+            <!-- ✅ Dot Indicators -->
+            <div class="carousel-indicators">
+                <button type="button" data-bs-target="#bannerCarousel" data-bs-slide-to="0" class="active" aria-current="true"
+                    aria-label="Slide 1"></button>
+                <button type="button" data-bs-target="#bannerCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
+                <button type="button" data-bs-target="#bannerCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
             </div>
 
-            <!-- Slide 2 -->
-            <div class="carousel-item">
-                <div class="banner"><img src="{{ asset('images/banner-2.jpg') }}" class="d-block w-100" alt="Banner 2">
+            <!-- ✅ Slide nội dung -->
+            <div class="carousel-inner p-0">
+
+                <!-- Slide 1 -->
+                <div class="carousel-item active">
+                    <div class="banner"><img src="{{ asset('images/web-phim-thang-6.jpg') }}" class="d-block w-100"
+                            alt="Banner 1"></div>
+                    <a href="/phim-thang-6" class="label-phim">PHIM HAY THÁNG 6</a>
+                    <a href="/danh-sach-phim" class="btn-xem-them">XEM THÊM<img
+                            src="{{ asset('images/ticket-svgrepo-com.svg') }}" alt=""></a>
                 </div>
-                <a href="/phim-thang-6" class="label-phim">ĐIỀU ƯỚC CUỐI CÙNG</a>
-                <a href="/danh-sach-phim" class="btn-xem-them">ĐẶT VÉ NGAY<img
-                        src="{{ asset('images/ticket-svgrepo-com.svg') }}" alt=""></a>
-            </div>
-            <!-- Slide 2 -->
-            <div class="carousel-item">
-                <div class="banner"><img src="{{ asset('images/banner-1.jpg') }}" class="d-block w-100" alt="Banner 2">
+
+                <!-- Slide 2 -->
+                <div class="carousel-item">
+                    <div class="banner"><img src="{{ asset('images/banner-2.jpg') }}" class="d-block w-100" alt="Banner 2">
+                    </div>
+                    <a href="/phim-thang-6" class="label-phim">ĐIỀU ƯỚC CUỐI CÙNG</a>
+                    <a href="/danh-sach-phim" class="btn-xem-them">ĐẶT VÉ NGAY<img
+                            src="{{ asset('images/ticket-svgrepo-com.svg') }}" alt=""></a>
                 </div>
-                <a href="/phim-thang-6" class="label-phim">F1</a>
-                <a href="/danh-sach-phim" class="btn-xem-them">ĐẶT VÉ NGAY<img
-                        src="{{ asset('images/ticket-svgrepo-com.svg') }}" alt=""></a>
+                <!-- Slide 2 -->
+                <div class="carousel-item">
+                    <div class="banner"><img src="{{ asset('images/banner-1.jpg') }}" class="d-block w-100" alt="Banner 2">
+                    </div>
+                    <a href="/phim-thang-6" class="label-phim">F1</a>
+                    <a href="/danh-sach-phim" class="btn-xem-them">ĐẶT VÉ NGAY<img
+                            src="{{ asset('images/ticket-svgrepo-com.svg') }}" alt=""></a>
+                </div>
+            </div>
+
+            <!-- ✅ Nút điều hướng -->
+            <button class="carousel-control-prev" type="button" data-bs-target="#bannerCarousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#bannerCarousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            </button>
+
+        </div>
+        <button class="btn1">PHIM ĐANG CHIẾU</button>
+
+        <div class="slider-container">
+            <div class="swiper mySwiper">
+                <div class="swiper-wrapper">
+                    <!-- Slide 1 -->
+                    <div class="swiper-slide">
+                        <div class="movie-box">
+
+                            <div class="movie-img">
+                                <img src="{{ asset('images/1.jpg') }}" alt="Út Lan">
+                                <!-- Nút play - dẫn đến trailer -->
+                                <a href="javascript:void(0);" class="play-button" onclick="openTrailer(this)"
+                                    data-trailer="https://www.youtube.com/embed/YOUR_TRAILER_ID"></a>
+
+
+
+                                <!-- Nút mua vé -->
+                                <a href="dat-ve.html" class="buy-button">
+                                    MUA VÉ NGAY
+                                    <img src="{{ asset('images/ticket-svgrepo-com.svg') }}" alt="vé">
+                                </a>
+
+                            </div>
+                            <div class="info">
+                                <div class="labels">
+                                    <span class="label age">T18</span>
+                                    <span class="label subtitle">PHỤ ĐỀ</span>
+                                    <span class="label type">2D</span>
+                                </div>
+                                <h4>ÚT LAN: OÁN LINH GIỮ CỬA</h4>
+                                <p>Thể loại phim: <span class="tag horror">Horror</span></p>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <!-- Slide 2 -->
+                    <div class="swiper-slide">
+                        <div class="movie-box">
+
+                            <div class="movie-img">
+                                <img src="{{ asset('images/2.jpg') }}" alt="Út Lan">
+                                <!-- Nút play - dẫn đến trailer -->
+                                <a href="javascript:void(0);" class="play-button" onclick="openTrailer(this)"
+                                    data-trailer="https://www.youtube.com/embed/YOUR_TRAILER_ID"></a>
+
+
+
+                                <!-- Nút mua vé -->
+                                <a href="dat-ve.html" class="buy-button">
+                                    MUA VÉ NGAY
+                                    <img src="{{ asset('images/ticket-svgrepo-com.svg') }}" alt="vé">
+                                </a>
+
+                            </div>
+                            <div class="info">
+                                <div class="labels">
+                                    <span class="label age">T18</span>
+                                    <span class="label subtitle">PHỤ ĐỀ</span>
+                                    <span class="label type">2D</span>
+                                </div>
+                                <h4>ÚT LAN: OÁN LINH GIỮ CỬA</h4>
+                                <p>Thể loại phim: <span class="tag horror">Horror</span></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Slide 3 -->
+                    <div class="swiper-slide">
+                        <div class="movie-box">
+
+                            <div class="movie-img">
+                                <img src="{{ asset('images/banner-1.jpg') }}" alt="Út Lan">
+                                <!-- Nút play - dẫn đến trailer -->
+                                <a href="javascript:void(0);" class="play-button" onclick="openTrailer(this)"
+                                    data-trailer="https://www.youtube.com/embed/YOUR_TRAILER_ID"></a>
+
+
+
+                                <!-- Nút mua vé -->
+                                <a href="dat-ve.html" class="buy-button">
+                                    MUA VÉ NGAY
+                                    <img src="{{ asset('images/ticket-svgrepo-com.svg') }}" alt="vé">
+                                </a>
+
+                            </div>
+                            <div class="info">
+                                <div class="labels">
+                                    <span class="label age">T18</span>
+                                    <span class="label subtitle">PHỤ ĐỀ</span>
+                                    <span class="label type">2D</span>
+                                </div>
+                                <h4>ÚT LAN: OÁN LINH GIỮ CỬA</h4>
+                                <p>Thể loại phim: <span class="tag horror">Horror</span></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Slide 4 -->
+                    <div class="swiper-slide">
+                        <div class="movie-box">
+
+                            <div class="movie-img">
+                                <img src="{{ asset('images/banner-2.jpg') }}" alt="Út Lan">
+                                <!-- Nút play - dẫn đến trailer -->
+                                <a href="javascript:void(0);" class="play-button" onclick="openTrailer(this)"
+                                    data-trailer="https://www.youtube.com/embed/YOUR_TRAILER_ID"></a>
+
+
+
+                                <!-- Nút mua vé -->
+                                <a href="dat-ve.html" class="buy-button">
+                                    MUA VÉ NGAY
+                                    <img src="{{ asset('images/ticket-svgrepo-com.svg') }}" alt="vé">
+                                </a>
+
+                            </div>
+                            <div class="info">
+                                <div class="labels">
+                                    <span class="label age">T18</span>
+                                    <span class="label subtitle">PHỤ ĐỀ</span>
+                                    <span class="label type">2D</span>
+                                </div>
+                                <h4>ÚT LAN: OÁN LINH GIỮ CỬA</h4>
+                                <p>Thể loại phim: <span class="tag horror">Horror</span></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Slide 5 -->
+                    <div class="swiper-slide">
+                        <div class="movie-box">
+
+                            <div class="movie-img">
+                                <img src="{{ asset('images/slide3.jpg') }}" alt="Út Lan">
+                                <!-- Nút play - dẫn đến trailer -->
+                                <a href="javascript:void(0);" class="play-button" onclick="openTrailer(this)"
+                                    data-trailer="https://www.youtube.com/embed/YOUR_TRAILER_ID"></a>
+
+
+
+                                <!-- Nút mua vé -->
+                                <a href="dat-ve.html" class="buy-button">
+                                    MUA VÉ NGAY
+                                    <img src="{{ asset('images/ticket-svgrepo-com.svg') }}" alt="vé">
+                                </a>
+
+                            </div>
+                            <div class="info">
+                                <div class="labels">
+                                    <span class="label age">T18</span>
+                                    <span class="label subtitle">PHỤ ĐỀ</span>
+                                    <span class="label type">2D</span>
+                                </div>
+                                <h4>ÚT LAN: OÁN LINH GIỮ CỬA</h4>
+                                <p>Thể loại phim: <span class="tag horror">Horror</span></p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Slide 6 -->
+                    <div class="swiper-slide">
+                        <div class="movie-box">
+
+                            <div class="movie-img">
+                                <img src="{{ asset('images/web-phim-thang-6.jpg') }}" alt="Út Lan">
+                                <!-- Nút play - dẫn đến trailer -->
+                                <a href="javascript:void(0);" class="play-button" onclick="openTrailer(this)"
+                                    data-trailer="https://www.youtube.com/embed/YOUR_TRAILER_ID"></a>
+
+
+
+                                <!-- Nút mua vé -->
+                                <a href="dat-ve.html" class="buy-button">
+                                    MUA VÉ NGAY
+                                    <img src="{{ asset('images/ticket-svgrepo-com.svg') }}" alt="vé">
+                                </a>
+
+                            </div>
+                            <div class="info">
+                                <div class="labels">
+                                    <span class="label age">T18</span>
+                                    <span class="label subtitle">PHỤ ĐỀ</span>
+                                    <span class="label type">2D</span>
+                                </div>
+                                <h4>ÚT LAN: OÁN LINH GIỮ CỬA</h4>
+                                <p>Thể loại phim: <span class="tag horror">Horror</span></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Slide 7 -->
+                    <div class="swiper-slide">
+                        <div class="movie-box">
+
+                            <div class="movie-img">
+                                <img src="{{ asset('images/combo1.png') }}" alt="Út Lan">
+                                <!-- Nút play - dẫn đến trailer -->
+                                <a href="javascript:void(0);" class="play-button" onclick="openTrailer(this)"
+                                    data-trailer="https://www.youtube.com/embed/YOUR_TRAILER_ID"></a>
+
+
+
+                                <!-- Nút mua vé -->
+                                <a href="dat-ve.html" class="buy-button">
+                                    MUA VÉ NGAY
+                                    <img src="{{ asset('images/ticket-svgrepo-com.svg') }}" alt="vé">
+                                </a>
+
+                            </div>
+                            <div class="info">
+                                <div class="labels">
+                                    <span class="label age">T18</span>
+                                    <span class="label subtitle">PHỤ ĐỀ</span>
+                                    <span class="label type">2D</span>
+                                </div>
+                                <h4>ÚT LAN: OÁN LINH GIỮ CỬA</h4>
+                                <p>Thể loại phim: <span class="tag horror">Horror</span></p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Buttons and Pagination -->
+                <div class="swiper-button-next banner-next"></div>
+                <div class="swiper-button-prev banner-prev"></div>
+                <div class="swiper-pagination banner-pagination"></div>
             </div>
         </div>
+        <div class="trailer-overlay" id="trailerOverlay">
+            <div class="trailer-content">
+                <iframe id="trailerIframe" src="" allowfullscreen></iframe>
+                <button class="close-btn" onclick="closeTrailer()">×</button>
+            </div>
+        </div>
+        <button class="btn1">KHUYẾN MÃI</button>
+        <div class="promo-container swiper">
+            <!-- Wrapper -->
+            <div class="swiper-wrapper">
+                <!-- Promo 1 -->
+                <div class="promo-card swiper-slide">
+                    <img src="{{ asset('images/HAPPY-DAY-2.jpg') }}" alt="Giữ xe miễn phí" />
+                    <div class="promo-content">
+                        <div class="promo-title">
+                            MIỄN PHÍ VÉ GỬI XE – ĐI XEM PHIM THẢ GA, KHÔNG LO PHÍ GIỮ XE
+                        </div>
+                        <div class="promo-desc">
+                            Từ nay, đi xem phim tại BHD Star Cineplex lại càng tiện lợi và
+                            tiết kiệm hơn bao giờ hết! Chúng tôi chính thức triển khai chương
+                            trình <strong>MIỄN PHÍ VÉ GỬI XE</strong> dành cho tất cả khách
+                            hàng khi mua vé xem phim tại rạp BHS Star – Huế.<br />📌 Áp dụng
+                            cho khách […]
+                        </div>
+                    </div>
+                </div>
 
-        <!-- ✅ Nút điều hướng -->
-        <button class="carousel-control-prev" type="button" data-bs-target="#bannerCarousel" data-bs-slide="prev">
-            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-        </button>
-        <button class="carousel-control-next" type="button" data-bs-target="#bannerCarousel" data-bs-slide="next">
-            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-        </button>
+                <!-- Promo 2 -->
+                <div class="promo-card swiper-slide">
+                    <img src="{{ asset('images/GIA-VE-48K.jpg') }}" alt="Xem phim khuyến mãi 50K" />
+                    <div class="promo-content">
+                        <div class="promo-title">
+                            🔥 XEM PHIM KHUYA – GIÁ CỰC MÊ CHỈ TỪ 50K 🔥
+                        </div>
+                        <div class="promo-desc">
+                            Bạn là “cú đêm” chính hiệu? Bạn muốn tìm một hoạt động thú vị sau
+                            22h? BHD Star Cineplex có ngay deal hấp dẫn dành cho bạn! 🎬
+                            <strong>XEM PHIM TRỄ – GIÁ CỰC MÊ</strong> 📍 Áp dụng cho tất cả
+                            các suất chiếu sau 22h tại một vài cụm rạp BHD Star Cineplex 🟢
+                            […]
+                        </div>
+                    </div>
+                </div>
 
-    </div>
-    <button class="btn1">PHIM ĐANG CHIẾU</button>
+                <!-- Promo 3 -->
+                <div class="promo-card swiper-slide">
+                    <img src="{{ asset('images/GIAI-NHIEIT-CUNG-LUMI-STAR.jpg') }}" alt="Happy Day 45K" />
+                    <div class="promo-content">
+                        <div class="promo-title">Happy Day – Vé chỉ từ 45k</div>
+                        <div class="promo-desc">
+                            Vào thứ hai hàng tuần – Happy Day, giá vé
+                            <strong>CHỈ TỪ 45K</strong>. Thưởng thức phim cả ngày không lo về
+                            giá. Ưu đãi 45.000đ/vé áp dụng tại cụm rạp: BHD Star Phú Mỹ, BHD
+                            Star Huế. Ưu đãi 50.000đ/vé áp dụng tại cụm rạp: BHD Star The
+                            Garden; BHD Star Phạm Ngọc […]
+                        </div>
+                    </div>
+                </div>
+                <!-- Promo 3 -->
+                <div class="promo-card swiper-slide">
+                    <img src="{{ asset('images/PHIM-KHUYA.jpg') }}" alt="Happy Day 45K" />
+                    <div class="promo-content">
+                        <div class="promo-title">Happy Day – Vé chỉ từ 45k</div>
+                        <div class="promo-desc">
+                            Vào thứ hai hàng tuần – Happy Day, giá vé
+                            <strong>CHỈ TỪ 45K</strong>. Thưởng thức phim cả ngày không lo về
+                            giá. Ưu đãi 45.000đ/vé áp dụng tại cụm rạp: BHD Star Phú Mỹ, BHD
+                            Star Huế. Ưu đãi 50.000đ/vé áp dụng tại cụm rạp: BHD Star The
+                            Garden; BHD Star Phạm Ngọc […]
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-    <div class="slider-container">
-        <div class="swiper mySwiper">
+            <!-- Navigation + Pagination -->
+            <div class="swiper-button-next promo-next"></div>
+            <div class="swiper-button-prev promo-prev"></div>
+            <div class="swiper-pagination promo-pagination"></div>
+        </div>
+        <button class="btn1">PHIM SẮP CHIẾU</button>
+        <button class="btn1">TIN MỚI NHẤT</button>
+        <div class="featured-news swiper">
             <div class="swiper-wrapper">
                 <!-- Slide 1 -->
                 <div class="swiper-slide">
-                    <div class="movie-box">
-
-                        <div class="movie-img">
-                            <img src="{{ asset('images/1.jpg') }}" alt="Út Lan">
-                            <!-- Nút play - dẫn đến trailer -->
-                            <a href="javascript:void(0);" class="play-button" onclick="openTrailer(this)"
-                                data-trailer="https://www.youtube.com/embed/YOUR_TRAILER_ID"></a>
-
-
-
-                            <!-- Nút mua vé -->
-                            <a href="dat-ve.html" class="buy-button">
-                                MUA VÉ NGAY
-                                <img src="{{ asset('images/ticket-svgrepo-com.svg') }}" alt="vé">
-                            </a>
-
-                        </div>
-                        <div class="info">
-                            <div class="labels">
-                                <span class="label age">T18</span>
-                                <span class="label subtitle">PHỤ ĐỀ</span>
-                                <span class="label type">2D</span>
-                            </div>
-                            <h4>ÚT LAN: OÁN LINH GIỮ CỬA</h4>
-                            <p>Thể loại phim: <span class="tag horror">Horror</span></p>
-                        </div>
-                    </div>
+                    <a href="#">
+                        <img src="{{ asset('images/tin1.jpg') }}" alt="">
+                    </a>
                 </div>
-
 
                 <!-- Slide 2 -->
                 <div class="swiper-slide">
-                    <div class="movie-box">
-
-                        <div class="movie-img">
-                            <img src="{{ asset('images/2.jpg') }}" alt="Út Lan">
-                            <!-- Nút play - dẫn đến trailer -->
-                            <a href="javascript:void(0);" class="play-button" onclick="openTrailer(this)"
-                                data-trailer="https://www.youtube.com/embed/YOUR_TRAILER_ID"></a>
-
-
-
-                            <!-- Nút mua vé -->
-                            <a href="dat-ve.html" class="buy-button">
-                                MUA VÉ NGAY
-                                <img src="{{ asset('images/ticket-svgrepo-com.svg') }}" alt="vé">
-                            </a>
-
-                        </div>
-                        <div class="info">
-                            <div class="labels">
-                                <span class="label age">T18</span>
-                                <span class="label subtitle">PHỤ ĐỀ</span>
-                                <span class="label type">2D</span>
-                            </div>
-                            <h4>ÚT LAN: OÁN LINH GIỮ CỬA</h4>
-                            <p>Thể loại phim: <span class="tag horror">Horror</span></p>
-                        </div>
-                    </div>
+                    <a href="#">
+                        <img src="{{ asset('images/tin2.jpg') }}" alt="">
+                    </a>
                 </div>
 
                 <!-- Slide 3 -->
                 <div class="swiper-slide">
-                    <div class="movie-box">
-
-                        <div class="movie-img">
-                            <img src="{{ asset('images/banner-1.jpg') }}" alt="Út Lan">
-                            <!-- Nút play - dẫn đến trailer -->
-                            <a href="javascript:void(0);" class="play-button" onclick="openTrailer(this)"
-                                data-trailer="https://www.youtube.com/embed/YOUR_TRAILER_ID"></a>
-
-
-
-                            <!-- Nút mua vé -->
-                            <a href="dat-ve.html" class="buy-button">
-                                MUA VÉ NGAY
-                                <img src="{{ asset('images/ticket-svgrepo-com.svg') }}" alt="vé">
-                            </a>
-
-                        </div>
-                        <div class="info">
-                            <div class="labels">
-                                <span class="label age">T18</span>
-                                <span class="label subtitle">PHỤ ĐỀ</span>
-                                <span class="label type">2D</span>
-                            </div>
-                            <h4>ÚT LAN: OÁN LINH GIỮ CỬA</h4>
-                            <p>Thể loại phim: <span class="tag horror">Horror</span></p>
-                        </div>
-                    </div>
+                    <a href="#">
+                        <img src="{{ asset('images/tin3.webp') }}" alt="">
+                    </a>
                 </div>
-
-                <!-- Slide 4 -->
-                <div class="swiper-slide">
-                    <div class="movie-box">
-
-                        <div class="movie-img">
-                            <img src="{{ asset('images/banner-2.jpg') }}" alt="Út Lan">
-                            <!-- Nút play - dẫn đến trailer -->
-                            <a href="javascript:void(0);" class="play-button" onclick="openTrailer(this)"
-                                data-trailer="https://www.youtube.com/embed/YOUR_TRAILER_ID"></a>
-
-
-
-                            <!-- Nút mua vé -->
-                            <a href="dat-ve.html" class="buy-button">
-                                MUA VÉ NGAY
-                                <img src="{{ asset('images/ticket-svgrepo-com.svg') }}" alt="vé">
-                            </a>
-
-                        </div>
-                        <div class="info">
-                            <div class="labels">
-                                <span class="label age">T18</span>
-                                <span class="label subtitle">PHỤ ĐỀ</span>
-                                <span class="label type">2D</span>
-                            </div>
-                            <h4>ÚT LAN: OÁN LINH GIỮ CỬA</h4>
-                            <p>Thể loại phim: <span class="tag horror">Horror</span></p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Slide 5 -->
-                <div class="swiper-slide">
-                    <div class="movie-box">
-
-                        <div class="movie-img">
-                            <img src="{{ asset('images/slide3.jpg') }}" alt="Út Lan">
-                            <!-- Nút play - dẫn đến trailer -->
-                            <a href="javascript:void(0);" class="play-button" onclick="openTrailer(this)"
-                                data-trailer="https://www.youtube.com/embed/YOUR_TRAILER_ID"></a>
-
-
-
-                            <!-- Nút mua vé -->
-                            <a href="dat-ve.html" class="buy-button">
-                                MUA VÉ NGAY
-                                <img src="{{ asset('images/ticket-svgrepo-com.svg') }}" alt="vé">
-                            </a>
-
-                        </div>
-                        <div class="info">
-                            <div class="labels">
-                                <span class="label age">T18</span>
-                                <span class="label subtitle">PHỤ ĐỀ</span>
-                                <span class="label type">2D</span>
-                            </div>
-                            <h4>ÚT LAN: OÁN LINH GIỮ CỬA</h4>
-                            <p>Thể loại phim: <span class="tag horror">Horror</span></p>
-                        </div>
-                    </div>
-                </div>
-                <!-- Slide 6 -->
-                <div class="swiper-slide">
-                    <div class="movie-box">
-
-                        <div class="movie-img">
-                            <img src="{{ asset('images/web-phim-thang-6.jpg') }}" alt="Út Lan">
-                            <!-- Nút play - dẫn đến trailer -->
-                            <a href="javascript:void(0);" class="play-button" onclick="openTrailer(this)"
-                                data-trailer="https://www.youtube.com/embed/YOUR_TRAILER_ID"></a>
-
-
-
-                            <!-- Nút mua vé -->
-                            <a href="dat-ve.html" class="buy-button">
-                                MUA VÉ NGAY
-                                <img src="{{ asset('images/ticket-svgrepo-com.svg') }}" alt="vé">
-                            </a>
-
-                        </div>
-                        <div class="info">
-                            <div class="labels">
-                                <span class="label age">T18</span>
-                                <span class="label subtitle">PHỤ ĐỀ</span>
-                                <span class="label type">2D</span>
-                            </div>
-                            <h4>ÚT LAN: OÁN LINH GIỮ CỬA</h4>
-                            <p>Thể loại phim: <span class="tag horror">Horror</span></p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Slide 7 -->
-                <div class="swiper-slide">
-                    <div class="movie-box">
-
-                        <div class="movie-img">
-                            <img src="{{ asset('images/662722.png') }}" alt="Út Lan">
-                            <!-- Nút play - dẫn đến trailer -->
-                            <a href="javascript:void(0);" class="play-button" onclick="openTrailer(this)"
-                                data-trailer="https://www.youtube.com/embed/YOUR_TRAILER_ID"></a>
-
-
-
-                            <!-- Nút mua vé -->
-                            <a href="dat-ve.html" class="buy-button">
-                                MUA VÉ NGAY
-                                <img src="{{ asset('images/ticket-svgrepo-com.svg') }}" alt="vé">
-                            </a>
-
-                        </div>
-                        <div class="info">
-                            <div class="labels">
-                                <span class="label age">T18</span>
-                                <span class="label subtitle">PHỤ ĐỀ</span>
-                                <span class="label type">2D</span>
-                            </div>
-                            <h4>ÚT LAN: OÁN LINH GIỮ CỬA</h4>
-                            <p>Thể loại phim: <span class="tag horror">Horror</span></p>
-                        </div>
-                    </div>
-                </div>
-
+                <!-- ... thêm slide nếu cần ... -->
             </div>
 
-            <!-- Buttons and Pagination -->
-            <div class="swiper-button-next"></div>
-            <div class="swiper-button-prev"></div>
-            <div class="swiper-pagination"></div>
-        </div>
-    </div>
-    <div class="trailer-overlay" id="trailerOverlay">
-        <div class="trailer-content">
-            <iframe id="trailerIframe" src="" allowfullscreen></iframe>
-            <button class="close-btn" onclick="closeTrailer()">×</button>
+            <!-- Nếu cần navigation -->
+            <div class="swiper-button-next news-next"></div>
+            <div class="swiper-button-prev news-prev"></div>
+            <div class="swiper-pagination news-pagination"></div>
         </div>
     </div>
 @endsection
@@ -320,7 +427,6 @@
 
         .swiper-slide img {
             width: 100%;
-            height: 360px;
             object-fit: cover;
             border-radius: 10px;
         }
@@ -584,10 +690,173 @@
             display: block;
         }
     </style>
+    <style>
+        /* Gộp từng promo-card thành slide */
+        .promo-container .swiper-wrapper {
+            display: flex;
+        }
+
+        .promo-container .swiper-slide {
+            flex-shrink: 0;
+            width: 100%;
+            height: 100%;
+            box-sizing: border-box;
+            padding: 10px;
+        }
+
+        /* Điều chỉnh hiển thị trên các màn hình lớn */
+        @media (min-width: 768px) {
+            .promo-container .swiper-slide {
+                width: 50%;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .promo-container .swiper-slide {
+                width: 33.3333%;
+            }
+        }
+
+        .swiper-button-next,
+        .swiper-button-prev {
+            color: white !important;
+            padding: 20px;
+            border-radius: 50%;
+            width: 90px;
+            height: 90px;
+            top: 50%;
+            transform: translateY(-50%);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 20;
+            position: absolute;
+            cursor: pointer;
+            pointer-events: auto;
+            /* ✅ Cho phép click */
+        }
+
+        /* Mặc định ẩn nút */
+        .promo-container .swiper-button-next,
+        .promo-container .swiper-button-prev {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        /* Khi hover thì hiện ra */
+        .promo-container:hover .swiper-button-next,
+        .promo-container:hover .swiper-button-prev {
+            opacity: 1;
+            visibility: visible;
+        }
+
+
+        /* Swiper bullets */
+        .swiper-pagination-bullet {
+            width: 12px !important;
+            height: 12px !important;
+            margin: 0 6px !important;
+            background-color: #bbb !important;
+            border-radius: 50% !important;
+            opacity: 1 !important;
+            transition: all 0.3s ease !important;
+        }
+
+        .swiper-pagination-bullet-active {
+            background-color: #72BE43 !important;
+            transform: scale(1.2);
+        }
+    </style>
+    <style>
+        .featured-news {
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .featured-news .swiper-slide {
+            width: 100%;
+            height: auto;
+        }
+
+        .featured-news .swiper-slide img {
+            width: 100%;
+            height: auto;
+            display: block;
+            border-radius: 8px;
+        }
+
+        /* Nút điều hướng */
+        .featured-news .swiper-button-next,
+        .featured-news .swiper-button-prev {
+            color: #fff;
+            padding: 10px;
+            border-radius: 50%;
+            width: 90px;
+            height: 90px;
+            top: 45%;
+            transform: translateY(-50%);
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.3s ease;
+        }
+
+        .featured-news:hover .swiper-button-next,
+        .featured-news:hover .swiper-button-prev {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        /* Pagination */
+        .news-pagination .swiper-pagination-bullet {
+            background: #bbb;
+        }
+
+        .news-pagination .swiper-pagination-bullet-active {
+            background: #72BE43;
+        }
+
+        .news-pagination {
+            position: absolute;
+            bottom: 20px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            z-index: 10;
+        }
+
+        .news-pagination .swiper-pagination-bullet {
+            width: 12px;
+            height: 12px;
+            margin: 0 6px;
+            background-color: #bbb;
+            border-radius: 50%;
+            opacity: 0.8;
+            transition: 0.3s ease;
+        }
+
+        .news-pagination .swiper-pagination-bullet-active {
+            background-color: #72BE43;
+            transform: scale(1.2);
+        }
+
+
+        .swiper-button-next::after,
+        .swiper-button-prev::after {
+            font-size: 50px;
+            font-weight: bolder;
+        }
+
+        /* Khi hover vào container thì hiện nút */
+        .featured-news:hover .swiper-button-next,
+        .featured-news:hover .swiper-button-prev {
+            opacity: 1;
+            pointer-events: auto;
+        }
+    </style>
 @endpush
 
 @prepend('scripts')
-    <script src="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.js"></script>
+    {{-- <script src="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.js"></script>
     <script>
         function openTrailer(el) {
             const url = el.getAttribute("data-trailer");
@@ -634,7 +903,98 @@
                 }
             }
         });
-    </script>
+    </script> --}}
+    @prepend('scripts')
+        <script src="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.js"></script>
+
+        <script>
+            function openTrailer(el) {
+                const url = el.getAttribute("data-trailer");
+                const overlay = document.getElementById("trailerOverlay");
+                const iframe = document.getElementById("trailerIframe");
+                iframe.src = url + "?autoplay=1";
+                overlay.style.display = "flex";
+            }
+
+            function closeTrailer() {
+                const overlay = document.getElementById("trailerOverlay");
+                const iframe = document.getElementById("trailerIframe");
+                overlay.style.display = "none";
+                iframe.src = "";
+            }
+            // Swiper phim
+            const swiperBanner = new Swiper(".mySwiper", {
+                slidesPerView: 5,
+                spaceBetween: 20,
+                loop: true,
+                autoplay: {
+                    delay: 10000,
+                    disableOnInteraction: false
+                },
+                pagination: {
+                    el: ".banner-pagination",
+                    clickable: true
+                },
+                navigation: {
+                    nextEl: ".banner-next",
+                    prevEl: ".banner-prev"
+                },
+                breakpoints: {
+                    320: {
+                        slidesPerView: 1
+                    },
+                    640: {
+                        slidesPerView: 2
+                    },
+                    768: {
+                        slidesPerView: 3
+                    },
+                    1024: {
+                        slidesPerView: 5
+                    }
+                }
+            });
+
+            // Swiper khuyến mãi
+            const swiperPromo = new Swiper('.promo-container.swiper', {
+                slidesPerView: 1,
+                spaceBetween: 20,
+                loop: true,
+                pagination: {
+                    el: '.promo-pagination',
+                    clickable: true
+                },
+                navigation: {
+                    nextEl: '.promo-next',
+                    prevEl: '.promo-prev'
+                },
+                breakpoints: {
+                    768: {
+                        slidesPerView: 2
+                    },
+                    1024: {
+                        slidesPerView: 3
+                    }
+                }
+            });
+            const swiperNews = new Swiper('.featured-news.swiper', {
+                slidesPerView: 1,
+                loop: true,
+                autoplay: {
+                    delay: 5000,
+                    disableOnInteraction: false
+                },
+                pagination: {
+                    el: '.news-pagination',
+                    clickable: true
+                },
+                navigation: {
+                    nextEl: '.news-next',
+                    prevEl: '.news-prev'
+                }
+            });
+        </script>
+    @endprepend
 @endprepend
 
 @push('scripts')
