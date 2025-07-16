@@ -48,8 +48,8 @@
         }
 
         .seat-card {
-            width: 40px;
-            height: 60px;
+            width: 30px;
+            height: 45px;
             border: 1px solid #ddd;
             border-radius: 6px;
             position: relative;
@@ -61,10 +61,8 @@
             transition: all 0.2s ease;
             cursor: pointer;
         }
-
         .seat-card.couple {
-            width: 85px; /* Bằng 2 ghế thường + khoảng cách */
-            padding: 5px;
+            width: 65px;
         }
 
         .seat-card:hover {
@@ -79,7 +77,7 @@
         }
 
         .seat-code {
-            font-size: 10px;
+            font-size: 8px;
             color: #555;
             margin-top: 2px;
         }
@@ -119,14 +117,19 @@
             color: #555;
         }
 
+        .couple-group {
+            display: flex;
+            margin-right: 5px;
+        }
+
         @media (max-width: 768px) {
             .seat-card {
-                width: 30px;
-                height: 45px;
+                width: 25px;
+                height: 38px;
             }
             
             .seat-card.couple {
-                width: 65px;
+                width: 55px;
             }
             
             .legend-item img {
@@ -136,6 +139,10 @@
             
             .legend-item .couple-sample {
                 width: 55px;
+            }
+            
+            .seat-code {
+                font-size: 7px;
             }
         }
     </style>
@@ -205,24 +212,66 @@
                         usort($seatsInRow, function ($a, $b) {
                             return substr($a->seat_code, 1) <=> substr($b->seat_code, 1);
                         });
+                        
+                        // Group couple seats
+                        $processedSeats = [];
+                        $i = 0;
+                        $n = count($seatsInRow);
+                        while ($i < $n) {
+                            $seat = $seatsInRow[$i];
+                            if ($seat->seatType->name === 'couple' && $i < $n - 1) {
+                                // Check if next seat is also couple and consecutive
+                                $nextSeat = $seatsInRow[$i + 1];
+                                if ($nextSeat->seatType->name === 'couple' && 
+                                    intval(substr($seat->seat_code, 1)) + 1 === intval(substr($nextSeat->seat_code, 1))) {
+                                    $processedSeats[] = [$seat, $nextSeat];
+                                    $i += 2;
+                                } else {
+                                    $processedSeats[] = $seat;
+                                    $i++;
+                                }
+                            } else {
+                                $processedSeats[] = $seat;
+                                $i++;
+                            }
+                        }
                     @endphp
                     
                     <div class="seat-row">
                         <div class="row-label">{{ $row }}</div>
                         
                         <div class="seat-container">
-                            @foreach ($seatsInRow as $index => $seat)
-                                @php
-                                    $isVipZone = $index >= $vipZoneStart && $index <= $vipZoneEnd;
-                                    $isCouple = $seat->seatType->name === 'couple';
-                                @endphp
-                                
-                                <div class="seat-card {{ $isCouple ? 'couple' : '' }} {{ $isVipZone ? 'vip-zone' : '' }}"
-                                     data-seat-id="{{ $seat->seat_id }}"
-                                     data-type="{{ $seat->seatType->name ?? 'normal' }}">
-                                    <img src="{{ $seat->img_url }}" alt="{{ $seat->seat_code }}">
-                                    <div class="seat-code">{{ $seat->seat_code }}</div>
-                                </div>
+                            @foreach ($processedSeats as $index => $item)
+                                @if (is_array($item))
+                                    {{-- Couple seat pair --}}
+                                    @php
+                                        $seat1 = $item[0];
+                                        $seat2 = $item[1];
+                                        $isVipZone = $index >= $vipZoneStart && $index <= $vipZoneEnd;
+                                    @endphp
+                                    <div class="seat-card couple {{ $isVipZone ? 'vip' : '' }}"
+                                         data-seat-id="{{ $seat1->seat_id }},{{ $seat2->seat_id }}"
+                                         data-type="couple">
+                                        <img src="{{ asset('admin/pictures/seat-double-available.svg') }}" 
+                                             alt="{{ $seat1->seat_code }}, {{ $seat2->seat_code }}">
+                                        <div class="seat-code">{{ $seat1->seat_code }}, {{ $seat2->seat_code }}</div>
+                                    </div>
+                                @else
+                                    {{-- Single seat --}}
+                                    @php
+                                        $seat = $item;
+                                        $isVipZone = $index >= $vipZoneStart && $index <= $vipZoneEnd;
+                                    @endphp
+                                    <div class="seat-card {{ $isVipZone ? 'vip' : '' }}"
+                                         data-seat-id="{{ $seat->seat_id }}"
+                                         data-type="{{ $seat->seatType->name ?? 'normal' }}">
+                                        <img src="{{ $seat->seatType->name === 'vip' 
+                                            ? asset('admin/pictures/seat-vip-available.svg')
+                                            : asset('admin/pictures/seat-normal-available.svg') }}" 
+                                             alt="{{ $seat->seat_code }}">
+                                        <div class="seat-code">{{ $seat->seat_code }}</div>
+                                    </div>
+                                @endif
                             @endforeach
                         </div>
                         

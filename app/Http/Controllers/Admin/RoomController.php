@@ -122,10 +122,9 @@ public function show($id)
                 $filename = "seat-double-available.svg";
                 break;
             default:
-                $filename = "seat-normal-available.svg"; // fallback
+                $filename = "seat-normal-available.svg";
         }
 
-        // Gán thêm thuộc tính tùy biến (không ảnh hưởng DB)
         $seat->img_url = asset('admin/pictures/' . $filename);
     }
 
@@ -135,38 +134,91 @@ public function show($id)
 
 protected function generateSeats($roomID, int $quantity)
 {
-    $colsPerRow = $quantity / 10;
-    if ($colsPerRow > 25) {
-        $colsPerRow = 25;
-    }
-    $lastRowCols = $colsPerRow / 2;
+    $rows = 0;
+    $colsPerRow = 0;
+    $coupleRow = '';
+    $vipRows = [];
+    $vipCols = [];
 
-    $fullRows = floor(($quantity - $lastRowCols) / $colsPerRow);
-    $rows = $fullRows + 1;
+    if ($quantity == 50) {
+        $rows = 5;
+        $colsPerRow = 10;
+        $coupleRow = 'E';
+        $vipRows = ['C', 'D'];
+        $vipCols = [3, 8];
+    } elseif ($quantity == 80) {
+        $rows = 7;
+        $colsPerRow = 12;
+        $coupleRow = 'G';
+        $vipRows = ['D', 'E', 'F'];
+        $vipCols = [3, 10];
+    } elseif ($quantity == 120) {
+        $rows = 10;
+        $colsPerRow = 12;
+        $coupleRow = 'J';
+        $vipRows = ['E', 'F', 'G', 'H', 'I'];
+        $vipCols = [3, 10];
+    } else {
+        $rows = ceil($quantity / 10);
+        $colsPerRow = 10;
+        $coupleRow = chr(64 + $rows);
+        $vipRows = [chr(64 + $rows - 2), chr(64 + $rows - 1)];
+        $vipCols = [floor($colsPerRow * 0.3), floor($colsPerRow * 0.7)];
+    }
 
     $letters = $this->getSeatLetters($rows);
-
     $seatIndex = 0;
-    for ($rowIndex = 0; $rowIndex < $rows; $rowIndex++) {
-        $currentCols = ($rowIndex == $rows - 1) ? $lastRowCols : $colsPerRow;
 
-        for ($colIndex = 0; $colIndex < $currentCols; $colIndex++) {
+    for ($rowIndex = 0; $rowIndex < $rows; $rowIndex++) {
+        $currentRowLetter = $letters[$rowIndex];
+        $currentCols = $colsPerRow;
+        
+        if ($currentRowLetter == $coupleRow && $quantity % $colsPerRow != 0) {
+            $currentCols = $quantity % $colsPerRow;
+        }
+
+        for ($colIndex = 1; $colIndex <= $currentCols; $colIndex++) {
             if ($seatIndex >= $quantity) break;
 
-            $seatNumber = $colIndex + 1;
-            $seatCode = $letters[$rowIndex] . $seatNumber;
-
+            $seatCode = $currentRowLetter . $colIndex;
             $seatTypeId = 1;
 
-            if ($rowIndex == $rows - 1) {
-                $seatTypeId = 3;
+            $existingSeat = Seat::where('room_id', $roomID)
+                              ->where('seat_code', $seatCode)
+                              ->first();
+
+            if ($existingSeat) {
+                continue;
             }
 
-            elseif ($rowIndex >= $rows - 5 && $rowIndex < $rows - 1) {
-                if ($colIndex >= 3 && $colIndex <= ($colsPerRow - 4)) {
-                    $seatTypeId = 2;
+            if ($currentRowLetter == $coupleRow) {
+                if ($colIndex % 2 == 1) {
+                    $seatTypeId = 3;
+                    
+                    Seat::create([
+                        'room_id' => $roomID,
+                        'seat_code' => $seatCode,
+                        'seat_type_id' => $seatTypeId,
+                    ]);
+                    
+                    if ($colIndex + 1 <= $currentCols) {
+                        $nextSeatCode = $currentRowLetter . ($colIndex + 1);
+                        Seat::create([
+                            'room_id' => $roomID,
+                            'seat_code' => $nextSeatCode,
+                            'seat_type_id' => $seatTypeId,
+                        ]);
+                        $colIndex++;
+                    }
+                    
+                    $seatIndex += 2;
+                    continue;
                 }
+            } elseif (in_array($currentRowLetter, $vipRows) && 
+                     $colIndex >= $vipCols[0] && $colIndex <= $vipCols[1]) {
+                $seatTypeId = 2;
             }
+
             Seat::create([
                 'room_id' => $roomID,
                 'seat_code' => $seatCode,
