@@ -3,186 +3,290 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard | Rạp Chiếu Phim</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Quản lý bài viết - Admin</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <style>
-        body {
-            font-family: "Segoe UI", sans-serif;
-            background-color: #f8f9fc;
+        .post-thumbnail {
+            width: 60px;
+            height: 40px;
+            object-fit: cover;
+            border-radius: 4px;
         }
-        .sidebar {
-            width: 240px;
-            background-color: #2d3e50;
-            height: 100vh;
-            position: fixed;
+        .badge-draft {
+            background-color: #6c757d;
             color: white;
-            padding-top: 20px;
         }
-        .sidebar a {
+        .badge-published {
+            background-color: #198754;
             color: white;
-            text-decoration: none;
-            display: block;
-            padding: 10px 20px;
         }
-        .sidebar a:hover {
-            background-color: #1c2938;
+        .badge-pending {
+            background-color: #ffc107;
+            color: black;
         }
-
+        .table-hover tbody tr:hover {
+            background-color: rgba(0, 0, 0, 0.02);
+        }
     </style>
 </head>
 <body>
-    <div class="sidebar">
-        <h4 class="text-center mb-4">RECINEMA</h4>
-        <a href="#"><i class="fas fa-tachometer-alt"></i> Tổng quan</a>
-        <a href="#"><i class="fas fa-chart-bar"></i> Thống kê</a>
-        <a href="#"><i class="fas fa-film"></i> Phim & Xuất chiếu</a>
-        <a href="#"><i class="fas fa-ticket-alt"></i> Vé đặt</a>
-        <a href="#"><i class="fas fa-users"></i> Khách hàng</a>
-        <a href="#"><i class="fas fa-cog"></i> Cài đặt</a>
+    <!-- Header -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Admin Panel</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#"><i class="bi bi-person-circle me-1"></i> Admin</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Sidebar + Main Content -->
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-2 bg-light p-0">
+                <div class="list-group list-group-flush">
+                    <a href="#" class="list-group-item list-group-item-action">Dashboard</a>
+                    <a href="#" class="list-group-item list-group-item-action active">Bài viết</a>
+                    <a href="#" class="list-group-item list-group-item-action">Danh mục</a>
+                    <a href="#" class="list-group-item list-group-item-action">Bình luận</a>
+                    <a href="#" class="list-group-item list-group-item-action">Cài đặt</a>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-md-10 p-4">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body p-0">
+                        <!-- Filter Form -->
+                        <form>
+                            <div class="container-fluid bg-light p-4 rounded-top">
+                                <div class="row align-items-end g-3">
+                                    <div class="col-xl-3 col-lg-4 col-md-6">
+                                        <label class="form-label fw-semibold">Danh mục</label>
+                                        <select class="form-select">
+                                            <option selected>Tất cả danh mục</option>
+                                            <option>Công nghệ</option>
+                                            <option>Lập trình</option>
+                                            <option>Thiết kế</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-xl-3 col-lg-4 col-md-6">
+                                        <label class="form-label fw-semibold">Từ ngày</label>
+                                        <input type="date" class="form-control">
+                                    </div>
+                                    <div class="col-xl-3 col-lg-4 col-md-6">
+                                        <label class="form-label fw-semibold">Đến ngày</label>
+                                        <input type="date" class="form-control">
+                                    </div>
+                                    <div class="col-xl-3 col-lg-4 col-md-6">
+                                        <label class="form-label fw-semibold">Trạng thái</label>
+                                        <select class="form-select">
+                                            <option selected>Tất cả</option>
+                                            <option>Bản nháp</option>
+                                            <option>Đã xuất bản</option>
+                                            <option>Chờ duyệt</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-xl-3 col-lg-4 col-md-6">
+                                        <label class="form-label fw-semibold">Tìm kiếm</label>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" placeholder="Tiêu đề bài viết...">
+                                            <button class="btn btn-primary" type="submit">
+                                                <i class="bi bi-search"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="col-xl-3 col-lg-4 col-md-6 d-flex gap-2 align-items-end">
+                                        <button class="btn btn-primary flex-grow-1">
+                                            <i class="bi bi-funnel me-1"></i> Lọc
+                                        </button>
+                                        <button class="btn btn-outline-secondary">
+                                            <i class="bi bi-arrow-counterclockwise"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+
+                        <!-- Table Header -->
+                        <div class="d-flex justify-content-between align-items-center p-3 bg-white border-top border-bottom">
+                            <div class="text-muted small">
+                                Hiển thị <strong>1-10</strong> trong <strong>25</strong> bài viết
+                            </div>
+                            <div>
+                                <button class="btn btn-sm btn-success">
+                                    <i class="bi bi-plus-circle me-1"></i> Thêm bài viết
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Posts Table -->
+                        <div class="table-responsive">
+                            <table class="table table-hover table-bordered mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th width="40%">Tiêu đề</th>
+                                        <th width="15%">Tác giả</th>
+                                        <th width="15%">Danh mục</th>
+                                        <th width="15%">Ngày đăng</th>
+                                        <th width="10%">Trạng thái</th>
+                                        <th width="5%" class="text-center">Thao tác</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Fake Data Rows -->
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <img src="https://via.placeholder.com/60x40" class="post-thumbnail me-3" alt="Thumbnail">
+                                                <div>
+                                                    <div class="fw-semibold">Hướng dẫn Laravel cơ bản</div>
+                                                    <small class="text-muted">Giới thiệu về framework Laravel cho người mới bắt đầu...</small>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>Admin</td>
+                                        <td>
+                                            <span class="badge bg-light text-dark">Lập trình</span>
+                                            <span class="badge bg-light text-dark">PHP</span>
+                                        </td>
+                                        <td>15/05/2023</td>
+                                        <td><span class="badge badge-published">Đã xuất bản</span></td>
+                                        <td class="text-center">
+                                            <div class="d-flex justify-content-center gap-2">
+                                                <button class="btn btn-icon btn-sm btn-outline-primary">
+                                                    <i class="bi bi-pencil-fill"></i>
+                                                </button>
+                                                <button class="btn btn-icon btn-sm btn-outline-danger">
+                                                    <i class="bi bi-trash-fill"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <img src="https://via.placeholder.com/60x40" class="post-thumbnail me-3" alt="Thumbnail">
+                                                <div>
+                                                    <div class="fw-semibold">ReactJS trong 30 ngày</div>
+                                                    <small class="text-muted">Lộ trình học ReactJS từ cơ bản đến nâng cao...</small>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>Editor</td>
+                                        <td>
+                                            <span class="badge bg-light text-dark">Frontend</span>
+                                        </td>
+                                        <td>10/06/2023</td>
+                                        <td><span class="badge badge-published">Đã xuất bản</span></td>
+                                        <td class="text-center">
+                                            <div class="d-flex justify-content-center gap-2">
+                                                <button class="btn btn-icon btn-sm btn-outline-primary">
+                                                    <i class="bi bi-pencil-fill"></i>
+                                                </button>
+                                                <button class="btn btn-icon btn-sm btn-outline-danger">
+                                                    <i class="bi bi-trash-fill"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <div>
+                                                    <div class="fw-semibold">Bài viết đang chờ duyệt</div>
+                                                    <small class="text-muted">Nội dung đang được kiểm duyệt trước khi xuất bản...</small>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>Author</td>
+                                        <td>
+                                            <span class="badge bg-light text-dark">Tổng hợp</span>
+                                        </td>
+                                        <td>01/07/2023</td>
+                                        <td><span class="badge badge-pending">Chờ duyệt</span></td>
+                                        <td class="text-center">
+                                            <div class="d-flex justify-content-center gap-2">
+                                                <button class="btn btn-icon btn-sm btn-outline-primary">
+                                                    <i class="bi bi-pencil-fill"></i>
+                                                </button>
+                                                <button class="btn btn-icon btn-sm btn-outline-danger">
+                                                    <i class="bi bi-trash-fill"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <!-- Thêm các dòng khác tương tự -->
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Pagination -->
+                        <div class="d-flex justify-content-between align-items-center p-3 bg-white border-top">
+                            <div class="text-muted small">
+                                Hiển thị <strong>1-10</strong> trong <strong>25</strong> kết quả
+                            </div>
+                            <nav aria-label="Page navigation">
+                                <ul class="pagination mb-0">
+                                    <li class="page-item disabled">
+                                        <a class="page-link" href="#" tabindex="-1">Trước</a>
+                                    </li>
+                                    <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                                    <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                    <li class="page-item">
+                                        <a class="page-link" href="#">Tiếp</a>
+                                    </li>
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <div class="content">
-
+    <!-- Delete Modal -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title text-danger"><i class="bi bi-exclamation-triangle-fill me-2"></i>Xác nhận</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body py-4">
+                    Bạn có chắc chắn muốn xóa bài viết này? Thao tác này không thể hoàn tác.
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Hủy bỏ</button>
+                    <button type="button" class="btn btn-danger">Xác nhận xóa</button>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <!-- Font Awesome -->
-    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Biểu đồ doanh thu
-        const revenueCtx = document.getElementById('revenueChart').getContext('2d');
-        const revenueChart = new Chart(revenueCtx, {
-            type: 'line',
-            data: {
-                labels: ['23/06', '24/06', '25/06', '26/06', '27/06', '28/06', '29/06'],
-                datasets: [{
-                    label: 'Doanh thu (VND)',
-                    data: [2500000, 3100000, 2800000, 2200000, 1800000, 2900000, 4000000],
-                    fill: true,
-                    borderColor: '#4e73df',
-                    backgroundColor: 'rgba(78, 115, 223, 0.05)',
-                    tension: 0.4
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        display: false
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            callback: function(value) {
-                                return (value / 1000000).toFixed(1) + 'tr';
-                            }
-                        }
-                    }
-                }
-            }
-        });
-
-        // Biểu đồ thể loại
-        const genreCtx = document.getElementById('genreChart').getContext('2d');
-        const genreChart = new Chart(genreCtx, {
-            type: 'doughnut',
-            data: {
-                labels: ['Hành động', 'Hài', 'Kinh dị', 'Tâm lý', 'Sci-fi'],
-                datasets: [{
-                    data: [35, 25, 15, 15, 10],
-                    backgroundColor: [
-                        '#4e73df',
-                        '#1cc88a',
-                        '#e74a3b',
-                        '#f6c23e',
-                        '#36b9cc'
-                    ],
-                    hoverBackgroundColor: [
-                        '#2e59d9',
-                        '#17a673',
-                        '#be2617',
-                        '#dda20a',
-                        '#2c9faf'
-                    ],
-                    hoverBorderColor: "rgba(234, 236, 244, 1)",
-                }],
-            },
-            options: {
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'right',
-                    }
-                },
-                cutout: '70%',
-            }
-        });
-
-        // Biểu đồ lịch chiếu
-        const scheduleCtx = document.getElementById('scheduleChart').getContext('2d');
-        const scheduleChart = new Chart(scheduleCtx, {
-            type: 'bar',
-            data: {
-                labels: ['8h', '10h', '12h', '14h', '16h', '18h', '20h', '22h'],
-                datasets: [{
-                    label: 'Số suất chiếu',
-                    data: [3, 5, 2, 6, 4, 8, 7, 3],
-                    backgroundColor: 'rgba(78, 115, 223, 0.8)',
-                    borderColor: 'rgba(78, 115, 223, 1)',
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            stepSize: 1
-                        }
-                    }
-                },
-                plugins: {
-                    legend: {
-                        display: false
-                    }
-                }
-            }
-        });
-
-        // Xử lý tab thể loại phim
-        document.querySelectorAll('.genre-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                // Xóa active tất cả các nút
-                document.querySelectorAll('.genre-btn').forEach(b => {
-                    b.classList.remove('active');
-                    b.classList.remove('btn-primary');
-                    b.classList.add('btn-outline-primary');
-                });
-                
-                // Thêm active cho nút được click
-                this.classList.add('active');
-                this.classList.add('btn-primary');
-                this.classList.remove('btn-outline-primary');
-                
-                // Ẩn tất cả nội dung
-                document.querySelectorAll('.genre-content').forEach(content => {
-                    content.classList.remove('active');
-                });
-                
-                // Hiển thị nội dung tương ứng
-                const genre = this.getAttribute('data-genre');
-                document.getElementById(genre).classList.add('active');
+        // Xử lý modal xóa
+        document.addEventListener('DOMContentLoaded', function() {
+            var deleteModal = document.getElementById('deleteModal');
+            deleteModal.addEventListener('show.bs.modal', function (event) {
+                var button = event.relatedTarget;
+                // Có thể thêm logic lấy ID bài viết ở đây
             });
         });
     </script>
 </body>
-</html> 
+</html>
