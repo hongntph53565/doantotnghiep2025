@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="container-fuild">
+    <div class="container">
         <div id="bannerCarousel" class="carousel slide mt-4" data-bs-ride="carousel">
 
             <!-- ✅ Dot Indicators -->
@@ -13,12 +13,11 @@
             </div>
 
             <!-- ✅ Slide nội dung -->
-            <div class="carousel-inner p-0">
+            <div class="carousel-inner">
 
                 <!-- Slide 1 -->
                 <div class="carousel-item active">
-                    <div class="banner"><img src="{{ asset('images/web-phim-thang-6.jpg') }}" class="d-block w-100"
-                            alt="Banner 1"></div>
+                    <div class="banner"><img src="{{ asset('images/web-phim-thang-6.jpg') }}" alt="Banner 1"></div>
                     <a href="/phim-thang-6" class="label-phim">PHIM HAY THÁNG 6</a>
                     <a href="/danh-sach-phim" class="btn-xem-them">XEM THÊM<img
                             src="{{ asset('images/ticket-svgrepo-com.svg') }}" alt=""></a>
@@ -26,7 +25,7 @@
 
                 <!-- Slide 2 -->
                 <div class="carousel-item">
-                    <div class="banner"><img src="{{ asset('images/banner-2.jpg') }}" class="d-block w-100" alt="Banner 2">
+                    <div class="banner"><img src="{{ asset('images/banner-2.jpg') }}" alt="Banner 2">
                     </div>
                     <a href="/phim-thang-6" class="label-phim">ĐIỀU ƯỚC CUỐI CÙNG</a>
                     <a href="/danh-sach-phim" class="btn-xem-them">ĐẶT VÉ NGAY<img
@@ -34,7 +33,7 @@
                 </div>
                 <!-- Slide 2 -->
                 <div class="carousel-item">
-                    <div class="banner"><img src="{{ asset('images/banner-1.jpg') }}" class="d-block w-100" alt="Banner 2">
+                    <div class="banner"><img src="{{ asset('images/banner-1.jpg') }}" alt="Banner 3">
                     </div>
                     <a href="/phim-thang-6" class="label-phim">F1</a>
                     <a href="/danh-sach-phim" class="btn-xem-them">ĐẶT VÉ NGAY<img
@@ -396,6 +395,127 @@
 @endsection
 
 @push('styles')
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    {{-- slider --}}
+    <style>
+        .carousel,
+        .carousel-inner,
+        .carousel-item,
+        .banner {
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+
+        .carousel-inner {
+            min-height: auto;
+            /* Loại bỏ min-height cố định */
+            overflow: hidden;
+        }
+
+        .carousel-item {
+            height: auto;
+            /* Cho phép chiều cao tự động */
+            position: relative;
+        }
+
+        .carousel-item .banner {
+            height: 100%;
+        }
+
+        .carousel-item .banner img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        @media (min-width: 768px) {
+
+            .carousel-inner,
+            .carousel-item {
+                min-height: 400px;
+                /* Giá trị tối thiểu trên màn hình lớn */
+            }
+        }
+
+        @media (max-width: 767px) {
+
+            .carousel-inner,
+            .carousel-item {
+                min-height: 200px;
+                /* Điều chỉnh cho thiết bị nhỏ */
+            }
+        }
+    </style>
+    <style>
+        .btn-xem-them img {
+            width: 18px;
+            margin-bottom: 3px;
+            margin-left: 3px;
+        }
+
+        .label-phim {
+            position: absolute;
+            bottom: 80px;
+            left: 20px;
+            background-color: #fff;
+            color: #4CAF50;
+            font-weight: bold;
+            border-radius: 10px;
+            padding: 6px 16px;
+            font-size: 16px;
+            border: 1px solid #4CAF50;
+            z-index: 10;
+            text-decoration: none;
+        }
+
+        .label-phim:hover {
+            color: black;
+        }
+
+        .btn-xem-them {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            background: linear-gradient(to right, #7ddc2f, #5ac630);
+            color: white;
+            font-weight: bold;
+            padding: 6px 18px;
+            border-radius: 6px;
+            font-size: 14px;
+            z-index: 10;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-xem-them:hover {
+            background: linear-gradient(to left, #7ddc2f, #5ac630);
+        }
+
+        .carousel-indicators [data-bs-target] {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: #6c757d;
+            margin: 0 6px;
+            opacity: 0.7;
+        }
+
+        .carousel-indicators .active {
+            background-color: #28a745;
+            opacity: 1;
+        }
+
+        .carousel-control-prev-icon,
+        .carousel-control-next-icon {
+            padding: 10px;
+        }
+    </style>
+
+    {{-- phim đang+ sắp chiếu --}}
     <style>
         h2.title {
             text-align: center;
@@ -855,8 +975,17 @@
     </style>
 @endpush
 
-@prepend('scripts')
-    {{-- <script src="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.js"></script>
+@push('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var carousel = new bootstrap.Carousel(document.getElementById('bannerCarousel'), {
+                interval: 5000,
+                ride: 'carousel'
+            });
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.js"></script>
+
     <script>
         function openTrailer(el) {
             const url = el.getAttribute("data-trailer");
@@ -872,7 +1001,8 @@
             overlay.style.display = "none";
             iframe.src = "";
         }
-        var swiper = new Swiper(".mySwiper", {
+        // Swiper phim
+        const swiperBanner = new Swiper(".mySwiper", {
             slidesPerView: 5,
             spaceBetween: 20,
             loop: true,
@@ -881,12 +1011,12 @@
                 disableOnInteraction: false
             },
             pagination: {
-                el: ".swiper-pagination",
+                el: ".banner-pagination",
                 clickable: true
             },
             navigation: {
-                nextEl: ".swiper-button-next",
-                prevEl: ".swiper-button-prev"
+                nextEl: ".banner-next",
+                prevEl: ".banner-prev"
             },
             breakpoints: {
                 320: {
@@ -903,102 +1033,44 @@
                 }
             }
         });
-    </script> --}}
-    @prepend('scripts')
-        <script src="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.js"></script>
 
-        <script>
-            function openTrailer(el) {
-                const url = el.getAttribute("data-trailer");
-                const overlay = document.getElementById("trailerOverlay");
-                const iframe = document.getElementById("trailerIframe");
-                iframe.src = url + "?autoplay=1";
-                overlay.style.display = "flex";
+        // Swiper khuyến mãi
+        const swiperPromo = new Swiper('.promo-container.swiper', {
+            slidesPerView: 1,
+            spaceBetween: 20,
+            loop: true,
+            pagination: {
+                el: '.promo-pagination',
+                clickable: true
+            },
+            navigation: {
+                nextEl: '.promo-next',
+                prevEl: '.promo-prev'
+            },
+            breakpoints: {
+                768: {
+                    slidesPerView: 2
+                },
+                1024: {
+                    slidesPerView: 3
+                }
             }
-
-            function closeTrailer() {
-                const overlay = document.getElementById("trailerOverlay");
-                const iframe = document.getElementById("trailerIframe");
-                overlay.style.display = "none";
-                iframe.src = "";
+        });
+        const swiperNews = new Swiper('.featured-news.swiper', {
+            slidesPerView: 1,
+            loop: true,
+            autoplay: {
+                delay: 5000,
+                disableOnInteraction: false
+            },
+            pagination: {
+                el: '.news-pagination',
+                clickable: true
+            },
+            navigation: {
+                nextEl: '.news-next',
+                prevEl: '.news-prev'
             }
-            // Swiper phim
-            const swiperBanner = new Swiper(".mySwiper", {
-                slidesPerView: 5,
-                spaceBetween: 20,
-                loop: true,
-                autoplay: {
-                    delay: 10000,
-                    disableOnInteraction: false
-                },
-                pagination: {
-                    el: ".banner-pagination",
-                    clickable: true
-                },
-                navigation: {
-                    nextEl: ".banner-next",
-                    prevEl: ".banner-prev"
-                },
-                breakpoints: {
-                    320: {
-                        slidesPerView: 1
-                    },
-                    640: {
-                        slidesPerView: 2
-                    },
-                    768: {
-                        slidesPerView: 3
-                    },
-                    1024: {
-                        slidesPerView: 5
-                    }
-                }
-            });
-
-            // Swiper khuyến mãi
-            const swiperPromo = new Swiper('.promo-container.swiper', {
-                slidesPerView: 1,
-                spaceBetween: 20,
-                loop: true,
-                pagination: {
-                    el: '.promo-pagination',
-                    clickable: true
-                },
-                navigation: {
-                    nextEl: '.promo-next',
-                    prevEl: '.promo-prev'
-                },
-                breakpoints: {
-                    768: {
-                        slidesPerView: 2
-                    },
-                    1024: {
-                        slidesPerView: 3
-                    }
-                }
-            });
-            const swiperNews = new Swiper('.featured-news.swiper', {
-                slidesPerView: 1,
-                loop: true,
-                autoplay: {
-                    delay: 5000,
-                    disableOnInteraction: false
-                },
-                pagination: {
-                    el: '.news-pagination',
-                    clickable: true
-                },
-                navigation: {
-                    nextEl: '.news-next',
-                    prevEl: '.news-prev'
-                }
-            });
-        </script>
-    @endprepend
-@endprepend
-
-@push('scripts')
-    <script>
-        console.log('Chạy sau');
+        });
     </script>
 @endpush

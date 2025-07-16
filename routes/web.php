@@ -35,8 +35,6 @@ Route::get('/combo/{id}', [ComboController::class, 'show'])->name('combo.show');
 Route::get('/cart', [CartController::class, 'showCart'])->name('cart');
 Route::post('/add-cart', [CartController::class, 'addToCart'])->name('cart.addCart');
 Route::post('/update-cart', [CartController::class, 'updateCart'])->name('cart.update');
-// Route::post('/cart/remove', [CartController::class, 'removeFromCart'])->name('cart.remove');
-// Route::post('/cart/update', [CartController::class, 'updateQuantity'])->name('cart.update');
 
 
 
