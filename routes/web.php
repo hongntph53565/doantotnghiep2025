@@ -202,19 +202,13 @@ Route::prefix('admin')->middleware(['auth', 'role:admin,employee'])->group(funct
 
 
 
-
-
-
 Route::get('/home', [HomeController::class, 'home'])->name('home');
 Route::get('/cart', [HomeController::class, 'index']);
 Route::get('/booking2', [HomeController::class, 'booking2']);
 Route::get('/booking3', [HomeController::class, 'booking3']);
 Route::get('/booking4', [HomeController::class, 'booking4']);
-Route::get('/', function () {
-    // return response()->json(['message' => 'Backend OK']);
-});
-Route::get('/lich-chieu-phim', [HomeController::class, 'Showtimes'])->name('Client.MovieShowtimes');
 
+Route::get('/lich-chieu-phim', [HomeController::class, 'Showtimes'])->name('Client.MovieShowtimes');
 
 Route::get('/he-thong-rap', function () {
     return view('Client.hethongrap');
@@ -231,35 +225,13 @@ Route::get('/dat-ve', function () {
 Route::get('/lich-chieu-rap', [CinemaController::class, 'listCinemas'])->name('Client.cinemaShowtime');
 Route::get('/lich-chieu-rap/{cinema_id}', [HomeController::class, 'ShowtimesByCinema'])->name('Client.MovieShowtimesByCinema');
 
-
-
 Route::get('/', [HomeController::class, 'home'])->name('home');
 
 Route::get('/dat-ve/{movie_id}', [HomeController::class, 'booking'])->name('Client.booking.home');
 Route::get('/chon-ghe/{movie_id}', [HomeController::class, 'booking'])->name('Client.booking.select-seat');
-// Route::get('/ajax/showtimes', action: [HomeController::class, 'loadShowtimes'])->name('Client.booking.ajaxShowtimes');
 Route::get('/ajax/showtimes', [HomeController::class, 'ajaxShowtimes']);
 Route::get('/ajax-showtimes-by-cinema', [HomeController::class, 'ajaxShowtimesByCinema'])->name('Client.ajaxShowtimesByCinema');
 Route::get('/booking/select-combo/{showtime_id}', [HomeController::class, 'showCombo'])->name('Client.booking.select-combo');
-
-// routes/web.php
-
-
-
-
-
-
-
-
-// Route::get('/chon-ghe', function () {
-//     return view('Client.chonghe');
-// });
-// Route::get('/chon-do-an', function () {
-//     return view('Client.chondoan');
-// });
-// Route::get('/thanh-toan', function () {
-//     return view('Client.thanhtoan');
-// });
 
 Route::post('/login', [AuthController::class, 'login']);
 
@@ -314,8 +286,6 @@ Route::prefix('payos')->name('payos.')->group(function () {
     Route::get('/create-link/{amount}/{description}', [PayosController::class, 'createLink'])->name('create');
     Route::get('/return-link/{description}',          [PayosController::class, 'returnPage'])->name('return');
 });
-
-
 
 Route::middleware('web')->group(function () {
     Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login.form');
