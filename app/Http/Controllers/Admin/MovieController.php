@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Booking;
 use App\Models\Genre;
 use Illuminate\Http\Request;
 use App\Models\Movie;
@@ -151,6 +152,57 @@ class MovieController extends Controller
 
         return redirect()->route('movies.index')->with('success', 'Cập nhật phim thành công!');
     }
+
+public function show($id)
+{
+    $movie = Movie::with('genre')->findOrFail($id);
+
+    // Lấy ID của tất cả showtimes thuộc movie
+    $showtimeIds = Showtime::where('movie_id', $movie->movie_id)->pluck('showtime_id')->toArray();
+
+    // Lấy showtimes kèm room, cinema, bookings (phân trang)
+    $showtimes = Showtime::with(['room.cinema', 'bookings'])
+        ->whereIn('showtime_id', $showtimeIds)
+        ->orderBy('start_time', 'desc')
+        ->paginate(10);
+
+    // Tính tổng doanh thu
+    $totalRevenue = Booking::whereIn('showtime_id', $showtimeIds)->sum('total_price');
+
+    // Tính tổng số vé bán (số booking)
+    $totalTickets = Booking::whereIn('showtime_id', $showtimeIds)->count();
+
+    // Tính tổng ghế từ room
+    $totalSeats = Showtime::with('room')
+        ->whereIn('showtime_id', $showtimeIds)
+        ->get()
+        ->sum(fn($showtime) => $showtime->room->total_seats);
+
+    $occupancyRate = $totalSeats > 0 ? round(($totalTickets / $totalSeats) * 100, 2) : 0;
+
+    // Doanh thu theo tháng bằng query group by
+    $revenueByMonth = Booking::selectRaw("DATE_FORMAT(created_at, '%m/%Y') as month, SUM(total_price) as revenue")
+        ->whereIn('showtime_id', $showtimeIds)
+        ->groupBy('month')
+        ->orderBy('month')
+        ->pluck('revenue', 'month')
+        ->toArray();
+
+    $revenueChart = [
+        'labels' => array_keys($revenueByMonth),
+        'data' => array_values($revenueByMonth),
+    ];
+
+    return view('admin.show.movie', compact(
+        'movie',
+        'showtimes',
+        'totalRevenue',
+        'totalTickets',
+        'occupancyRate',
+        'revenueChart'
+    ));
+}
+
 
     public function destroy($id)
     {

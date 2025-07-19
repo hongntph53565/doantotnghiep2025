@@ -10,15 +10,21 @@ use App\Models\CinemaSeatTypePrice;
 
 class CinemaSeatTypePriceController extends Controller
 {
-    public function index()
-    {
-        $prices = CinemaSeatTypePrice::with(['cinema', 'seatType'])->get();
-        $cinemas = Cinema::all();
-        $seatTypes = SeatType::all();
-        $districts = Cinema::select('city')->distinct()->get();
+public function index()
+{
+    $cinemas = Cinema::all();
 
-        return view('admin.list.cinemaseatprice', compact('prices', 'cinemas', 'seatTypes', 'districts'));
+    if ($cinemas->isEmpty()) {
+        return redirect()->back()->with('error', 'Chưa có rạp nào được tạo.');
     }
+
+    $prices = CinemaSeatTypePrice::with(['cinema', 'seatType'])->get();
+    $seatTypes = SeatType::all();
+    $districts = Cinema::select('city')->distinct()->get();
+
+    return view('admin.list.cinemaseatprice', compact('prices', 'cinemas', 'seatTypes', 'districts'));
+}
+
 
     public function store(Request $request)
     {

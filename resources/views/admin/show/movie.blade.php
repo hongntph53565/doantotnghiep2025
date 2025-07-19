@@ -15,8 +15,10 @@
                     <img src="{{ asset('storage/' . $movie->poster) ?? asset('/img/default-movie-poster.jpg') }}"
                         class="img-fluid rounded mb-3" alt="Poster phim">
                     <div class="d-grid gap-2">
-                        <button class="btn btn-warning" onclick="window.location.href='{{ route('movies.edit',['id' => $movie->movie_id]) }}'">Chỉnh sửa</button>
-                        <button class="btn btn-danger" >Xóa phim</button>
+                        <button class="btn btn-warning"
+                            onclick="window.location.href='{{ route('movies.edit', ['id' => $movie->movie_id]) }}'">Chỉnh
+                            sửa</button>
+                        <button class="btn btn-danger">Xóa phim</button>
                     </div>
                 </div>
                 <div class="col-md-9">
@@ -56,8 +58,9 @@
                     <div class="mb-3">
                         <h6>Trailer:</h6>
                         <div class="ratio ratio-16x9">
-                            <iframe src="{{ $movie->trailer ?? 'https://www.youtube.com/embed/abc123XYZ' }}"
+                            <iframe src="{{ str_replace('watch?v=', 'embed/', $movie->trailer) }}"
                                 allowfullscreen></iframe>
+
                         </div>
                     </div>
                 </div>
@@ -80,14 +83,13 @@
                             <th>Giờ bắt đầu</th>
                             <th>Giờ kết thúc</th>
                             <th>Trạng thái</th>
-                            <th>Hành động</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach ($showtimes as $showtime)
                             <tr>
                                 <td>{{ $showtime->room->cinema->name }}</td>
-                                <td>{{ $showtime->room->name }}</td>
+                                <td>{{ $showtime->room->room_name }}</td>
                                 <td>{{ \Carbon\Carbon::parse($showtime->start_time)->format('d/m/Y') }}</td>
                                 <td>{{ \Carbon\Carbon::parse($showtime->start_time)->format('H:i') }}</td>
                                 <td>{{ \Carbon\Carbon::parse($showtime->end_time)->format('H:i') }}</td>
@@ -100,6 +102,9 @@
                         @endforeach
                     </tbody>
                 </table>
+                <div class="d-flex justify-content-end">
+                    {{ $showtimes->links() }}
+                </div>
             </div>
         </div>
     </div>

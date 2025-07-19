@@ -33,8 +33,8 @@
             <div class="col-md-3">
                 <div class="card p-3 mb-3 shadow-sm">
                     <label for="createdBy" class="form-label fw-bold">Người đang tạo</label>
-                    <input type="text" class="form-control" id="createdBy" name="created_by"
-                        placeholder="Nhập tên người tạo">
+                    <input type="text" class="form-control" value="{{ session('my_name') ?? 'Guest' }}" id="createdBy" name="created_by"
+                        placeholder="Nhập tên người tạo" readonly>
                 </div>
 
                 <div class="card p-3 shadow-sm">

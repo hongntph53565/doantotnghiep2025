@@ -1,5 +1,5 @@
 <?php
-
+// Then create the users migration (0001_create_users_table.php)
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
@@ -8,23 +8,23 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id('user_id');
-            $table->string('username', 50);
+            $table->string('username', 50)->unique();
             $table->string('full_name', 100)->nullable();
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->string('phone', 10)->nullable();
-            $table->tinyInteger('role')->default(2);
+            $table->string('phone', 15)->nullable();
+            $table->unsignedBigInteger('role_id')->default(3);
+            $table->enum('status', ['active', 'inactive'])->default('active');
             $table->rememberToken();
             $table->timestamps();
             $table->softDeletes();
+
+            $table->foreign('role_id')->references('role_id')->on('roles');
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
@@ -44,27 +44,22 @@ return new class extends Migration
 
         if (DB::table('users')->count() === 0) {
             DB::table('users')->insert([
-                [
-                    'username' => 'Admin',
-                    'full_name' => 'Admin',
-                    'email' => 'lumistar2025@gmail.com',
-                    'phone' => '9999999999',
-                    'password' => Hash::make('admin123'),
-                    'created_at' => now(),
-                    'updated_at' => now()
-                ]
+                'username' => 'admin',
+                'full_name' => 'System Administrator',
+                'email' => 'lumistar2025@gmail.com',
+                'phone' => '9999999999',
+                'password' => Hash::make('1'),
+                'role_id' => 1,
+                'created_at' => now(),
+                'updated_at' => now()
             ]);
         }
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
-        Schema::dropIfExists('users');
-        Schema::dropIfExists('password_reset_tokens');
         Schema::dropIfExists('sessions');
-        Schema::dropSoftDeletes();
+        Schema::dropIfExists('password_reset_tokens');
+        Schema::dropIfExists('users');
     }
 };

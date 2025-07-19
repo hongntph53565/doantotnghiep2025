@@ -38,47 +38,42 @@ class PayosController extends Controller
     }
 
     public function returnPage(Request $request, $description)
-{
-    $allParams = $request->query();
-    $booking = Booking::where('booking_code', $description)->first();
+    {
+        $allParams = $request->query();
+        $booking = Booking::where('booking_code', $description)->first();
 
-    if (!$booking) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Không tìm thấy booking.'
-        ], 404);
-    }
+        if (!$booking) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Không tìm thấy booking.'
+            ], 404);
+        }
 
-    if ($booking['payment_method'] === "payos") {
-        $payment = Payment::create([
-            'booking_id'     => $booking['booking_id'],
-            'payment_method' => $booking['payment_method'],
-            'price_amount'   => $booking->total_price,
-            'status'         => ($allParams['cancel'] ?? 'false') === 'true' ? 'unpaid' : 'paid'
-        ]);
-        $payment['user_id'] = $booking['user_id'];
-        event(new PaymentEvents($payment));
-    }
+        if ($booking['payment_method'] === "payos") {
+            $payment = Payment::create([
+                'booking_id'     => $booking['booking_id'],
+                'payment_method' => $booking['payment_method'],
+                'price_amount'   => $booking->total_price,
+                'status'         => ($allParams['cancel'] ?? 'false') === 'true' ? 'unpaid' : 'paid'
+            ]);
+            $payment['user_id'] = $booking['user_id'];
+            event(new PaymentEvents($payment));
+        }
 
-    if (($allParams['cancel'] ?? 'false') !== 'true' && $booking['payment_method'] === "payos") {
-        $booking->update([
-            'payment_status' => 'paid',
-            'booking_status' => 'confirmed'
-        ]);
-    } elseif (($allParams['cancel'] ?? 'false') === 'true' && $booking['payment_method'] === "payos") {
-        $booking->update([
-            'booking_status' => 'cancelled'
-        ]);
-        $this->bookingService->cancelSeats($booking);
-    }
+        if (($allParams['cancel'] ?? 'false') !== 'true' && $booking['payment_method'] === "payos") {
+            $booking->update([
+                'payment_status' => 'paid',
+                'booking_status' => 'confirmed'
+            ]);
+        } elseif (($allParams['cancel'] ?? 'false') === 'true' && $booking['payment_method'] === "payos") {
+            $booking->update([
+                'booking_status' => 'cancelled'
+            ]);
+            $this->bookingService->cancelSeats($booking);
+        }
 
-    return response()->json([
-        'success' => true,
-        'message' => ($allParams['cancel'] ?? 'false') === 'true' 
+        return redirect()->route('home')->with('message', ($allParams['cancel'] ?? 'false') == 'true'
             ? 'Thanh toán đã bị hủy, booking đã hủy.'
-            : 'Thanh toán thành công, booking đã xác nhận.',
-        'booking' => $booking
-    ]);
-}
-
+            : 'Thanh toán thành công, booking đã xác nhận.');
+    }
 }

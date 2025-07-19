@@ -2,7 +2,7 @@
 
 @section('title', 'Hệ Thống Rạp')
 @push('styles')
-    <link rel="stylesheet" href="{{ asset('client/css/thongtinrap.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/thongtinrap.css') }}">
 @endpush
 
 @section('content')
