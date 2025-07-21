@@ -1,0 +1,277 @@
+/* ====== Bố cục tổng ====== */
+.schedule-section {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.schedule-box {
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  padding: 20px;
+  background: #fff;
+  flex: 1;
+  min-width: 60%;
+  box-sizing: border-box;
+}
+
+.calendar-box {
+  background: #e9dece;
+  border-radius: 12px;
+  padding: 20px;
+  width: 280px;
+  box-sizing: border-box;
+}
+
+/* ====== Button xem suất chiếu ====== */
+.showtime-btn {
+  background-color: #3d4461;
+  color: white;
+  padding: 19px 70px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 18px;
+  margin: 18px 0 8px;
+  min-width: 100px;
+  text-align: center;
+}
+
+.showtime-btn:hover {
+  background-color: #6fc441;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+/* ====== Thẻ tag nhỏ ====== */
+.tag {
+  display: inline-block;
+  padding: 2px 6px;
+  font-size: 12px;
+  border-radius: 6px;
+  margin: 2px 2px 0;
+  line-height: 1.4;
+  background-color: black;
+  color: white;
+  border: 1px solid #ffd700;
+  font-weight: 600;
+}
+
+.tag.green {
+  background-color: #32cd32;
+}
+
+/* ====== DatePicker ====== */
+.datepicker {
+  background-color: #eae2cc;
+  width: 100%;
+  max-width: 420px;
+  border-radius: 16px;
+  padding: 14px 14px 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
+}
+
+.datepicker-inner {
+  border: 2px solid #d5ccb5;
+  border-radius: 12px;
+  padding: 12px;
+}
+
+.datepicker-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: bold;
+  margin-bottom: 12px;
+  padding: 0 6px;
+  font-size: 16px;
+  color: #2c2c2c;
+}
+
+.month-labels {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.month-text,
+.year-text {
+  padding: 4px 12px;
+  font-weight: bold;
+  font-size: 15px;
+  border-radius: 10px;
+}
+
+.month-text:hover,
+.year-text:hover {
+  background-color: #f5f3ea;
+  cursor: pointer;
+}
+
+.year-text {
+  margin-left: 30px;
+}
+
+.arrow {
+  cursor: pointer;
+  font-size: 20px;
+  user-select: none;
+  padding: 6px;
+  border-radius: 8px;
+  transition: background-color 0.2s;
+}
+
+.arrow:hover {
+  background-color: #ddd5bb;
+}
+
+.day-names,
+.days,
+.date-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+  text-align: center;
+  font-weight: 500;
+}
+
+.day-name {
+  font-weight: bold;
+  padding: 4px;
+  font-size: 13px;
+  color: #333;
+}
+
+.day,
+.date-grid div {
+  padding: 6px;
+  border-radius: 6px;
+  background: white;
+  font-size: 14px;
+  color: #333;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.day:hover {
+  background-color: #dcd3b6;
+}
+
+.inactive {
+  color: #c5c2bd;
+  pointer-events: none;
+}
+
+.selected {
+  background-color: #444b5a;
+  color: white;
+}
+
+.today {
+  border: 2px solid #444b5a;
+  border-radius: 8px;
+  background: #005189 !important;
+  color: white;
+}
+
+/* ====== Month/Year Picker ====== */
+#month-picker,
+#year-picker {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  background: #fff;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  position: absolute;
+  z-index: 100;
+}
+
+#month-picker.hidden,
+#year-picker.hidden {
+  display: none;
+}
+
+.month-option,
+.year-option {
+  padding: 8px 12px;
+  background: #f5f5f5;
+  text-align: center;
+  border-radius: 6px;
+  font-weight: 500;
+  transition: background 0.3s;
+}
+
+.month-option:not(.disabled),
+.year-option {
+  cursor: pointer;
+}
+
+.month-option:hover,
+.year-option:hover {
+  background: #dbeafe;
+}
+
+.month-option.disabled {
+  background: #eee;
+  color: #aaa;
+  cursor: not-allowed !important;
+  opacity: 0.6;
+}
+
+.month-option.disabled:hover {
+  background: #eee;
+}
+
+.month-option.selected,
+.year-option.active {
+  background: #334155;
+  color: white;
+}
+
+
+
+.text-muted.mb-3 {
+  font-size: 20px;
+  text-align: center;
+  margin-bottom: 8px;
+}
+
+/* ====== Responsive ====== */
+@media (max-width: 768px) {
+  .schedule-section {
+    flex-direction: column;
+  }
+
+  .schedule-box,
+  .datepicker,
+  .calendar-box {
+    width: 100% !important;
+    max-width: 100%;
+  }
+
+  .cinema-box {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .cinema-box img {
+    margin-right: 0;
+    margin-bottom: 12px;
+    width: 100%;
+  }
+
+  .showtime-btn {
+    width: 100%;
+    padding: 14px 0;
+    font-size: 16px;
+  }
+
+  .datepicker {
+    margin-top: 20px;
+  }
+  
+}

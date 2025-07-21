@@ -49,7 +49,6 @@
             border-radius: 4px;
         }
 
-
         .review-section img {
             width: 100%;
             border-radius: 10px;
@@ -67,7 +66,6 @@
             padding: 6px 12px;
             border-radius: 8px;
         }
-
 
         .cinema-title {
             font-weight: bold;
@@ -494,7 +492,6 @@
         <div class="container">
             <div class="row">
 
-
                 <div class="col-md-4 mb-4">
                     <h5 class="fw-bold">VỀ BHD STAR</h5>
                     <hr class="mt-0"
@@ -506,7 +503,6 @@
                     </ul>
                     <img src="{{ asset('images\image-21.png') }}" alt="Đã thông báo" width="200">
                 </div>
-
 
                 <div class="col-md-4 mb-4">
                     <h5 class="fw-bold">QUY ĐỊNH & ĐIỀU KHOẢN</h5>
@@ -525,7 +521,6 @@
                         </li>
                     </ul>
                 </div>
-
 
                 <div class="col-md-4 mb-4">
                     <h5 class="fw-bold">CHĂM SÓC KHÁCH HÀNG</h5>
@@ -557,6 +552,7 @@
                         Kiếm, Hà Nội</p>
                     <p class="mb-1">Hotline: 19002099</p>
                     <p class="mb-0">COPYRIGHT 2010 BHD STAR. ALL RIGHTS RESERVED</p>
+>>>>>>> origin/haiyen
                 </div>
             </div>
         </div>

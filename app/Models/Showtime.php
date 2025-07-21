@@ -32,6 +32,7 @@ use HasFactory;
     /**
      * Liên kết với phim
      */
+
     public function movie()
     {
         return $this->belongsTo(Movie::class, 'movie_id', 'movie_id');
@@ -46,5 +47,5 @@ use HasFactory;
 {
     return $this->hasMany(Booking::class, 'showtime_id', 'id');
 }
-    
+
 }

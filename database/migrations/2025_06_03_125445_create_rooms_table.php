@@ -15,7 +15,10 @@ return new class extends Migration
             $table->bigIncrements('room_id');
             $table->unsignedBigInteger('cinema_id');
             $table->string('room_name', 100)->collation('utf8mb4_unicode_ci');
+<<<<<<< HEAD
             $table->enum('format', ['2D', '3D', 'IMAX', 'VIP'])->default('2D');
+=======
+>>>>>>> origin/hung
             $table->integer('total_seats')->unsigned();
             $table->timestamps();
 

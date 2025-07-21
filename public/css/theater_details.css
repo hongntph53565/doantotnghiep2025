@@ -1,0 +1,230 @@
+/* === CINEMA INFO === */
+.schedule-title {
+  margin-top: 30px;
+  font-weight: bold;
+  text-align: center;
+}
+.cinema-box {
+  display: flex;
+  gap: 20px;
+  padding: 20px;
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0 0 10px rgba(0,0,0,0.08);
+  margin-bottom: 30px;
+}
+
+.cinema-box img {
+  width: 220px;
+  height: auto;
+  border-radius: 10px;
+  object-fit: cover;
+}
+
+.cinema-box h6 {
+  font-size: 20px;
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+.cinema-info {
+  font-size: 14px;
+  color: #333;
+}
+
+/* === SCHEDULE SECTION === */
+.schedule-section {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  align-items: flex-start;
+}
+
+.schedule-box {
+  flex: 1;
+  background: #fff;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 0 8px rgba(0,0,0,0.05);
+  min-width: 300px;
+}
+
+.schedule-box h6 {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.schedule-box p {
+  margin-bottom: 12px;
+  color: #666;
+  font-size: 14px;
+}
+
+/* === SHOWTIME BUTTON === */
+.showtime-btn {
+  background-color: #34395e;
+  color: white;
+  padding: 8px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  border-radius: 6px;
+  margin-bottom: 6px;
+  transition: background-color 0.2s;
+}
+
+.showtime-btn:hover {
+  background-color: #2c3152;
+}
+
+/* === TAGS: Phụ đề, Lồng tiếng, 2D === */
+.tag {
+  display: inline-block;
+  padding: 2px 8px;
+  font-size: 12px;
+  border-radius: 5px;
+  margin-top: 3px;
+  color: white;
+  background-color: #000;
+}
+
+.tag.green {
+  background-color: #4CAF50;
+  margin-left: 5px;
+}
+
+.tag.voice {
+  background-color: #000;
+}
+
+/* === CALENDAR === */
+.datepicker {
+  flex: 1;
+  min-width: 250px;
+  background: #f4e9d6;
+  border-radius: 14px;
+  padding: 20px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.05);
+}
+
+.calendar-header {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.calendar-dates {
+  display: flex;
+  overflow-x: auto;
+  gap: 12px;
+}
+
+.calendar-date {
+  min-width: 60px;
+  padding: 10px 0;
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  text-align: center;
+  cursor: pointer;
+  font-weight: bold;
+  color: #333;
+  transition: background-color 0.2s;
+}
+
+.calendar-date:hover,
+.calendar-date.active {
+  background-color: #34395e;
+  color: white;
+  border-color: #34395e;
+}
+
+.steps {
+  margin-top: 10px;
+
+}
+
+.step.active {
+  background-color: #0fcd3b; /* 🌿 Màu xanh lá */
+  color: white;
+}
+
+
+
+/* ===== Responsive for screens under 600px ===== */
+@media (max-width: 600px) {
+  /* Rạp chiếu: ảnh và thông tin xếp dọc */
+  .cinema-box {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .cinema-box img {
+    width: 100%;
+    max-width: 300px;
+    margin-bottom: 15px;
+  }
+
+  /* Layout lịch chiếu và lịch ngày xếp dọc */
+  .schedule-section {
+    flex-direction: column;
+  }
+
+  .schedule-box, .datepicker {
+    width: 100%;
+  }
+
+  /* Nút giờ chiếu co lại */
+  .showtime-btn {
+    padding: 6px 14px;
+    font-size: 14px;
+  }
+
+  /* Tag thu nhỏ */
+  .tag {
+    font-size: 11px;
+    padding: 2px 6px;
+  }
+
+  /* Padding giảm bớt */
+  .cinema-box,
+  .schedule-box,
+  .datepicker {
+    padding: 15px;
+  }
+
+  /* Khoảng cách dọc giữa các showtime */
+  .schedule-box .text-center {
+    width: 48%;
+    margin-bottom: 15px;
+  }
+
+  .schedule-box .d-flex {
+    justify-content: center;
+  }
+
+  /* Calendar điều chỉnh padding và căn giữa */
+  .datepicker-inner {
+    padding: 10px;
+    text-align: center;
+  }
+
+  .calendar-date {
+    min-width: 44px;
+    font-size: 13px;
+    padding: 8px 0;
+  }
+
+  .steps {
+  margin-top: 10px;
+  justify-content: center;
+}
+
+.step.active {
+  background-color: #0fcd3b; /* 🌿 Màu xanh lá */
+  color: white;
+}
+
+
+}

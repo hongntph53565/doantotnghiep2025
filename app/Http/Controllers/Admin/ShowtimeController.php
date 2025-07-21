@@ -278,6 +278,7 @@ if ($request->status) {
     public function dele()
     {
         return view('Showtime.delete');
+
     }
     private function isOverlapping($roomId, $date, $newStart, $newEnd)
     {

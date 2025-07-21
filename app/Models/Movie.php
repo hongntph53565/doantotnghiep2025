@@ -25,6 +25,7 @@ class Movie extends Model
         'language',
         'description',
         'status'
+
     ];
 
     protected $dates = ['deleted_at'];

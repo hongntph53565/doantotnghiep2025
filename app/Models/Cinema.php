@@ -19,6 +19,7 @@ class Cinema extends Model
         'phone',
         'email',
         'status',
+
     ];
 
         public function rooms()

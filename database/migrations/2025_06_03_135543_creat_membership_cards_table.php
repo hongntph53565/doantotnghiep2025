@@ -14,6 +14,11 @@ return new class extends Migration
             $table->string('card_number')->unique();
             $table->enum('card_type', ['silver', 'gold', 'platinum'])->default('silver');
             $table->integer('points')->default(0);
+<<<<<<< HEAD
+=======
+            $table->timestamp('issued_date')->nullable();
+            $table->timestamp('expired_date')->nullable();
+>>>>>>> origin/hung
             $table->timestamps();
 
             $table->foreign('user_id')->references('user_id')->on('users')->onDelete('cascade');

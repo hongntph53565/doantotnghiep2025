@@ -15,6 +15,7 @@ return new class extends Migration
             $table->bigIncrements('showtime_id');
             $table->unsignedBigInteger('movie_id');
             $table->unsignedBigInteger('room_id');
+<<<<<<< HEAD
             $table->date('date');
             $table->time('start_time');
             $table->time('end_time');
@@ -23,6 +24,18 @@ return new class extends Migration
 
             $table->timestamps();
 
+<<<<<<< HEAD
+=======
+            // Khóa ngoại phải chỉ rõ tên cột và bảng nếu không theo chuẩn 'id'
+=======
+            $table->dateTime('show_date');
+            $table->decimal('price', 8, 2);
+            $table->enum('status', ['active', 'cancelled', 'sold_out'])->default('active');
+
+            $table->timestamps();
+
+>>>>>>> origin/hung
+>>>>>>> origin/haiyen
             $table->foreign('movie_id')->references('movie_id')->on('movies')->onDelete('cascade');
             $table->foreign('room_id')->references('room_id')->on('rooms')->onDelete('cascade');
         });

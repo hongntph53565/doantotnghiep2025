@@ -10,7 +10,7 @@ class Booking extends Model
 {
     protected $primaryKey = 'booking_id';
     use HasFactory;
-    
+
     protected $fillable = [
         'user_id',
         'showtime_id',
@@ -42,4 +42,5 @@ class Booking extends Model
                 ->withPivot('quantity')
                 ->withTimestamps();
 }
+
 }

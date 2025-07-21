@@ -15,6 +15,7 @@ class MailService
     {
 
         $userID = 1;
+
         try {
 
             $template = EmailTemplate::findOrFail($templateID);

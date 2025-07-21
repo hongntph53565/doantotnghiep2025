@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Events\PaymentEvents;
+
 use App\Http\Controllers\Controller;
 use App\Models\Booking;
 use App\Models\Payment;
@@ -58,6 +59,7 @@ class PayosController extends Controller
             ]);
             $payment['user_id'] = $booking['user_id'];
             event(new PaymentEvents($payment));
+
         }
 
         if (($allParams['cancel'] ?? 'false') !== 'true' && $booking['payment_method'] === "payos") {
