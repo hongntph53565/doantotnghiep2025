@@ -23,7 +23,6 @@ return new class extends Migration
 
             $table->timestamps();
 
-            // Khóa ngoại phải chỉ rõ tên cột và bảng nếu không theo chuẩn 'id'
             $table->foreign('movie_id')->references('movie_id')->on('movies')->onDelete('cascade');
             $table->foreign('room_id')->references('room_id')->on('rooms')->onDelete('cascade');
         });

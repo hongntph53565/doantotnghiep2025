@@ -29,13 +29,15 @@
                         alt="avatar">
                     <div class="lh-sm d-none d-md-block">
                         <div class="fw-semibold">Admin</div>
-                        <small class="text-muted text-uppercase" style="font-size: 11px;">Nguyễn Thị
-                            Hồng</small>
+                        <small class="text-muted text-uppercase" style="font-size: 11px;">
+                            {{ session('my_name') ?? 'Guest' }}
+                        </small>
+
                     </div>
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end">
                     <li><a class="dropdown-item" href="#">Thông tin tài khoản</a></li>
-                    <li><a class="dropdown-item" href="#">Đăng xuất</a></li>
+                    <li><a class="dropdown-item" href="{{ route('logout') }}">Đăng xuất</a></li>
                 </ul>
             </div>
         </div>

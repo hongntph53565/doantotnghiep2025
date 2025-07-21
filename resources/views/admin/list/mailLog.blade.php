@@ -4,13 +4,9 @@
     <div class="card border-0 shadow-sm mt-3">
         <div class="card-body">
             <div class="d-flex justify-content-between align-items-center mb-3">
-                <h6 class="fw-bold">Danh sách phòng chiếu</h6>
-                <button class="btn btn-success" onclick="window.location.href='create_room.html'">
-                    <i class="bi bi-plus-circle me-1"></i> Tạo phòng chiếu
-                </button>
+                <h6 class="fw-bold">Danh sách Mail đã gửi</h6>
             </div>
 
-            <!-- Bộ lọc trạng thái -->
             <div class="mb-3 d-flex flex-wrap gap-2">
 
                 <form action="{{ route('emaillog.index') }}" method="GET">
@@ -59,11 +55,11 @@
                                 </td>
                                 <td>{{ \Carbon\Carbon::parse($log->created_at)->format('d/m/Y H:i') }}</td>
                                 <td>
-                                    <a href="{{ route('emaillog.show', $log->id) }}"
+                                    <a href=""
                                         class="btn btn-outline-primary btn-sm me-1">
                                         <i class="bi bi-eye-fill"></i>
                                     </a>
-                                    <form action="{{ route('emaillog.destroy', $log->id) }}" method="POST" class="d-inline"
+                                    <form action="" method="POST" class="d-inline"
                                         onsubmit="return confirm('Xóa log này?')">
                                         @csrf
                                         @method('DELETE')

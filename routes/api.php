@@ -21,10 +21,8 @@ use App\Http\Controllers\PayosController;
 use App\Http\Controllers\VnpayController;
 use App\Http\Controllers\ZalopayController;
 
-use App\Http\Controllers\Api\CinemaController;
-use App\Http\Controllers\API\PromotionController;
 
-use App\Http\Controllers\PayosController;
+
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
