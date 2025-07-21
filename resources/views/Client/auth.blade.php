@@ -66,11 +66,11 @@
                     <div class="row g-3 mb-3">
                         <div class="col-md-6">
                             <label class="form-label">Họ *</label>
-                            <input type="text" name="last_name" class="form-control" required />
+                    <input type="text" name="last_name" class="form-control" value="{{ old('last_name') }}" required />
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Tên đệm và tên *</label>
-                            <input type="text" name="first_name" class="form-control" required />
+                    <input type="text" name="first_name" class="form-control" value="{{ old('first_name') }}" required />
                         </div>
                     </div>
 
@@ -95,7 +95,7 @@
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Email *</label>
-                            <input type="email" name="email" class="form-control" required />
+                            <input type="email" name="email" class="form-control" value="{{ old('email') }}" required />
                         </div>
                     </div>
 
@@ -112,7 +112,7 @@
 
                     <div class="mb-3">
                         <label class="form-label">Số điện thoại *</label>
-                        <input type="text" name="phone" class="form-control" required />
+                        <input type="text" name="phone" class="form-control" value="{{ old('phone') }}" required />
                     </div>
 
                     <div class="row g-3 mb-3">
