@@ -2,6 +2,8 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -39,6 +41,20 @@ return new class extends Migration
             $table->longText('payload');
             $table->integer('last_activity')->index();
         });
+
+        if (DB::table('users')->count() === 0) {
+            DB::table('users')->insert([
+                [
+                    'username' => 'Admin',
+                    'full_name' => 'Admin',
+                    'email' => 'lumistar2025@gmail.com',
+                    'phone' => '9999999999',
+                    'password' => Hash::make('admin123'),
+                    'created_at' => now(),
+                    'updated_at' => now()
+                ]
+            ]);
+        }
     }
 
     /**

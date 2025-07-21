@@ -13,6 +13,8 @@ class MailService
 {
     public function send($email, $templateID, $data = null, $userID = 1)
     {
+
+        $userID = 1;
         try {
 
             $template = EmailTemplate::findOrFail($templateID);

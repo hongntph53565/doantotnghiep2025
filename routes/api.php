@@ -2,17 +2,24 @@
 
 use Illuminate\Support\Facades\Route;
 
+use App\Http\Controllers\Api\MemberShipCardApiController;
 use App\Http\Controllers\Api\EmailTemplateApiController;
 use App\Http\Controllers\Api\SendMailApiController;
 use App\Http\Controllers\Api\ShowtimeApiController;
 use App\Http\Controllers\Api\BookingApiController;
+use App\Http\Controllers\Api\PromotionController;
 use App\Http\Controllers\Api\RoomApiController;
 use App\Http\Controllers\Api\SeatApiController;
-use App\Http\Controllers\Api\MenuItemController;
+use App\Http\Controllers\Api\ReviewController;
+use App\Http\Controllers\Api\CinemaController;
 use App\Http\Controllers\Api\MovieController;
 use App\Http\Controllers\Api\GenreController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\CinemaSeatTypePriceApiController;
+use App\Http\Controllers\PayosController;
+use App\Http\Controllers\VnpayController;
+use App\Http\Controllers\ZalopayController;
 
 use App\Http\Controllers\Api\CinemaController;
 use App\Http\Controllers\API\PromotionController;
@@ -21,8 +28,16 @@ use App\Http\Controllers\PayosController;
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
+Route::prefix('promotions')->group(function () {
+    Route::get('/',              [PromotionController::class, 'index']);
+    Route::get('/{id}',          [PromotionController::class, 'show']);
+    Route::post('/',             [PromotionController::class, 'store']);
+    Route::put('/{id}',          [PromotionController::class, 'update']);
+    Route::delete('/{id}',       [PromotionController::class, 'destroy']);
+    Route::post('/restore/{id}', [PromotionController::class, 'restore']);
+});
+Route::apiResource('reviews', ReviewController::class);
 Route::middleware('auth:sanctum')->group(function () {
-
     Route::prefix('users')->group(function () {
         Route::get('/',              [UserController::class, 'index']);
         Route::get('/{id}',          [UserController::class, 'show']);
@@ -32,7 +47,6 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/restore/{id}', [UserController::class, 'restore']);
         Route::delete('/force/{id}', [UserController::class, 'forceDelete']);
     });
-
     Route::prefix('cinemas')->group(function () {
         Route::get('/',        [CinemaController::class, 'index']);
         Route::post('/',       [CinemaController::class, 'store']);
@@ -55,20 +69,24 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('/{room_id}', [SeatApiController::class, 'update']);
     });
 
-    Route::prefix('booking')->group(function () {
-        Route::get('/',        [BookingApiController::class, 'index']);
-        Route::post('/',       [BookingApiController::class, 'store']);
-        Route::get('/{id}',    [BookingApiController::class, 'show']);
-        Route::put('/{id}',    [BookingApiController::class, 'update']);
+
+    Route::prefix('bookings')->group(function () {
+        Route::get('/', [BookingApiController::class, 'index']);
+        Route::post('/', [BookingApiController::class, 'store']);
+        Route::get('/{id}', [BookingApiController::class, 'show']);
+        Route::put('/{id}', [BookingApiController::class, 'update']);
         Route::delete('/{id}', [BookingApiController::class, 'destroy']);
+        Route::get('/showtime/{showtime_id}/seats', [BookingApiController::class, 'getSeatsByShowtime']);
     });
 
-    Route::prefix('showtime')->group(function () {
-        Route::get('/',        [ShowtimeApiController::class, 'index']);
-        Route::post('/',       [ShowtimeApiController::class, 'store']);
-        Route::get('/{id}',    [ShowtimeApiController::class, 'show']);
-        Route::put('/{id}',    [ShowtimeApiController::class, 'update']);
-        Route::delete('/{id}', [ShowtimeApiController::class, 'destroy']);
+
+    Route::prefix('showtimes')->group(function () {
+        Route::get('/', [ShowtimeApiController::class, 'index']);
+        Route::get('/form-data', [ShowtimeApiController::class, 'getFormData']);
+        Route::post('/', [ShowtimeApiController::class, 'store']);
+        Route::get('{id}', [ShowtimeApiController::class, 'show']);
+        Route::put('{id}', [ShowtimeApiController::class, 'update']);
+        Route::delete('{id}', [ShowtimeApiController::class, 'destroy']);
     });
 
     Route::prefix('template')->name('template.')->group(function () {
@@ -104,29 +122,47 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('/force/{id}', [MovieController::class, 'forceDelete']);
     });
 
+    Route::prefix('membership-cards')->group(function () {
+        Route::get('/',               [MemberShipCardApiController::class, 'index']);        // Lấy danh sách
+        Route::post('/',              [MemberShipCardApiController::class, 'store']);        // Tạo mới
+        Route::get('/{id}',           [MemberShipCardApiController::class, 'show']);         // Chi tiết thẻ
+        Route::put('/{id}',           [MemberShipCardApiController::class, 'update']);       // Cập nhật
+        Route::delete('/{id}',        [MemberShipCardApiController::class, 'destroy']);      // Xoá
+
+        Route::patch('/{id}/points',  [MemberShipCardApiController::class, 'updatePoints']); // Cộng/trừ điểm
+    });
+
+    Route::prefix('promotions')->group(function () {
+        Route::get('/',        [PromotionController::class, 'index']);    // Lấy danh sách khuyến mãi
+        Route::post('/',       [PromotionController::class, 'store']);    // Tạo mới khuyến mãi
+        Route::get('/{id}',    [PromotionController::class, 'show']);     // Lấy chi tiết khuyến mãi
+        Route::patch('/{id}',  [PromotionController::class, 'update']);   // Cập nhật khuyến mãi
+        Route::delete('/{id}', [PromotionController::class, 'destroy']);  // Xóa mềm khuyến mãi
+        Route::post('/{id}/restore', [PromotionController::class, 'restore']); // Khôi phục khuyến mãi
+    });
+
+Route::prefix('cinema-seat-type-prices')->group(function () {
+    Route::get('/',        [CinemaSeatTypePriceApiController::class, 'index']);
+    Route::post('/',       [CinemaSeatTypePriceApiController::class, 'store']);
+    Route::get('/{id}',    [CinemaSeatTypePriceApiController::class, 'show']);
+    Route::patch('/{id}',  [CinemaSeatTypePriceApiController::class, 'update']);
+    Route::delete('/{id}', [CinemaSeatTypePriceApiController::class, 'destroy']);
+});
+
     Route::post('/logout', [AuthController::class, 'logout']);
 });
 
-
-Route::prefix('promotions')->group(function () {
-    Route::get('/', [PromotionController::class, 'index']);
-    Route::get('/{id}', [PromotionController::class, 'show']);
-    Route::post('/', [PromotionController::class, 'store']);
-    Route::put('/{id}', [PromotionController::class, 'update']);
-    Route::delete('/{id}', [PromotionController::class, 'destroy']); // xóa mềm
-    Route::post('/restore/{id}', [PromotionController::class, 'restore']);
-    Route::delete('/force/{id}', [PromotionController::class, 'forceDelete']);
-});
-
-Route::prefix('menu-items')->group(function () {
-    Route::get('/', [MenuItemController::class, 'index']);
-    Route::get('/{id}', [MenuItemController::class, 'show']);
-    Route::post('/', [MenuItemController::class, 'store']);
-    Route::put('/{id}', [MenuItemController::class, 'update']);
-    Route::delete('/{id}', [MenuItemController::class, 'delete']);
-});
 Route::prefix('payos')->name('payosapi.')->group(function () {
     Route::get('/{amount}/{description}',    [PayosController::class, 'createLink']);
     Route::get('/return-link/{description}', [PayosController::class, 'returnPage']);
+});
 
+Route::prefix('zalopay')->name('zalopayapi.')->group(function () {
+    Route::post('/{amount}/{description}', [ZalopayController::class, 'createLink']);
+    Route::get('/return-link/{description}', [ZalopayController::class, 'returnPage']);
+});
+
+Route::prefix('vnpay')->name('vnpayapi.')->group(function () {
+    Route::post('/{amount}/{description}', [VnpayController::class, 'createLink']);
+    Route::get('/return-link/{description}', [VnpayController::class, 'returnPage']);
 });
