@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Staff\Cinema_StaffController;
 use App\Http\Controllers\CinemaController;
 use App\Http\Controllers\EmailTemplateController;
 use App\Http\Controllers\SendMailController;
@@ -21,12 +22,16 @@ use App\Http\Controllers\StaticController;
 use App\Http\Controllers\VnpayController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ZalopayController;
+use App\Http\Controllers\Client\TheaterController;
+use App\Http\Controllers\Client\BookingController as ClientBooking;
+use App\Http\Controllers\Staff\BookingController as StaffBooking;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [DashboardController::class, 'index'])->name('admin.dashboard');
 
 Route::get('/static', [StaticController::class, 'index'])->name('admin.static');
 
+Route::get('/booking1', [ClientBooking::class, 'step1']);
 Route::get('/home', [HomeController::class, 'home']);
 Route::get('/cart', [HomeController::class, 'index']);
 Route::get('/booking2', [HomeController::class, 'booking2']);
@@ -35,10 +40,12 @@ Route::get('/booking4', [HomeController::class, 'booking4']);
 Route::get('/', function () {
     // return response()->json(['message' => 'Backend OK']);
 });
-Route::get('/lich-chieu-phim', function () {
-    return view('Client.lichchieuphim');
-});
 
+
+
+Route::get('/lich-chieu-phim', function () {
+    return view('Client.lichchieuphim', compact('nowShowing', 'comingSoon'));
+});
 Route::get('/lich-chieu-theo-rap', function () {
     return view('Client.lichchieurap');
 });
@@ -52,6 +59,14 @@ Route::get('/thong-tin-rap', function () {
     return view('Client.thongtinrap');
 });
 
+Route::prefix('staff')->name('staff.')->group(function () {
+    Route::get('/', [Cinema_StaffController::class, 'index'])->name('index');
+    Route::get('/booking1', [StaffBooking::class, 'step1'])->name('booking1'); 
+    Route::get('/booking2', [StaffBooking::class, 'step2'])->name('booking2'); 
+    Route::get('/now-showing', [Cinema_StaffController::class, 'nowShowing'])->name('nowShowing');
+    Route::get('/coming-soon', [Cinema_StaffController::class, 'comingSoon'])->name('comingSoon');
+    Route::get('/coming-soon', [Cinema_StaffController::class, 'comingSoon'])->name('comingSoon');
+});
 
 Route::prefix('cinema')->name('cinemas.')->group(function () {
     Route::get('/',              [CinemaController::class, 'index'])->name('index');

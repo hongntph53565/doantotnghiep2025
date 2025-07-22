@@ -11,3 +11,34 @@
 .sidebar.collapsed ~ #mainContent .header {
     width: 92%;
 }
+
+
+@media (max-width: 992px) {
+  .header {
+    width: 100%;
+    left: 0;
+    padding: 0.8rem 1rem;
+  }
+
+  .sidebar.collapsed ~ #mainContent .header {
+    width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .header {
+    padding: 0.6rem 1rem;
+    font-size: 0.95rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .header {
+    padding: 0.5rem 0.8rem;
+    font-size: 0.9rem;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+}
+

@@ -13,11 +13,6 @@ return new class extends Migration
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('showtime_id');
             $table->enum('booking_status', ['pending', 'confirmed', 'cancelled'])->default('pending');
-<<<<<<< HEAD
-=======
-            $table->enum('payment_status', ['unpaid', 'paid'])->default('unpaid');
-            $table->enum('payment_method', ['cash', 'payos', 'momo'])->default('cash');
->>>>>>> origin/hung
             $table->string('booking_code')->unique();
             $table->unsignedInteger('total_price')->default(0);
             $table->timestamps();
