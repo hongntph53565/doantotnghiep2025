@@ -34,8 +34,8 @@ class AuthController extends Controller
             'role' => 2,
         ]);
 
-        event(New UserRegistered($user));
-        
+        event(new UserRegistered($user));
+
         $token = $user->createToken('api_token')->plainTextToken;
 
         return response()->json([
