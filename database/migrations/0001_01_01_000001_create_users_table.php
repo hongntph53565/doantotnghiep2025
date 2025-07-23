@@ -2,11 +2,9 @@
 // Then create the users migration (0001_create_users_table.php)
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-<<<<<<< HEAD
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-=======
->>>>>>> origin/hung
+
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -44,7 +42,6 @@ return new class extends Migration
             $table->longText('payload');
             $table->integer('last_activity')->index();
         });
-<<<<<<< HEAD
 
         if (DB::table('users')->count() === 0) {
             DB::table('users')->insert([
@@ -58,8 +55,7 @@ return new class extends Migration
                 'updated_at' => now()
             ]);
         }
-=======
->>>>>>> origin/hung
+
     }
 
     public function down(): void

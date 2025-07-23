@@ -1,5 +1,6 @@
 <?php
 
+
 use App\Http\Controllers\Admin\CinemaController;
 use App\Http\Controllers\Admin\EmailTemplateController;
 use App\Http\Controllers\Admin\SendMailController;
@@ -25,12 +26,15 @@ use App\Http\Controllers\Admin\ZalopayController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Client\HomeController;
 use App\Http\Controllers\Manager\DashboardController as ManagerDashboardController;
+use App\Http\Controllers\Staff\Cinema_StaffController;
+
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Client\CartController;
 use App\Http\Controllers\Client\ComboController;
 
 
+// Route::get('/booking1', [ClientBooking::class, 'step1']);
 Route::get('/home', [HomeController::class, 'home']);
 Route::get('/booking2', [HomeController::class, 'booking2']);
 Route::get('/booking3', [HomeController::class, 'booking3']);
@@ -241,8 +245,23 @@ Route::get('/profile', [AuthController::class, 'profile'])->name('profile');
 Route::get('/thong-tin-rap', function () {
     return view('Client.thongtinrap');
 });
-Route::get('/dat-ve', function () {
-    return view('Client.booking.home');
+
+Route::prefix('staff')->name('staff.')->group(function () {
+    Route::get('/', [Cinema_StaffController::class, 'index'])->name('index');
+    // Route::get('/booking1', [StaffBooking::class, 'step1'])->name('booking1');
+    // Route::get('/booking2', [StaffBooking::class, 'step2'])->name('booking2');
+    Route::get('/now-showing', [Cinema_StaffController::class, 'nowShowing'])->name('nowShowing');
+    Route::get('/coming-soon', [Cinema_StaffController::class, 'comingSoon'])->name('comingSoon');
+    Route::get('/coming-soon', [Cinema_StaffController::class, 'comingSoon'])->name('comingSoon');
+});
+
+Route::prefix('cinema')->name('cinemas.')->group(function () {
+    Route::get('/',              [CinemaController::class, 'index'])->name('index');
+    Route::get('/create',        [CinemaController::class, 'create'])->name('create');
+    Route::post('/store',        [CinemaController::class, 'store'])->name('store');
+    Route::get('/edit/{id}',     [CinemaController::class, 'edit'])->name('edit');
+    Route::post('/update/{id}',  [CinemaController::class, 'update'])->name('update');
+    Route::delete('/delete/{id}', [CinemaController::class, 'delete'])->name('delete');
 });
 
 Route::get('/lich-chieu-rap', [CinemaController::class, 'listCinemas'])->name('Client.cinemaShowtime');

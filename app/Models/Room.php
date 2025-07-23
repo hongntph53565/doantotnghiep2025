@@ -26,5 +26,9 @@ class Room extends Model
     {
         return $this->hasMany(Seat::class, 'room_id');
     }
-}
 
+    public function showtimes()
+    {
+        return $this->hasMany(Showtime::class, 'room_id');
+    }
+}
