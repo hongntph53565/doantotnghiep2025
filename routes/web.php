@@ -27,7 +27,8 @@ use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Client\HomeController;
 use App\Http\Controllers\Manager\DashboardController as ManagerDashboardController;
 use App\Http\Controllers\Staff\Cinema_StaffController;
-
+use App\Http\Controllers\Staff\StaffFoodController;
+use App\Http\Controllers\Staff\BookingSearchController;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Client\CartController;
@@ -253,6 +254,9 @@ Route::prefix('staff')->name('staff.')->group(function () {
     Route::get('/now-showing', [Cinema_StaffController::class, 'nowShowing'])->name('nowShowing');
     Route::get('/coming-soon', [Cinema_StaffController::class, 'comingSoon'])->name('comingSoon');
     Route::get('/coming-soon', [Cinema_StaffController::class, 'comingSoon'])->name('comingSoon');
+    Route::get('/foods', [StaffFoodController::class, 'index'])->name('index');
+    Route::get('/foods/{id}', [StaffFoodController::class, 'show'])->name('foods.show');
+    Route::get('/search-ticket-online', [BookingSearchController::class, 'search'])->name('search');
 });
 
 Route::prefix('cinema')->name('cinemas.')->group(function () {

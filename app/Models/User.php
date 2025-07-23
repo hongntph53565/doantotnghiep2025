@@ -23,7 +23,8 @@ class User extends Authenticatable
     'birth_day',
     'birth_month',
     'birth_year',
-    'role', // Thêm trường role nếu cần
+    'role',
+    'province',
 ];
 
 
