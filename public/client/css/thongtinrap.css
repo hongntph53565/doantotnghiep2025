@@ -1,0 +1,73 @@
+.cinema-title {
+    font-weight: bold;
+    margin: 20px 0;
+}
+
+.cinema-box {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.cinema-box img {
+    width: 100%;
+    height: auto;
+    border-radius: 4px;
+}
+
+.cinema-name {
+    margin: 10px 0;
+    font-weight: 500;
+    color: #333;
+}
+
+.btn-detail {
+    background-color: #7bc043;
+    color: white;
+    font-weight: 500;
+    border: none;
+}
+
+.btn-detail:hover {
+    background-color: #5fa334;
+}
+
+/* Dropdown riêng */
+.dropdown-menu.custom-dropdown {
+    background-color: rgba(0, 0, 0, 0.6);
+    border-radius: 10px;
+}
+
+.dropdown-menu.custom-dropdown a {
+    color: #f1f1f1;
+    font-weight: 500;
+}
+.dropdown-menu.custom-dropdown a:hover {
+    color: #7bc043;
+    background-color: transparent;
+}
+
+/* Mạng xã hội */
+.social-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    font-size: 24px;
+    color: white;
+    text-decoration: none;
+}
+
+.social-icon.facebook {
+    background-color: #1877f2;
+}
+.social-icon.instagram {
+    background-color: #e1306c;
+}
+.social-icon.tiktok {
+    background-color: #000;
+}
+.social-icon.youtube {
+    background-color: #ff0000;
+}

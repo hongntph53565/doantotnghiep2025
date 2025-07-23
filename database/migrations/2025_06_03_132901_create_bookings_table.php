@@ -14,6 +14,7 @@ return new class extends Migration
             $table->unsignedBigInteger('showtime_id');
             $table->enum('booking_status', ['pending', 'confirmed', 'cancelled'])->default('pending');
             $table->string('booking_code')->unique();
+            $table->enum('payment_method', ['cash', 'payos', 'zalopay', 'vnpay']);
             $table->unsignedInteger('total_price')->default(0);
             $table->timestamps();
 

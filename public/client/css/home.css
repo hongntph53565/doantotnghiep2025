@@ -1,0 +1,310 @@
+ h2.title {
+     text-align: center;
+     margin-bottom: 30px;
+ }
+
+ .slider-container {
+     width: 100%;
+     max-width: 1400px;
+     margin: 0 auto;
+ }
+
+ .swiper {
+     width: 100%;
+     height: auto;
+ }
+
+ .swiper-slide {
+     border-radius: 10px;
+     padding: 10px;
+     text-align: center;
+     transition: 0.8s ease;
+     height: 500px;
+     width: 260px;
+     display: flex;
+     flex-direction: column;
+     justify-content: flex-start;
+ }
+
+ .swiper-slide img {
+     width: 100%;
+     height: 360px;
+     object-fit: cover;
+     border-radius: 10px;
+ }
+
+ .info {
+     margin-top: 10px;
+     flex: 1;
+     display: flex;
+     flex-direction: column;
+     justify-content: flex-start;
+     text-align: left;
+ }
+
+ .swiper-slide h4 {
+     font-size: 15px;
+     margin: 5px 0;
+     font-weight: bold;
+     line-height: 20px;
+     height: 20px;
+     /* Chiều cao đúng bằng 1 dòng */
+     overflow: hidden;
+     white-space: nowrap;
+     text-overflow: ellipsis;
+ }
+
+
+ .swiper-slide p {
+     font-size: 14px;
+     margin: 0;
+ }
+
+ .labels {
+     margin-bottom: 5px;
+ }
+
+ .label {
+     display: inline-block;
+     font-size: 12px;
+     padding: 3px 6px;
+     margin-right: 4px;
+     border-radius: 4px;
+     color: #fff;
+     font-weight: bold;
+ }
+
+ .label.age {
+     background: #a00;
+ }
+
+ .label.subtitle {
+     background: #000;
+ }
+
+ .label.type {
+     background: #0a0;
+ }
+
+ .tag {
+     font-weight: bold;
+ }
+
+ .tag.horror {
+     color: red;
+ }
+
+ .tag.family {
+     color: green;
+ }
+
+ .swiper-pagination-bullet {
+     width: 12px;
+     height: 12px;
+     margin: 0 6px !important;
+     background-color: #bbb;
+     border-radius: 50%;
+     opacity: 1;
+     transition: 0.3s ease;
+ }
+
+ .swiper-pagination-bullet-active {
+     background-color: #72BE43;
+     transform: scale(1.2);
+ }
+
+ .swiper-button-next,
+ .swiper-button-prev {
+     color: #fff;
+     padding: 10px;
+     border-radius: 50%;
+     width: 90px;
+     height: 90px;
+     top: 45%;
+     transform: translateY(-50%);
+     opacity: 0;
+     pointer-events: none;
+     transition: all 0.3s ease;
+ }
+
+ .swiper-button-next::after,
+ .swiper-button-prev::after {
+     font-size: 50px;
+     font-weight: bolder;
+ }
+
+ /* Khi hover vào container thì hiện nút */
+ .slider-container:hover .swiper-button-next,
+ .slider-container:hover .swiper-button-prev {
+     opacity: 1;
+     pointer-events: auto;
+ }
+
+ .movie-img {
+     position: relative;
+     overflow: hidden;
+     border-radius: 10px;
+     transition: box-shadow 0.3s ease;
+ }
+
+ .movie-img:hover {
+     box-shadow: 0 8px 12px 0 #99CE78;
+ }
+
+
+ .movie-img img {
+     width: 100%;
+     height: 360px;
+     object-fit: cover;
+     border-radius: 10px;
+ }
+
+ .movie-box {
+     flex: 1;
+     display: flex;
+     flex-direction: column;
+     justify-content: space-between;
+ }
+
+ .play-button,
+ .buy-button {
+     position: absolute;
+     opacity: 0;
+     transition: 0.3s ease;
+     z-index: 2;
+     text-decoration: none;
+ }
+
+ /* PLAY BUTTON */
+ .play-button {
+     top: 50%;
+     left: 50%;
+     transform: translate(-50%, -50%);
+     width: 50px;
+     height: 50px;
+     border-radius: 50%;
+     border: 3px solid white;
+     display: flex;
+     align-items: center;
+     justify-content: center;
+ }
+
+ .play-button::before {
+     content: '';
+     width: 0;
+     height: 0;
+     border-left: 14px solid white;
+     border-top: 8px solid transparent;
+     border-bottom: 8px solid transparent;
+ }
+
+ /* BUY BUTTON */
+ .buy-button {
+     position: absolute;
+     bottom: 15px;
+     left: 50%;
+     transform: translateX(-50%);
+     background-color: #a3dfb4;
+     color: white;
+     font-weight: bold;
+     font-size: 15px;
+     text-transform: uppercase;
+     padding: 12px 24px;
+     border-radius: 10px;
+     display: inline-flex;
+     align-items: center;
+     justify-content: center;
+     gap: 10px;
+     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+     opacity: 0;
+     transition: 0.3s;
+     cursor: pointer;
+     white-space: nowrap;
+     /* ✅ ép nằm cùng 1 dòng */
+     text-decoration: none;
+ }
+
+
+ .buy-button img {
+     width: 20px;
+     height: 20px;
+     margin-bottom: 2px;
+ }
+
+ .buy-button:hover {
+     background-color: #72BE43;
+ }
+
+ /* HOVER VÀO ẢNH MỚI HIỆN NÚT */
+ .movie-img:hover .play-button,
+ .movie-img:hover .buy-button {
+     opacity: 1;
+ }
+
+ .trailer-overlay {
+     position: fixed;
+     top: 0;
+     left: 0;
+     width: 100vw;
+     height: 100vh;
+     background: rgba(0, 0, 0, 0.8);
+     display: none;
+     align-items: center;
+     justify-content: center;
+     z-index: 9999;
+ }
+
+ .trailer-content {
+     position: relative;
+     width: 80%;
+     max-width: 800px;
+     aspect-ratio: 16/9;
+     background: #000;
+     box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+     z-index: 10000;
+ }
+
+ .trailer-content iframe {
+     width: 100%;
+     height: 100%;
+     border: none;
+     display: block;
+ }
+
+ .close-btn {
+     position: absolute;
+     top: -14px;
+     right: -14px;
+     background: #fff;
+     color: #000;
+     border: none;
+     font-size: 22px;
+     border-radius: 50%;
+     width: 36px;
+     height: 36px;
+     cursor: pointer;
+     z-index: 10001;
+     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+     /* display: block !important; */
+ }
+
+ #trailerOverlay .trailer-content .close-btn {
+     display: block;
+ }
+
+ .btn1 {
+     background-color: white;
+     border: none;
+     padding: 8px 20px;
+     border-radius: 10px;
+     font-weight: bold;
+     cursor: pointer;
+     margin: 50px auto;
+     margin-bottom: 50px;
+     display: block;
+     color: #63be2c;
+     border: 1px solid #63be2c;
+     font-size: 18px;
+ }
+
+ 
