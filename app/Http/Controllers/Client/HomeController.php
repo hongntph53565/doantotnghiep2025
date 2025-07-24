@@ -187,20 +187,23 @@ return view('Client.MovieShowtimesByCinema', compact('cinema', 'showtimes', 'dat
 
 
 
-    public function Showtimes()
-    {
-        $nowShowing = Movie::with('genre')
-            ->where('status', 'active')
-            ->orderBy('created_at', 'desc')
-            ->get();
+   
+public function Showtimes()
+{
+    $today = Carbon::today();
 
-        $comingSoon = Movie::with('genre')
-            ->where('status', 'inactive')
-            ->orderBy('created_at', 'desc')
-            ->get();
+    $nowShowing = Movie::with('genre')
+        ->whereDate('release_date', '<=', $today)
+        ->orderBy('release_date', 'desc')
+        ->get();
 
-        return view('Client.MovieShowtimes', compact('nowShowing', 'comingSoon'));
-    }
+    $comingSoon = Movie::with('genre')
+        ->whereDate('release_date', '>', $today)
+        ->orderBy('release_date', 'asc')
+        ->get();
+
+    return view('Client.MovieShowtimes', compact('nowShowing', 'comingSoon'));
+}
 
 
     public function loadShowtimes(Request $request)
