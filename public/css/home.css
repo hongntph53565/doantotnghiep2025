@@ -32,6 +32,26 @@
             object-fit: cover;
             border-radius: 10px;
         }
+.movie-title {
+    display: block;
+    width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-weight: bold;
+    font-size: 16px;
+    text-align: left;
+    color: #72BE43; /* màu xanh nổi bật giống mẫu */
+    margin: 5px 0;
+    line-height: 22px;
+    height: 22px;
+    cursor: pointer;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+
 
         .info {
             margin-top: 10px;
@@ -64,34 +84,37 @@
             margin-bottom: 5px;
         }
 
-        .label {
-            display: inline-block;
-            font-size: 12px;
-            padding: 3px 6px;
-            margin-right: 4px;
-            border-radius: 4px;
-            color: #fff;
-            font-weight: bold;
-        }
+       .label {
+    display: inline-block;
+    font-size: 12px;
+    padding: 3px 6px;
+    margin-right: 4px;
+    border-radius: 4px;
+    color: #fff;
+    font-weight: bold;
+}
 
-        .label.age {
-            background: #a00;
-        }
+/* Thẻ tuổi - ví dụ: T16 */
+.label.age {
+    background: linear-gradient(to bottom, #ff4d4d, #a00); /* đỏ bóng */
+}
 
-        .label.subtitle {
-            background: #000;
-        }
-
-        .label.type {
-            background: #0a0;
-        }
+.label.subtitle {
+    background: #000;
+    border: 1px solid rgba(247, 232, 147, 0.795);
+    font-weight: normal; /* Ghi đè lại không in đậm */
+}
+/* Thẻ định dạng - ví dụ: 2D */
+.label.type {
+    background: linear-gradient(to bottom, #5fd26f, #2ca551); /* xanh bóng */
+}
 
         .tag {
             font-weight: bold;
         }
 
         .tag.horror {
-            color: red;
+            color: #72BE43;
         }
 
         .tag.family {

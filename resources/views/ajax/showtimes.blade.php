@@ -12,7 +12,7 @@
             <img src="{{ asset('images/logo.jpg') }}" alt="Logo rạp" width="60" class="me-3" style="object-fit: contain;">
             <div>
                 <h6 class="fw-bold mb-1">{{ $cinema->name }}</h6>
-                <p class="text-muted mb-0">{{ $cinema->full_address }}</p>
+                <p class="text-muted mb-0">{{ $cinema->address_detail }}</p>
             </div>
         </div>
 
@@ -26,7 +26,7 @@
                         {{ \Carbon\Carbon::parse($showtime->start_time)->format('H:i') }}
                     </button>
                     <div class="tag">{{ $movie->language ?? 'Phụ đề' }}</div>
-                    <div class="tag green">{{ $movie->format ?? '2D' }}</div>
+                    <div class="tag green">{{ $movie->format ?? '' }}</div>
                 </div>
             @endforeach
         </div>

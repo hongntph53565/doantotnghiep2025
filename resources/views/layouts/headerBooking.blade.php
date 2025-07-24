@@ -228,8 +228,101 @@
             width: 100%;
             max-width: 1140px;
         }
+        
+        .auth-hover-parent {
+            position: relative;
+            margin-left: 20px;
+        }
+
+        .auth-hover-box {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            width: 320px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            display: none;
+            z-index: 1000;
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .auth-hover-parent:hover .auth-hover-box {
+            display: block;
+        }
+
+        .auth-hover-box form {
+            margin-bottom: 8px;
+        }
+
+        .auth-hover-box input {
+            background: white;
+            color: black;
+            border-radius: 6px;
+            font-size: 14px;
+            padding: 8px 12px;
+        }
+
+        .auth-hover-box button {
+            width: 100%;
+            border-radius: 6px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .auth-hover-box .mb-2 label {
+            font-weight: 500;
+            font-size: 13px;
+            margin-bottom: 4px;
+        }
+
+        .auth-hover-box a {
+            font-size: 12px;
+            color: white;
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .auth-hover-box a:hover {
+            color: #4caf50;
+        }
+
+        .auth-hover-box button.btn-success {
+            background: #87d8a6;
+            border: none;
+            transition: background 0.3s ease, transform 0.2s ease;
+        }
+
+        .auth-hover-box button.btn-success:hover {
+            background: #6ec893;
+            transform: translateY(-2px);
+        }
+
+        .auth-hover-box button.btn-primary {
+            background: #4caf50;
+            border: none;
+            transition: background 0.3s ease, transform 0.2s ease;
+        }
+
+        .auth-hover-box button.btn-primary:hover {
+            background: #43a047;
+            transform: translateY(-2px);
+        }
+
+        footer a:hover {
+            color: #8bc34a !important;
+            transition: 0.3s;
+        }
+
+        footer a.social-icon:hover {
+            color: white !important;
+        }
+        
     </style>
     @stack('styles')
+    
 </head>
 
 <body>
@@ -271,10 +364,73 @@
                     </ul>
                 </div>
 
-                <a href="{{ url('/profile') }}" class="text-decoration-none text-dark d-flex align-items-center">
-                    <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" width="24" class="me-2">
-                    <span>Gia Hưng / <strong>Thoát</strong></span>
-                </a>
+                @if (Auth::check())
+                 <a href="{{ url('/profile') }}" class="text-decoration-none text-dark">
+                    <div class="d-flex align-items-center ms-3">
+                        <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" width="24" class="me-1">
+                        <span>{{ Auth::user()->full_name }} /
+                            <strong>
+                                <a href="#"
+                                    onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
+                                    class="text-dark text-decoration-none">Thoát</a>
+                            </strong>
+                        </span>
+                    </div>
+ </a>
+                    <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                        @csrf
+                    </form>
+                @else
+                    <div class="auth-hover-parent">
+                        <button class="btn btn-success">Đăng nhập/Đăng ký</button>
+
+                        <div class="auth-hover-box">
+                            <form action="{{ route('login') }}" method="POST">
+                                @csrf
+                                <div class="mb-2">
+                                    <label>Email *</label>
+                                    <input type="email" name="email" class="form-control" required>
+                                </div>
+                                <div class="mb-2">
+                                    <label>Mật khẩu *</label>
+                                    <input type="password" name="password" class="form-control" required>
+                                </div>
+                                <div class="mb-2 text-end">
+                                    <a href="#" class="small text-white">Quên mật khẩu?</a>
+                                </div>
+                                <button type="submit" class="btn btn-success mb-2">Đăng nhập</button>
+                            </form>
+
+                            <a href="{{ route('register.form') }}" class="btn btn-primary w-100">Đăng ký thành
+                                viên</a>
+
+                        </div>
+                        <script>
+                            document.getElementById("registerForm").addEventListener("submit", function(e) {
+                                e.preventDefault();
+                                const formData = new FormData(this);
+
+                                fetch("{{ route('register') }}", {
+                                        method: "POST",
+                                        body: formData,
+                                        headers: {
+                                            'X-Requested-With': 'XMLHttpRequest',
+                                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                                        }
+                                    })
+                                    .then(res => res.json())
+                                    .then(data => {
+                                        if (data.message === "Đăng ký thành công") {
+                                            window.location.href = "{{ route('login.form') }}";
+                                        } else {
+                                            alert(data.message || "Có lỗi xảy ra!");
+                                        }
+                                    })
+                                    .catch(err => console.error(err));
+                            });
+                        </script>
+                    </div>
+                @endif
             </div>
         </div>
     </header>
@@ -359,7 +515,22 @@
 
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
+    @stack('scripts')
+</body>
+
+</html>
+
+
+
+
+
+
+
+
+
+
+
+ <script>
     document.addEventListener("DOMContentLoaded", function () {
         const logoLink = document.getElementById("logo-link");
         if (logoLink) {
@@ -371,7 +542,3 @@
         }
     });
 </script>
-    @stack('scripts')
-</body>
-
-</html>

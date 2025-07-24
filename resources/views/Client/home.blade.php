@@ -10,7 +10,8 @@
 
 
 @section('content')
-    <div id="bannerCarousel" class="carousel slide mt-4" data-bs-ride="carousel">
+    <div id="bannerCarousel" class="carousel slide" data-bs-ride="carousel">
+
 
         <!-- ✅ Dot Indicators -->
         <div class="carousel-indicators">
@@ -70,8 +71,10 @@
                             <div class="movie-img">
                                 <img src="{{ asset('storage/' . $movie->poster) }}" alt="{{ $movie->title }}">
 
-                                <a href="javascript:void(0);" class="play-button" onclick="openTrailer(this)"
-                                    data-trailer="{{ $movie->trailer }}"></a>
+                                @if (!empty($movie->trailer))
+                                    <a href="javascript:void(0);" class="play-button" onclick="openTrailer(this)"
+                                        data-trailer="{{ $movie->trailer }}"></a>
+                                @endif
 
                                 <a href="{{ route('Client.booking.home', ['movie_id' => $movie->movie_id]) }}"
                                     class="buy-button">
@@ -82,10 +85,10 @@
                             <div class="info">
                                 <div class="labels">
                                     <span class="label age">{{ $movie->age_rating }}</span>
-                                    <span class="label subtitle">PHỤ ĐỀ</span>
+                                    <span class="label subtitle">{{ $movie->language }}</span>
                                     <span class="label type">{{ $movie->format }}</span>
                                 </div>
-                                <h4>{{ $movie->title }}</h4>
+                                <h4 class="movie-title" title="{{ $movie->title }}">{{ $movie->title }}</h4>
                                 <p>Thể loại phim: <span
                                         class="tag horror">{{ $movie->genre->genre_name ?? 'Không rõ' }}</span></p>
                             </div>
@@ -110,11 +113,16 @@
     <script>
         function openTrailer(el) {
             const url = el.getAttribute("data-trailer");
+            if (!url) {
+                alert("Phim này chưa có trailer!");
+                return;
+            }
             const overlay = document.getElementById("trailerOverlay");
             const iframe = document.getElementById("trailerIframe");
             iframe.src = url + "?autoplay=1";
             overlay.style.display = "flex";
         }
+
 
         function closeTrailer() {
             const overlay = document.getElementById("trailerOverlay");

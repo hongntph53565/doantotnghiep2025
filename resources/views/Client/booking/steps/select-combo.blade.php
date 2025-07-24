@@ -7,7 +7,8 @@
             @if (isset($foods) && count($foods))
                 @foreach ($foods as $type => $items)
                     @foreach ($items as $food)
-                        <div class="combo-item mb-3" data-price="{{ $food->price }}">
+                        <div class="combo-item mb-3" data-id="{{ $food->food_id }}" data-price="{{ $food->price }}">
+
                             <div class="col">
                                 <img src="{{ asset('storage/' . $food->image) }}" alt="{{ $food->name }}">
                                 <div class="row">
@@ -31,27 +32,35 @@
         </div>
 
         <div class="right-box">
-            <h3 style="font-weight: bold;">
-                {{ $selectedShowtime->room->cinema->name ?? 'Tên rạp' }}
-            </h3>
+              <h3 style="font-weight: bold;">{{ $selectedShowtime->room->cinema->name ?? 'Tên rạp' }}</h3>
             <p>
                 <strong style="color: #67B72F;">{{ $selectedShowtime->room->room_name ?? 'Phòng chiếu' }}</strong>
-                <span>
-                    -
-                    {{ optional($selectedShowtime)->date ? \Carbon\Carbon::parse($selectedShowtime->date)->format('d/m/Y') : 'Ngày chiếu' }}
-                    - Suất chiếu:
-                    {{ optional($selectedShowtime)->start_time ? \Carbon\Carbon::parse($selectedShowtime->start_time)->format('H:i') : 'Giờ' }}
-                </span>
+                @if ($selectedShowtime)
+                    <span>
+                        - {{ \Carbon\Carbon::parse($selectedShowtime->date)->format('d/m/Y') }}
+                        - Suất chiếu: {{ \Carbon\Carbon::parse($selectedShowtime->start_time)->format('H:i') }}
+                    </span>
+                @else
+                    <span> - Ngày chiếu - Suất chiếu: giờ </span>
+                @endif
+
             </p>
-            <p class="title">{{ $movie->title ?? 'Tên phim' }}</p>
+            <p class="title" style="color: #67B72F; font-weight: bold; font-size: 20px;">
+                {{ $movie->title ?? 'Tên phim' }}
+            </p>
+
             <p>
                 <span
-                    style="background: #0096FF; color: white; padding: 2px 6px; border-radius: 4px; font-size: 12px;">{{ $movie->rated ?? 'P' }}</span>
+                    style="background: #0096FF; color: white; padding: 2px 6px; border-radius: 4px; font-size: 12px; margin-right: 6px;">
+                    {{ $movie->age_rating ?? 'P' }}
+                </span>
                 <span
-                    style="background: black; color: white; padding: 2px 6px; border-radius: 4px; font-size: 12px;">PHỤ
-                    ĐỀ</span>
-                <span
-                    style="background: green; color: white; padding: 2px 6px; border-radius: 4px; font-size: 12px;">2D</span>
+                    style="background: black; color: white; padding: 2px 6px; border-radius: 4px; font-size: 12px; margin-right: 6px;">
+                    {{ $movie->language ?? 'Phụ đề' }}
+                </span>
+                <span style="background: green; color: white; padding: 2px 6px; border-radius: 4px; font-size: 12px;">
+                    {{ $movie->format ?? '2D' }}
+                </span>
             </p>
             <p class="info" id="seat-info">Đang tải ghế...</p>
             <hr>

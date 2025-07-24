@@ -6,10 +6,10 @@
 @endpush
 
 @push('styles')
-    <link rel="stylesheet" href="{{ asset('css/movie_details.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/chonghe.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/chondoan.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/thanhtoan.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/MovieDetails.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/ChooseSeat.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/ChooseFood.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/Payment.css') }}">
 @endpush
 
 
@@ -22,25 +22,18 @@
         <div class="cinema-box">
             <img src="{{ asset('storage/' . $movie->poster) }}" alt="{{ $movie->title }}" width="200" />
             <div>
-                <h6>{{ $movie->title }}</h6>
+                <h6 class="movie-title">{{ $movie->title }}</h6>
                 <p class="mb-1 cinema-info">{{ $movie->description }}</p>
 
-                <p class="mb-1 cinema-info"><strong>Phân loại:</strong>
-                    <span class="tag">{{ $movie->age_rating ?? 'Không rõ' }}</span>
-                </p>
 
-                <p class="mb-1 cinema-info"><strong>Định dạng:</strong>
-                    <span class="tag">{{ $movie->format ?? 'Không rõ' }}</span>
-                </p>
-
-                <p class="mb-1 cinema-info"><strong>Đạo diễn:</strong> {{ $movie->director ?? 'Đang cập nhật' }}</p>
-                <p class="mb-1 cinema-info"><strong>Diễn viên:</strong> {{ $movie->cast ?? 'Đang cập nhật' }}</p>
-                <p class="mb-1 cinema-info"><strong>Thể loại:</strong> {{ $movie->genre->genre_name ?? 'Không rõ' }}</p>
+                <p class="mb-1 cinema-info"><strong>Đạo diễn:</strong><span> {{ $movie->director ?? '' }}</span></p>
+                <p class="mb-1 cinema-info"><strong>Diễn viên:</strong><span> {{ $movie->cast ?? '' }}</span></p>
+                <p class="mb-1 cinema-info"><strong>Thể loại:</strong><span>  {{ $movie->genre->genre_name ?? 'Không rõ' }}</span></p>
                 <p class="mb-1 cinema-info"><strong>Khởi chiếu:</strong>
                     {{ \Carbon\Carbon::parse($movie->release_date)->format('d/m/Y') }} |
                     <strong>Thời lượng:</strong> {{ $movie->duration }} phút
                 </p>
-                <p class="mb-1 cinema-info"><strong>Ngôn ngữ:</strong> {{ $movie->language ?? 'Không rõ' }}</p>
+                {{-- <p class="mb-1 cinema-info"><strong>Ngôn ngữ:</strong> {{ $movie->language ?? 'Không rõ' }}</p> --}}
 
                 <button class="btn btn-outline-success btn-sm mt-1" onclick="clearSessionAndGoHome()">
                     → CHỌN PHIM KHÁC

@@ -311,10 +311,11 @@ function updateFoodTotalAndList() {
     document.querySelectorAll(".combo-item").forEach(combo => {
         const qty = parseInt(combo.querySelector(".number").textContent);
         const price = parseInt(combo.dataset.price);
+        const foodId = parseInt(combo.dataset.id); // <- lấy id ở đây
         const name = combo.querySelector(".combo-title")?.textContent.trim();
 
         if (qty > 0) {
-            foodList.push({ name, qty, price, total: qty * price });
+            foodList.push({ food_id: foodId, name, qty, price, total: qty * price }); // <- thêm food_id
             foodTotal += qty * price;
         }
     });
@@ -328,8 +329,9 @@ function updateFoodTotalAndList() {
 
     sessionStorage.setItem("foodTotal", foodTotal);
     sessionStorage.setItem("finalTotal", finalTotal);
-    sessionStorage.setItem("selectedFoods", JSON.stringify(foodList)); // Bổ sung dòng này
+    sessionStorage.setItem("selectedFoods", JSON.stringify(foodList));
 }
+
 
 
 function renderSelectedFoodList(foodList) {
@@ -410,14 +412,14 @@ document.addEventListener("DOMContentLoaded", function () {
     const urlParams = new URLSearchParams(window.location.search);
     const fromURL = urlParams.get("showtime_id");
 
-    if (fromURL) {
-        localStorage.setItem("selectedShowtimeId", fromURL);
-        localStorage.setItem("currentStep", 1);
-        goToStep(1);
-    } else {
-        localStorage.setItem("currentStep", 0);
-        goToStep(0);
-    }
+   if (fromURL) {
+    localStorage.setItem("selectedShowtimeId", fromURL);
+    localStorage.setItem("currentStep", 1);
+    setTimeout(() => goToStep(1), 0);  // delay 1 tick
+} else {
+    localStorage.setItem("currentStep", 0);
+    setTimeout(() => goToStep(0), 0);  // delay 1 tick
+}
 
     renderCalendar(currentMonth, currentYear);
 
@@ -456,63 +458,7 @@ function fetchShowtimesByDate(dateObj) {
 }
 
 
-// document.addEventListener("DOMContentLoaded", function () {
-//     const combos = document.querySelectorAll(".combo-item");
 
-//     combos.forEach(combo => {
-//         const plusBtn = combo.querySelector(".plus");
-//         const minusBtn = combo.querySelector(".minus");
-//         const quantitySpan = combo.querySelector(".number");
-
-//         plusBtn.onclick = () => {
-//             let qty = parseInt(quantitySpan.textContent);
-//             qty++;
-//             quantitySpan.textContent = qty;
-//             updateFoodTotalAndList();
-//         };
-
-//         minusBtn.onclick = () => {
-//             let qty = parseInt(quantitySpan.textContent);
-//             if (qty > 0) qty--;
-//             quantitySpan.textContent = qty;
-//             updateFoodTotalAndList();
-//         };
-//     });
-
-//     const urlParams = new URLSearchParams(window.location.search);
-//     const fromURL = urlParams.get("showtime_id");
-
-//     if (fromURL) {
-//         localStorage.setItem("selectedShowtimeId", fromURL);
-//         localStorage.setItem("currentStep", 1);
-//         goToStep(1);
-//     } else {
-//         localStorage.setItem("currentStep", 0);
-//         goToStep(0);
-//     }
-
-//     renderCalendar(currentMonth, currentYear);
-
-//     const offsetDate = new Date(selectedDate.getTime() - selectedDate.getTimezoneOffset() * 60000);
-//     const selectedDateString = offsetDate.toISOString().split("T")[0];
-
-//     fetch(`/ajax/showtimes?movie_id=${movieIdGlobal}&date=${selectedDateString}`)
-//         .then(res => res.text())
-//         .then(html => {
-//             document.querySelector(".schedule-box").innerHTML = html;
-//             document.querySelectorAll(".showtime-btn").forEach(button => {
-//                 button.addEventListener("click", function () {
-//                     const showtimeId = this.getAttribute("data-showtime-id");
-//                     const url = new URL(window.location.href);
-//                     url.searchParams.set("showtime_id", showtimeId);
-//                     window.location.href = url.toString();
-//                 });
-//             });
-//         });
-
-//     renderSeatInfo();
-//     updateFoodTotalAndList();
-// });
 
 
 

@@ -14,9 +14,7 @@ use Illuminate\Support\Facades\DB;
 class BookingController extends Controller
 {
 
-    public function __construct()
-    {
-    }
+    public function __construct() {}
 
     public function index()
     {
@@ -24,81 +22,58 @@ class BookingController extends Controller
         return view('Booking.index', compact('bookings'));
     }
 
-    public function create()
-    {
-        $movies = Movie::all();
-        $showtimes = Showtime::with('room')->get();
-        $seats = ShowtimeSeat::all();
-        return view('Booking.create', compact('movies', 'showtimes', 'seats'));
+public function store(Request $request, BookingService $bookingService)
+{
+    $data = $request->validate([
+        'user_id'        => 'required|exists:users,user_id',
+        'showtime_id'    => 'required|exists:showtimes,showtime_id',
+        'booking_code'   => 'unique:bookings,booking_code',
+        'payment_method' => 'required|in:cash,payos,zalopay,vnpay',
+        'total_price'    => 'required|numeric|min:1',
+        'seats_id'       => 'required|string',    
+        'selected_foods' => 'nullable|string',
+    ]);
+
+    $selectedFoods = json_decode($data['selected_foods'], true) ?? [];
+    $seatIds = json_decode($data['seats_id'], true);
+
+    if (!is_array($seatIds)) {
+        return back()->withErrors(['seats_id' => 'Định dạng seats_id không hợp lệ.']);
     }
 
-    public function store(Request $request, BookingService $bookingService)
-    {
-        $data = $request->validate([
-            'user_id' => 'required|exists:users,user_id',
-            'showtime_id' => 'required|exists:showtimes,showtime_id',
-            'booking_status' => 'required|in:pending,confirmed,cancelled',
-            'payment_method' => 'required|in:cash,payos,zalopay,vnpay',
-            'payment_status' => 'required|in:unpaid,paid',
-            'booking_code' => 'unique:bookings,booking_code',
-            'total_price' => 'required|numeric|min:1',
-            'seats_id' => 'required|array',
-        ]);
+    $data['booking_code'] = strtoupper(substr(md5(time()), 0, 9));
+    $booking = Booking::create([
+        'user_id'        => $data['user_id'],
+        'showtime_id'    => $data['showtime_id'],
+        'booking_code'   => $data['booking_code'],
+        'total_price'    => $data['total_price'],
+        'payment_method' => $data['payment_method'],
+    ]);
 
-        $data['booking_code'] = strtoupper(substr(md5(time()), 0, 9));
-        $booking = Booking::create($data);
+    $bookingService->createSeats($booking, $seatIds);
+    $bookingService->attachFoodsToBooking($booking->booking_id, $selectedFoods);
 
-        $bookingService->createSeats($booking, $data['seats_id']);
-
-        if ($data["payment_method"] == "payos") {
+    switch ($data['payment_method']) {
+        case 'payos':
             return redirect()->route('payos.create', [
-                'amount' => $data['total_price'],
-                'description' => $data['booking_code']
+                'amount'      => $data['total_price'],
+                'description' => $data['booking_code'],
             ]);
-        }
-        if ($data["payment_method"] == "zalopay") {
+        case 'zalopay':
             return redirect()->route('zalopay.create', [
-                'amount' => $data['total_price'],
-                'description' => $data['booking_code']
+                'amount'      => $data['total_price'],
+                'description' => $data['booking_code'],
             ]);
-        }
-        if ($data["payment_method"] == "vnpay") {
+        case 'vnpay':
             return redirect()->route('vnpay.create', [
-                'amount' => $data['total_price'],
-                'description' => $data['booking_code']
+                'amount'      => $data['total_price'],
+                'description' => $data['booking_code'],
             ]);
-        }
+        default:
+            return redirect()->route('bookings.index')->with('success', 'Đặt vé thành công.');
     }
+}
 
-
-    public function show($id)
-    {
-        $booking = Booking::with(['user', 'showtime'])->findOrFail($id);
-        return view('Booking.show', compact('booking'));
-    }
-
-    public function edit($id)
-    {
-        $booking = Booking::findOrFail($id);
-        return view('Booking.edit', compact('booking'));
-    }
-
-    public function update(Request $request, $id)
-    {
-        $booking = Booking::findOrFail($id);
-
-        $validated = $request->validate([
-            'user_id' => 'required|exists:users,user_id',
-            'showtime_id' => 'required|exists:showtimes,showtime_id',
-            'booking_status' => 'required|in:pending,confirmed,cancelled',
-            'payment_status' => 'required|in:unpaid,paid,refunded',
-            'booking_code' => 'required|unique:bookings,booking_code,' . $booking->booking_id . ',booking_id',
-        ]);
-
-        $booking->update($validated);
-
-        return redirect()->route('booking.index')->with('success', 'Booking updated successfully.');
-    }
 
     public function delete($id)
     {

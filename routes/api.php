@@ -13,15 +13,15 @@ use App\Http\Controllers\Api\CinemaController;
 use App\Http\Controllers\Api\MovieController;
 use App\Http\Controllers\Api\GenreController;
 use App\Http\Controllers\Api\UserController;
-use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\API\AuthControllerAPI;
 use App\Http\Controllers\Admin\CinemaSeatTypePriceController;
 use App\Http\Controllers\API\PromotionController;
 use App\Http\Controllers\PayosController;
 use App\Http\Controllers\Admin\VnpayController;
 use App\Http\Controllers\Admin\ZalopayController;
 
-Route::post('/register', [AuthController::class, 'register']);
-Route::post('/login', [AuthController::class, 'login']);
+Route::post('/register', [AuthControllerAPI::class, 'register']);
+Route::post('/login', [AuthControllerAPI::class, 'login']);
 
 Route::middleware('auth:sanctum')->group(function () {
 
@@ -137,7 +137,7 @@ Route::prefix('cinema-seat-type-prices')->group(function () {
     Route::delete('/{id}', [CinemaSeatTypePriceController::class, 'destroy']);
 });
 
-    Route::post('/logout', [AuthController::class, 'logout']);
+    Route::post('/logout', [AuthControllerAPI::class, 'logout']);
 });
 
 Route::prefix('payos')->name('payosapi.')->group(function () {

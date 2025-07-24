@@ -15,9 +15,11 @@ return new class extends Migration
             $table->bigIncrements('showtime_id');
             $table->unsignedBigInteger('movie_id');
             $table->unsignedBigInteger('room_id');
-            $table->dateTime('show_date');
-            $table->decimal('price', 8, 2);
-            $table->enum('status', ['active', 'cancelled', 'sold_out'])->default('active');
+            $table->date('date');
+            $table->time('start_time');
+            $table->time('end_time');
+
+            $table->enum('status', ['active', 'inactive', 'sold_out'])->default('active');
 
             $table->timestamps();
 

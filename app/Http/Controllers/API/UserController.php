@@ -24,19 +24,31 @@ class UserController extends Controller
     public function show($id)
     {
         $user = User::find($id);
-        if (!$user) return response()->json(['message' => 'User not found'], 404);
+        if (!$user)
+            return response()->json(['message' => 'User not found'], 404);
         return response()->json($user, 200);
     }
 
     // Tạo mới user
     public function store(UserRequest $request)
     {
+        $birthday = null;
+        if ($request->has(['birth_day', 'birth_month', 'birth_year'])) {
+            $birthday = sprintf(
+                '%04d-%02d-%02d',
+                $request->birth_year,
+                $request->birth_month,
+                $request->birth_day
+            );
+        }
         $user = User::create([
             'username' => $request->username,
             'full_name' => $request->full_name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'phone' => $request->phone,
+            'address' => $request->address,
+            'birthday' => $birthday,
             'role' => $request->role ?? 2,
         ]);
 
@@ -47,7 +59,8 @@ class UserController extends Controller
     public function update(UserRequest $request, $id)
     {
         $user = User::find($id);
-        if (!$user) return response()->json(['message' => 'User not found'], 404);
+        if (!$user)
+            return response()->json(['message' => 'User not found'], 404);
 
         $user->update($request->only([
             'username',

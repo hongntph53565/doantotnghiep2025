@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers\Admin;
 
+
 use App\Http\Controllers\Controller;
 use App\Models\Cinema;
 use Illuminate\Http\Request;
@@ -89,12 +90,12 @@ public function update(Request $request, $id)
     public function listCinemas()
 {
     $cinemas = Cinema::latest()->get();
-    return view('Client.lichchieurap', compact('cinemas'));
+    return view('Client.cinemaShowtime', compact('cinemas'));
 }
 
 public function show($id)
 {
     $cinema = Cinema::findOrFail($id);
-    return view('Client.lichchieuphimtheorap', compact('cinema'));
+    return view('Client.MovieShowtimesByCinema', compact('cinema'));
 }
 }

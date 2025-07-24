@@ -16,7 +16,7 @@ return new class extends Migration
             $table->bigIncrements('id');
             $table->unsignedBigInteger('showtime_id');
             $table->unsignedBigInteger('seat_id');
-            $table->enum('status', ['available', 'booked'])->default('available');
+            $table->enum('status', ['available', 'booked', 'pending'])->default('available');
             $table->timestamps();
 
             $table->foreign('showtime_id')->references('showtime_id')->on('showtimes')->onDelete('cascade');

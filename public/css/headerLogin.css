@@ -1,0 +1,344 @@
+body {
+            background-color: #f8f9fa;
+        }
+
+        .section-title {
+            background-color: white;
+            border: 2px solid #00cc66;
+            color: #00cc66;
+            font-weight: bold;
+            padding: 6px 20px;
+            display: inline-block;
+            border-radius: 6px;
+            margin: 30px 0 20px;
+        }
+
+        .movie-card img {
+            border-radius: 10px;
+            width: 100%;
+            height: auto;
+        }
+
+        .movie-title {
+            font-weight: bold;
+            font-size: 14px;
+            margin-top: 6px;
+        }
+
+        .movie-meta {
+            font-size: 12px;
+            color: #555;
+        }
+
+        .movie-tags span {
+            font-size: 10px;
+            margin-right: 4px;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+
+        .review-section img {
+            width: 100%;
+            border-radius: 10px;
+            margin-top: 40px;
+        }
+
+        .review-text {
+            font-weight: bold;
+            text-align: center;
+            margin-top: 10px;
+            font-size: 20px;
+            color: white;
+            background-color: #000;
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 8px;
+        }
+
+
+        .cinema-title {
+            font-weight: bold;
+            margin: 20px 0;
+        }
+
+        .cinema-box {
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 16px;
+            background: white;
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 30px;
+            width: 100%;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .cinema-box img {
+            width: 120px;
+            height: auto;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+
+        .cinema-box>div {
+            flex: 1;
+            padding-top: 4px;
+        }
+
+        .cinema-box h6 {
+            color: #28a745;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .cinema-info {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 15px;
+            color: #333;
+            line-height: 1.4;
+        }
+
+        .cinema-name {
+            margin: 10px 0;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .btn-detail {
+            background-color: #7bc043;
+            color: white;
+            font-weight: 500;
+            border: none;
+        }
+
+        .btn-detail:hover {
+            background-color: #5fa334;
+        }
+
+        .topbar {
+            background-color: #f8f8f8;
+            padding: 1px 0;
+        }
+
+        .topbar .nav-link {
+            color: rgb(153, 152, 152);
+            font-weight: 500;
+        }
+
+        .topbar .btn-location {
+            background-color: #d9f3cc;
+            border: 1px solid #a8e38b;
+            font-weight: 600;
+            color: black;
+        }
+
+        .topbar .d-flex.align-items-center>*:not(:last-child) {
+            margin-right: 2px;
+        }
+
+
+        .navbar {
+            background-color: transparent !important;
+            box-shadow: none !important;
+            padding: 0;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            margin-bottom: 0;
+        }
+
+        .navbar-nav {
+            display: flex;
+            align-items: center;
+            height: 100%;
+        }
+
+        .navbar-nav .nav-link,
+        .navbar-nav .dropdown-toggle {
+            display: flex;
+            align-items: center;
+            height: 100%;
+            font-family: 'Roboto', sans-serif;
+            font-size: 15px;
+            font-weight: 700;
+            color: rgb(116, 114, 114) !important;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .navbar-nav .nav-link:hover,
+        .navbar-nav .dropdown-toggle:hover {
+            color: #7bc043 !important;
+        }
+
+
+        .dropdown-menu.custom-dropdown {
+            background-color: rgba(0, 0, 0, 0.6);
+            border: none;
+            border-radius: 10px;
+            padding: 10px;
+            display: none;
+
+        }
+
+
+        .nav-item.hover-dropdown:hover .dropdown-menu {
+            display: block;
+            margin-top: 0;
+        }
+
+        .dropdown-menu.custom-dropdown a {
+            color: #f1f1f1;
+            font-weight: 500;
+        }
+
+        .dropdown-menu.custom-dropdown a:hover {
+            color: #7bc043;
+            background-color: transparent;
+        }
+
+        .hover-dropdown:hover .dropdown-menu {
+            display: block !important;
+        }
+
+
+
+        .header-banner img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+
+        .social-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            font-size: 24px;
+            color: white;
+            text-decoration: none;
+        }
+
+        .social-icon.facebook {
+            background-color: #1877f2;
+        }
+
+        .social-icon.instagram {
+            background-color: #e1306c;
+        }
+
+        .social-icon.tiktok {
+            background-color: #000;
+        }
+
+        .social-icon.youtube {
+            background-color: #ff0000;
+        }
+
+        .social-icon:hover,
+        .social-icon:focus,
+        .social-icon:active {
+            background-color: inherit;
+            color: white;
+            filter: none;
+            transform: none;
+            outline: none;
+            box-shadow: none;
+        }
+
+
+        .auth-hover-parent {
+            position: relative;
+            margin-left: 20px;
+        }
+
+        .auth-hover-box {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            width: 320px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            display: none;
+            z-index: 1000;
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .auth-hover-parent:hover .auth-hover-box {
+            display: block;
+        }
+
+        .auth-hover-box form {
+            margin-bottom: 8px;
+        }
+
+        .auth-hover-box input {
+            background: white;
+            color: black;
+            border-radius: 6px;
+            font-size: 14px;
+            padding: 8px 12px;
+        }
+
+        .auth-hover-box button {
+            width: 100%;
+            border-radius: 6px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .auth-hover-box .mb-2 label {
+            font-weight: 500;
+            font-size: 13px;
+            margin-bottom: 4px;
+        }
+
+        .auth-hover-box a {
+            font-size: 12px;
+            color: white;
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .auth-hover-box a:hover {
+            color: #4caf50;
+        }
+
+        .auth-hover-box button.btn-success {
+            background: #87d8a6;
+            border: none;
+            transition: background 0.3s ease, transform 0.2s ease;
+        }
+
+        .auth-hover-box button.btn-success:hover {
+            background: #6ec893;
+            transform: translateY(-2px);
+        }
+
+        .auth-hover-box button.btn-primary {
+            background: #4caf50;
+            border: none;
+            transition: background 0.3s ease, transform 0.2s ease;
+        }
+
+        .auth-hover-box button.btn-primary:hover {
+            background: #43a047;
+            transform: translateY(-2px);
+        }
+
+        footer a:hover {
+            color: #8bc34a !important;
+            transition: 0.3s;
+        }
+
+        footer a.social-icon:hover {
+            color: white !important;
+        }

@@ -18,17 +18,11 @@ class Cinema extends Model
         'city',
         'phone',
         'email',
-        'created_at',
-        'updated_at'
+        'status',
     ];
 
         public function rooms()
     {
         return $this->hasMany(Room::class, 'cinema_id');
     }
-    
-public function getFullAddressAttribute()
-{
-    return "{$this->address_detail}, {$this->ward}, {$this->district}, {$this->city}";
-}
 }

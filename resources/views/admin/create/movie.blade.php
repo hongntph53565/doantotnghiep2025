@@ -89,12 +89,27 @@
                     <div class="col-md-6">
                         <label for="language" class="form-label fw-semibold">Ngôn ngữ</label>
                         <select class="form-select" name="language" id="language">
-                            <option value="Tiếng Việt">Tiếng Việt</option>
-                            <option value="Tiếng Anh">Tiếng Anh</option>
-                            <option value="Tiếng Hàn">Tiếng Hàn</option>
-                            <option value="Tiếng Nhật">Tiếng Nhật</option>
+                            <option value="Phụ đề">Phụ Đề</option>
+                            <option value="Lồng tiếng">Lồng tiếng</option>
+
                         </select>
                     </div>
+                    <div class="col-md-6">
+                        <label for="format" class="form-label fw-semibold">Định dạng</label>
+
+                        <div id="format-wrapper">
+                            <select class="form-select" name="format" id="format-select"
+                                onchange="handleFormatChange(this)">
+                                <option value="2D">2D</option>
+                                <option value="3D">3D</option>
+                                <option value="IMAX">IMAX</option>
+                                <option value="4DX">4DX</option>
+                                <option value="Khác">Khác</option>
+                            </select>
+                        </div>
+                    </div>
+
+
 
                     <!-- Mô tả -->
                     <div class="col-md-12">
@@ -104,8 +119,7 @@
 
                     <!-- Trạng thái -->
                     <div class="form-check form-switch">
-                        <input class="form-check-input" type="checkbox" name="status" id="activeStatus"
-                            value="1" checked>
+                        <input class="form-check-input" type="checkbox" name="status" id="activeStatus" value="1" checked>
                         <label class="form-check-label fw-semibold" for="activeStatus">
                             Kích hoạt phim
                         </label>
@@ -130,3 +144,13 @@
         </div>
     </div>
 @endsection
+<script>
+    function handleFormatChange(select) {
+        if (select.value === "Khác") {
+            const wrapper = document.getElementById('format-wrapper');
+            wrapper.innerHTML = `
+                <input type="text" class="form-control" name="format" id="format-input" placeholder="Nhập định dạng...">
+            `;
+        }
+    }
+</script>

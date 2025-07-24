@@ -14,23 +14,18 @@
                             $cinema = $firstShowtime && $firstShowtime->room ? $firstShowtime->room->cinema : null;
                         @endphp
 
-
-
-
-                            <img src="{{ asset('images/logo.jpg') }}" alt="Logo rạp" width="60" class="me-3"
-                                style="object-fit: contain;">
-                            <div>
-                                <h6 class="fw-bold mb-1">{{ $cinema->name }}</h6>
-                                <p class="text-muted mb-0">{{ $cinema->full_address }}</p>
-                            </div>
-                 
-
+                        <img src="{{ asset('images/logo.jpg') }}" alt="Logo rạp" width="60" class="me-3"
+                             style="object-fit: contain;">
+                        <div>
+                            <h6 class="fw-bold mb-1">{{ $cinema->name }}</h6>
+                            <p class="text-muted mb-0">{{ $cinema->address_detail }}</p>
+                        </div>
 
                         <div class="d-flex flex-wrap">
                             @foreach ($cinemaShowtimes as $showtime)
                                 <div class="showtime-card text-center p-2 border rounded shadow-sm me-2 mb-3">
                                     <button type="button" class="showtime-btn d-block mx-auto mb-1"
-                                        data-showtime-id="{{ $showtime->showtime_id }}">
+                                            data-showtime-id="{{ $showtime->showtime_id }}">
                                         {{ \Carbon\Carbon::parse($showtime->start_time)->format('H:i') }}
                                     </button>
 
@@ -73,13 +68,37 @@
             </div>
         </div>
     </div>
+
+    {{-- KIỂM TRA ĐĂNG NHẬP VÀ XỬ LÝ NÚT CHỌN XUẤT CHIẾU --}}
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        const isLoggedIn = {{ Auth::check() ? 'true' : 'false' }};
+        const loginUrl = "{{ route('register.form') }}"; // Thay đúng route nếu tên khác
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const showtimeButtons = document.querySelectorAll('.showtime-btn');
+
+            showtimeButtons.forEach(button => {
+                button.addEventListener('click', function () {
+                    if (!isLoggedIn) {
+                        alert("Vui lòng đăng nhập để tiếp tục đặt vé.");
+                        window.location.href = loginUrl;
+                        return;
+                    }
+
+                    const showtimeId = this.dataset.showtimeId;
+                    sessionStorage.setItem('selectedShowtimeId', showtimeId);
+
+                    goToStep(1);
+                });
+            });
+
+            // Nếu người dùng đã có ?showtime_id trên URL thì chuyển bước
             const urlParams = new URLSearchParams(window.location.search);
             if (urlParams.get('showtime_id')) {
                 goToStep(1);
             }
         });
+
         const movieIdGlobal = {{ $movie->movie_id }};
     </script>
 </div>

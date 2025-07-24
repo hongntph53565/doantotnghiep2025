@@ -11,8 +11,6 @@
                                 <stop offset="100%" stop-color="white" stop-opacity="0" />
                             </linearGradient>
                         </defs>
-
-
                         <path d="
                     M50 40
                     Q400 0 750 40
@@ -26,8 +24,6 @@
                     <div style="margin-top: -35px; font-weight: bold; color: #acacac; font-size: 20px;">Màn hình
                     </div>
                 </div>
-
-
             </div>
             <div class="legend">
                 <div class="legend-row">
@@ -73,10 +69,31 @@
                         ->keyBy('seat_type_id');
                 }
             @endphp
-
-
             <div class="seat">
                 <table>
+                    @php
+                        $maxSlots = $groupedSeats
+                            ->map(function ($rowSeats) {
+                                $sorted = $rowSeats->sortBy(fn($s) => intval(substr($s->seat_code, 1)))->values();
+                                $slots = 0;
+                                for ($i = 0; $i < $sorted->count(); $i++) {
+                                    $seat = $sorted[$i];
+                                    $type = strtolower($seat->seatType->name);
+                                    if (
+                                        $type === 'double' &&
+                                        isset($sorted[$i + 1]) &&
+                                        strtolower($sorted[$i + 1]->seatType->name) === 'double'
+                                    ) {
+                                        $slots += 2;
+                                        $i++; // Skip next seat
+                                    } else {
+                                        $slots++;
+                                    }
+                                }
+                                return $slots;
+                            })
+                            ->max();
+                    @endphp
                     @foreach ($groupedSeats as $rowLabel => $rowSeats)
                         <tr>
                             <td class="lable">{{ $rowLabel }}</td>
@@ -87,7 +104,7 @@
                                     ->values();
                                 $slotCount = 0;
                                 $cells = [];
-                                $maxSlots = 8;
+
                             @endphp
 
                             @for ($i = 0; $i < $sortedSeats->count(); $i++)
@@ -100,52 +117,88 @@
                                         $mappedType === 'couple' &&
                                         $nextSeat &&
                                         strtolower($nextSeat->seatType->name) === 'couple';
+                                         $status = $showtimeSeatStatuses[$seat->seat_id] ?? 'available';
 
-                                    $imgPath = match ($mappedType) {
-                                        'standard' => 'seat-standard-available.svg',
-                                        'vip' => 'seat-vip-available.svg',
-                                        'couple' => 'seat-couple-available.svg',
-                                        default => 'seat-standard-available.svg',
-                                    };
+                                  $imgPath = match ($status) {
+    'booked' => 'seat-booked.svg',
+    default => match ($mappedType) {
+        'standard' => 'seat-standard-available.svg',
+        'vip' => 'seat-vip-available.svg',
+        'couple' => 'seat-couple-available.svg',
+        default => 'seat-standard-available.svg',
+    }
+};
 
                                     $price = $seatPrices[$seat->seat_type_id]->price ?? 0;
-                                    
 
                                 @endphp
 
                                 @if ($isCouple)
-                                    @php
-                                    $coupleId = $seat->seat_code . '_' . $nextSeat->seat_code;
-                                       $cells[] =
-    '<td colspan="2"><div style="display: flex; gap: 0;">
+                                   @php
+    $coupleId = $seat->seat_code . '_' . $nextSeat->seat_code;
+
+    $status1 = $showtimeSeatStatuses[$seat->seat_id] ?? 'available';
+    $status2 = $showtimeSeatStatuses[$nextSeat->seat_id] ?? 'available';
+
+    // Ưu tiên booked > pending > available
+    $finalStatus = $status1 === 'booked' || $status2 === 'booked'
+        ? 'booked'
+        : ($status1 === 'pending' || $status2 === 'pending' ? 'pending' : 'available');
+
+   $imgPath = match ($finalStatus) {
+    'booked' => 'seat-booked.svg',
+    default => match ($mappedType) {
+        'standard' => 'seat-standard-available.svg',
+        'vip' => 'seat-vip-available.svg',
+        'couple' => 'seat-couple-available.svg',
+        default => 'seat-standard-available.svg',
+    }
+};
+@endphp
+
+@php
+    $cells[] =
+        '<td colspan="2"><div style="display: flex; gap: 0;">
 <img src="' .
-    asset("images/{$imgPath}") .
-    '" data-type="couple" data-seat-code="' .
-    $seat->seat_code .
-    '" data-couple-id="' . $coupleId . '" data-status="available" data-price="' .
-    $price .
-    '" title="Ghế ' .
-    $seat->seat_code .
-    ' - ' .
-    $price .
-    ' VND">
+        asset("images/{$imgPath}") .
+        '" data-type="couple" data-seat-code="' .
+        $seat->seat_code .
+        '" data-seat-id="' .
+        $seat->seat_id .
+        '" data-couple-id="' .
+        $coupleId .
+        '" data-status="' .
+        $finalStatus .
+        '" data-price="' .
+        $price .
+        '" title="Ghế ' .
+        $seat->seat_code .
+        ' - ' .
+        $price .
+        ' VND">
 <img src="' .
-    asset("images/{$imgPath}") .
-    '" data-type="couple" data-seat-code="' .
-    $nextSeat->seat_code .
-    '" data-couple-id="' . $coupleId . '" data-status="available" data-price="' .
-    $price .
-    '" title="Ghế ' .
-    $nextSeat->seat_code .
-    ' - ' .
-    $price .
-    ' VND">
+        asset("images/{$imgPath}") .
+        '" data-type="couple" data-seat-code="' .
+        $nextSeat->seat_code .
+        '" data-seat-id="' .
+        $nextSeat->seat_id .
+        '" data-couple-id="' .
+        $coupleId .
+        '" data-status="' .
+        $finalStatus .
+        '" data-price="' .
+        $price .
+        '" title="Ghế ' .
+        $nextSeat->seat_code .
+        ' - ' .
+        $price .
+        ' VND">
 </div></td>';
 
+    $slotCount += 2;
+    $i++;
+@endphp
 
-                                        $slotCount += 2;
-                                        $i++;
-                                    @endphp
                                 @else
                                     @php
                                         $cells[] =
@@ -155,7 +208,10 @@
                                             $mappedType .
                                             '" data-seat-code="' .
                                             $seat->seat_code .
-                                            '" data-status="available" data-price="' .
+                                            '" data-seat-id="' .
+                                            $seat->seat_id .
+                                            '" ' . // Thêm ở đây
+                                            'data-status="' . $status . '" data-price="' .
                                             $price .
                                             '" title="Ghế ' .
                                             $seat->seat_code .
@@ -186,10 +242,6 @@
                     @endforeach
                 </table>
             </div>
-
-
-
-
         </div>
 
         <div class="right-box-seat">
@@ -247,35 +299,44 @@
     document.querySelectorAll('.seat img[data-seat-code]').forEach(img => {
         img.addEventListener('click', () => {
             const code = img.dataset.seatCode;
+            const seatId = parseInt(img.dataset.seatId);
             const price = parseInt(img.dataset.price);
             const type = img.dataset.type;
             const coupleId = img.dataset.coupleId;
 
-            // Nếu ghế đã đặt thì bỏ qua
             if (img.dataset.status === 'booked') return;
 
-            // Xử lý ghế đôi
             if (type === 'couple' && coupleId) {
                 const coupleImgs = document.querySelectorAll(`img[data-couple-id="${coupleId}"]`);
                 const coupleKey = `couple-${coupleId}`;
                 const isSelected = selectedSeats.has(coupleKey);
-
                 if (isSelected) {
                     selectedSeats.delete(coupleKey);
                     coupleImgs.forEach(el => el.src = '/images/seat-couple-available.svg');
                 } else {
                     const codes = Array.from(coupleImgs).map(el => el.dataset.seatCode);
-                    selectedSeats.set(coupleKey, { codes, price, type: 'couple' });
+                    const seatIds = Array.from(coupleImgs).map(el => parseInt(el.dataset.seatId));
+
+                    selectedSeats.set(coupleKey, {
+                        codes,
+                        seat_ids: seatIds,
+                        price,
+                        type: 'couple'
+                    });
+
                     coupleImgs.forEach(el => el.src = '/images/seat-selected.svg');
                 }
-            } 
-            // Ghế đơn (Standard, VIP)
-            else {
+            } else {
                 if (selectedSeats.has(code)) {
                     selectedSeats.delete(code);
                     img.src = `/images/seat-${type}-available.svg`;
                 } else {
-                    selectedSeats.set(code, { code, price, type });
+                    selectedSeats.set(code, {
+                        code,
+                        seat_id: seatId,
+                        price,
+                        type
+                    });
                     img.src = `/images/seat-selected.svg`;
                 }
             }
@@ -283,6 +344,7 @@
             updateSummary();
         });
     });
+
 
     function updateSummary() {
         const summary = document.getElementById('selected-seats');
@@ -300,7 +362,7 @@
                 seatGroups.couple.push(seat.codes.join(' & '));
                 totalPrice += seat.price;
             } else {
-                seatGroups[seat.type]?.push(seat.code); // standard hoặc vip
+                seatGroups[seat.type]?.push(seat.code);
                 totalPrice += seat.price;
             }
         });
@@ -324,5 +386,3 @@
         sessionStorage.setItem('ticketTotal', totalPrice);
     }
 </script>
-
-
