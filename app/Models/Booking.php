@@ -45,5 +45,9 @@ public function seats()
     return $this->hasMany(BookingSeat::class, 'booking_id', 'booking_id')
                 ->with('showtimeSeat'); 
 }
+public function promotion()
+{
+    return $this->hasOne(BookingPromotion::class, 'booking_id', 'booking_id');
+}
 
 }

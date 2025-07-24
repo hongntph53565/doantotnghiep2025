@@ -372,6 +372,12 @@
     color: #5a5a5a;
 
 }
+.disabled-seat {
+    pointer-events: none;
+    opacity: 0.4;
+    filter: grayscale(100%);
+    cursor: not-allowed;
+}
 
 .info {
     color: #5a5a5a;

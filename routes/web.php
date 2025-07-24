@@ -200,7 +200,7 @@ Route::get('/cart', [HomeController::class, 'index']);
 Route::get('/', function () {
     // return response()->json(['message' => 'Backend OK']);
 });
-Route::get('/lich-chieu-phim', [HomeController::class, 'Showtimes'])->name('Client.MovieShowtimes');
+Route::get('/lich-chieu-phim', [HomeController::class, 'MovieShowtimes'])->name('Client.MovieShowtimes');
 
 
 Route::get('/he-thong-rap', function () {

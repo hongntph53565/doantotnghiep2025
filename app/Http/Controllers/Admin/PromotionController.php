@@ -81,4 +81,5 @@ class PromotionController extends Controller
         $promo->update(['deleted_at' => now()]);
         return redirect()->route('promos.index')->with('success', 'Đã xoá mã giảm giá.');
     }
+    
 }

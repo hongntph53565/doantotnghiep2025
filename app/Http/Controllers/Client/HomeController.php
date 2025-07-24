@@ -9,6 +9,7 @@ use App\Models\Food;
 use App\Models\Cinema;
 use App\Models\BookingSeat;
 use App\Models\Booking;
+use App\Models\Promotion;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -113,6 +114,11 @@ public function home()
         ->get()
         ->groupBy(fn($item) => $item->room->cinema->cinema_id);
 
+        $promotions = Promotion::where('status', 'active')
+    ->whereDate('start_date', '<=', now())
+    ->whereDate('end_date', '>=', now())
+    ->get();
+
     $selectedShowtimeId = $request->input('showtime_id');
     $selectedShowtime = null;
     $seats = collect();
@@ -154,7 +160,8 @@ public function home()
         'seats',
         'step',
         'foods',
-        'showtimeSeatStatuses'
+        'showtimeSeatStatuses',
+         'promotions'
     ));
 }
 
@@ -188,7 +195,7 @@ return view('Client.MovieShowtimesByCinema', compact('cinema', 'showtimes', 'dat
 
 
    
-public function Showtimes()
+public function MovieShowtimes()
 {
     $today = Carbon::today();
 
