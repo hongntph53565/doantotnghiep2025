@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Trang chủ')
+@section('title', 'LumiStar')
 
 @push('styles')
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.css" />

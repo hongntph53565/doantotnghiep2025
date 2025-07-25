@@ -1,5 +1,5 @@
 @extends('layouts.headerBooking')
-@section('title', 'Đặt vé')
+@section('title', 'LumiStar - Đặt vé')
 
 @push('scripts')
     <script src="{{ asset('js/calendar.js') }}"></script>
@@ -72,8 +72,8 @@
     <script>
         function clearSessionAndGoHome() {
             sessionStorage.clear();
-            window.history.back();
-            // window.location.href = '{{ route('home') }}';
+            // window.history.back();
+            window.location.href = '{{ route('home') }}';
         }
     </script>
 @endpush

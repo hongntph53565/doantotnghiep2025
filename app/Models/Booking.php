@@ -35,19 +35,37 @@ class Booking extends Model
     }
 
     public function foods()
+    {
+        return $this->belongsToMany(Food::class, 'booking_food')
+            ->withPivot('quantity')
+            ->withTimestamps();
+    }
+    public function seats()
+    {
+        return $this->hasManyThrough(
+            Seat::class,
+            BookingSeat::class,
+            'booking_id',               
+            'seat_id',                  
+            'booking_id',               
+            'showtime_seat_id'          
+        )->join('showtime_seat', 'showtime_seat.seat_id', '=', 'seats.seat_id');
+    }
+    public function bookingSeats()
+    {
+        return $this->hasMany(BookingSeat::class, 'booking_id');
+    }
+    public function promotion()
+    {
+        return $this->hasOne(BookingPromotion::class, 'booking_id', 'booking_id');
+    }
+    public function bookingFoods()
 {
-    return $this->belongsToMany(Food::class, 'booking_food')
-                ->withPivot('quantity')
-                ->withTimestamps();
+    return $this->hasMany(BookingFood::class, 'booking_id');
 }
-public function seats()
+public function bookingPromotions()
 {
-    return $this->hasMany(BookingSeat::class, 'booking_id', 'booking_id')
-                ->with('showtimeSeat'); 
-}
-public function promotion()
-{
-    return $this->hasOne(BookingPromotion::class, 'booking_id', 'booking_id');
+    return $this->hasMany(BookingPromotion::class, 'booking_id');
 }
 
 }

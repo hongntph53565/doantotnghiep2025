@@ -6,6 +6,7 @@ use App\Events\UserRegistered;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\Booking;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
@@ -116,9 +117,27 @@ public function register(Request $request)
 
     return redirect()->route('home')->with('success', 'Đăng xuất thành công');
 }
-    public function profile()
+//     public function profile()
+// {
+//     $user = Auth::user();
+//     return view('Client.profile', compact('user'));
+// }
+
+public function profile()
 {
     $user = Auth::user();
-    return view('Client.profile', compact('user'));
+
+    $bookings = Booking::with([
+        'showtime.room.cinema',
+        'bookingSeats.showtimeSeat.seat',
+        'bookingFoods.food',
+        'bookingPromotions'
+    ])
+    ->where('user_id', $user->user_id)
+    ->where('payment_status', 'paid')
+    ->orderByDesc('created_at')
+    ->get();
+
+    return view('Client.profile', compact('user', 'bookings'));
 }
 }
