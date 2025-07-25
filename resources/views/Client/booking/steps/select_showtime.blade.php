@@ -14,16 +14,13 @@
                             $cinema = $firstShowtime && $firstShowtime->room ? $firstShowtime->room->cinema : null;
                         @endphp
 
+                        <img src="{{ asset('images/logo.jpg') }}" alt="Logo rạp" width="60" class="me-3"
+                            style="object-fit: contain;">
+                        <div>
+                            <h6 class="fw-bold mb-1">{{ $cinema->name }}</h6>
+                            <p class="text-muted mb-0">{{ $cinema->full_address }}</p>
+                        </div>
 
-
-
-                            <img src="{{ asset('images/logo.jpg') }}" alt="Logo rạp" width="60" class="me-3"
-                                style="object-fit: contain;">
-                            <div>
-                                <h6 class="fw-bold mb-1">{{ $cinema->name }}</h6>
-                                <p class="text-muted mb-0">{{ $cinema->full_address }}</p>
-                            </div>
-                 
 
 
                         <div class="d-flex flex-wrap">
