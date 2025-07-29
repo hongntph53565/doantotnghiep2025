@@ -15,5 +15,4 @@ class Genre extends Model
     {
         return $this->hasMany(Movie::class, 'genre_id');
     }
-
 }

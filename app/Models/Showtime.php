@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Showtime extends Model
 {
@@ -11,7 +10,8 @@ class Showtime extends Model
     protected $primaryKey = 'showtime_id';
     public $incrementing = true;
     protected $keyType = 'int';
-use HasFactory;
+
+    // Các trường có thể gán hàng loạt
     protected $fillable = [
         'movie_id',
         'room_id',
@@ -32,7 +32,6 @@ use HasFactory;
     /**
      * Liên kết với phim
      */
-
     public function movie()
     {
         return $this->belongsTo(Movie::class, 'movie_id', 'movie_id');
@@ -42,10 +41,5 @@ use HasFactory;
     {
         return $this->belongsTo(Cinema::class, 'cinema_id', 'cinema_id');
     }
-
-    public function bookings()
-{
-    return $this->hasMany(Booking::class, 'showtime_id', 'id');
-}
 
 }

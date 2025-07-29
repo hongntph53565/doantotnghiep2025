@@ -4,7 +4,7 @@
 
 @push('styles')
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.css" />
-    <link rel="stylesheet" href="{{ asset('client/css/home.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/home.css') }}">
 @endpush
 
 
@@ -72,10 +72,8 @@
                             <div class="movie-img">
                                 <img src="{{ asset('storage/' . $movie->poster) }}" alt="{{ $movie->title }}">
 
-                                @if (!empty($movie->trailer))
-                                    <a href="javascript:void(0);" class="play-button" onclick="openTrailer(this)"
-                                        data-trailer="{{ $movie->trailer }}"></a>
-                                @endif
+                                <a href="javascript:void(0);" class="play-button" onclick="openTrailer(this)"
+                                    data-trailer="{{ $movie->trailer }}"></a>
 
                                 <a href="{{ route('Client.booking.home', ['movie_id' => $movie->movie_id]) }}"
                                     class="buy-button">

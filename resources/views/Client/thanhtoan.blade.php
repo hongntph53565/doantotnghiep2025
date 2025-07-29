@@ -1,4 +1,42 @@
-<div class="container mb-5">
+@extends('layouts.headerBooking')
+@section('title', 'Đặt vé')
+
+@push('scripts')
+    <script src="{{ asset('js/calendar.js') }}"></script>
+@endpush
+
+@push('styles')
+    <link rel="stylesheet" href="{{ asset('css/thanhtoan.css') }}">
+@endpush
+
+@section('content')
+
+    {{-- THÔNG TIN PHIM --}}
+    <div class="container mt-4">
+        <h1 class="entry-title text-center">Bước 4: Thanh toán</h1>
+        <div class="cinema-box">
+            <img src="{{ asset('images/1.jpg') }}" alt="DORAEMON: NOBITA'S ART WORLD TALES" />
+            <div>
+                <h6>DORAEMON: NOBITA'S ART WORLD TALES</h6>
+                <p class="mb-1 cinema-info">
+                    Thế giới trong lễ các châu Âu thú trung cổ được mở ra từ trong các bức tranh. Doraemon và những người
+                    bạn của mình nhảy vào "thế giới của bức tranh" cùng với Claire và những người bạn của cô là Milo và Chài
+                    khi họ bắt đầu một cuộc phiêu lưu tuyệt vời.
+                </p>
+                <p class="mb-1 cinema-info"><strong>Phân loại:</strong> <span class="tag">P</span> Phim phổ biến với mọi độ
+                    tuổi</p>
+                <p class="mb-1 cinema-info"><strong>Định dạng:</strong> <span class="tag">2D</span></p>
+                <p class="mb-1 cinema-info"><strong>Đạo diễn:</strong> Yukiyo Teramoto</p>
+                <p class="mb-1 cinema-info"><strong>Diễn viên:</strong> Megumi Ohara, Wasabi Mizuta</p>
+                <p class="mb-1 cinema-info"><strong>Thể loại:</strong> Family</p>
+                <p class="mb-1 cinema-info"><strong>Khởi chiếu:</strong> 23/05/2025 | Thời lượng: 105 phút</p>
+                <p class="mb-1 cinema-info"><strong>Ngôn ngữ:</strong> Phụ đề/Lồng tiếng</p>
+
+                <a href="#" class="btn-ghost">← CHỌN PHIM KHÁC</a>
+            </div>
+        </div>
+    </div>
+    <div class="container mt-4">
         <div class="container-combo">
             <div class="left-box">
                 <div class="payment-method-box">
@@ -58,12 +96,36 @@
                     <span>100.000</span>
                 </div>
                 <p class="note">(Đã bao gồm phụ thu)</p>
-                <a href="javascript:void(0);" class="btn-checkout">THANH TOÁN (4/4)</a>
+                <a href="#" class="btn-checkout">THANH TOÁN (4/4)</a>
                 <div class="btn-back-wrapper">
-    <a href="javascript:void(0);" class="btn-back" onclick="goBackStep()">← Trở lại</a>
-</div>
+                    <a href="{{ url()->previous() }}" class="btn-back">← Trở lại</a>
+                </div>
 
             </div>
 
         </div>
     </div>
+
+    <button class="btn1">TIN NỔI BẬT</button>
+    <div class="featured-news">
+        <a href="#">
+            <img src="{{ asset('images/cong-tu-bac-lieu-1-1728987515-8367-1728987588.jpg') }}" alt="">
+        </a>
+    </div>
+
+
+
+
+
+@endsection
+@prepend('scripts')
+    <script>
+        console.log('Chạy đầu tiên');
+    </script>
+@endprepend
+
+@push('scripts')
+    <script>
+        console.log('Chạy sau');
+    </script>
+@endpush

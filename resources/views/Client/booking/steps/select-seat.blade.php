@@ -11,6 +11,8 @@
                                 <stop offset="100%" stop-color="white" stop-opacity="0" />
                             </linearGradient>
                         </defs>
+
+
                         <path d="
                     M50 40
                     Q400 0 750 40
@@ -24,6 +26,8 @@
                     <div style="margin-top: -35px; font-weight: bold; color: #acacac; font-size: 20px;">Màn hình
                     </div>
                 </div>
+
+
             </div>
             <div class="legend">
                 <div class="legend-row">
@@ -69,6 +73,8 @@
                         ->keyBy('seat_type_id');
                 }
             @endphp
+
+
             <div class="seat">
                 <table>
                     @foreach ($groupedSeats as $rowLabel => $rowSeats)
@@ -104,46 +110,38 @@
 
                                     $price = $seatPrices[$seat->seat_type_id]->price ?? 0;
 
+
                                 @endphp
 
                                 @if ($isCouple)
                                     @php
-                                        $coupleId = $seat->seat_code . '_' . $nextSeat->seat_code;
-                                        $cells[] =
-                                            '<td colspan="2"><div style="display: flex; gap: 0;">
+                                    $coupleId = $seat->seat_code . '_' . $nextSeat->seat_code;
+                                       $cells[] =
+    '<td colspan="2"><div style="display: flex; gap: 0;">
 <img src="' .
-                                            asset("images/{$imgPath}") .
-                                            '" data-type="couple" data-seat-code="' .
-                                            $seat->seat_code .
-                                            '" data-seat-id="' .
-                                            $seat->seat_id .
-                                            '" ' . // Thêm ở đây
-                                            'data-couple-id="' .
-                                            $coupleId .
-                                            '" data-status="available" data-price="' .
-                                            $price .
-                                            '" title="Ghế ' .
-                                            $seat->seat_code .
-                                            ' - ' .
-                                            $price .
-                                            ' VND">
+    asset("images/{$imgPath}") .
+    '" data-type="couple" data-seat-code="' .
+    $seat->seat_code .
+    '" data-couple-id="' . $coupleId . '" data-status="available" data-price="' .
+    $price .
+    '" title="Ghế ' .
+    $seat->seat_code .
+    ' - ' .
+    $price .
+    ' VND">
 <img src="' .
-                                            asset("images/{$imgPath}") .
-                                            '" data-type="couple" data-seat-code="' .
-                                            $nextSeat->seat_code .
-                                            '" data-seat-id="' .
-                                            $nextSeat->seat_id .
-                                            '" ' . // Thêm ở đây
-                                            'data-couple-id="' .
-                                            $coupleId .
-                                            '" data-status="available" data-price="' .
-                                            $price .
-                                            '" title="Ghế ' .
-                                            $nextSeat->seat_code .
-                                            ' - ' .
-                                            $price .
-                                            ' VND">
+    asset("images/{$imgPath}") .
+    '" data-type="couple" data-seat-code="' .
+    $nextSeat->seat_code .
+    '" data-couple-id="' . $coupleId . '" data-status="available" data-price="' .
+    $price .
+    '" title="Ghế ' .
+    $nextSeat->seat_code .
+    ' - ' .
+    $price .
+    ' VND">
 </div></td>';
+
 
                                         $slotCount += 2;
                                         $i++;
@@ -157,10 +155,7 @@
                                             $mappedType .
                                             '" data-seat-code="' .
                                             $seat->seat_code .
-                                            '" data-seat-id="' .
-                                            $seat->seat_id .
-                                            '" ' . // Thêm ở đây
-                                            'data-status="available" data-price="' .
+                                            '" data-status="available" data-price="' .
                                             $price .
                                             '" title="Ghế ' .
                                             $seat->seat_code .
@@ -191,6 +186,10 @@
                     @endforeach
                 </table>
             </div>
+
+
+
+
         </div>
 
         <div class="right-box-seat">
@@ -248,13 +247,14 @@
     document.querySelectorAll('.seat img[data-seat-code]').forEach(img => {
         img.addEventListener('click', () => {
             const code = img.dataset.seatCode;
-            const seatId = parseInt(img.dataset.seatId);
             const price = parseInt(img.dataset.price);
             const type = img.dataset.type;
             const coupleId = img.dataset.coupleId;
 
+            // Nếu ghế đã đặt thì bỏ qua
             if (img.dataset.status === 'booked') return;
 
+            // Xử lý ghế đôi
             if (type === 'couple' && coupleId) {
                 const coupleImgs = document.querySelectorAll(`img[data-couple-id="${coupleId}"]`);
                 const coupleKey = `couple-${coupleId}`;
@@ -264,28 +264,17 @@
                     coupleImgs.forEach(el => el.src = '/images/seat-couple-available.svg');
                 } else {
                     const codes = Array.from(coupleImgs).map(el => el.dataset.seatCode);
-                    const seatIds = Array.from(coupleImgs).map(el => parseInt(el.dataset.seatId));
-
-                    selectedSeats.set(coupleKey, {
-                        codes,
-                        seat_ids: seatIds,
-                        price,
-                        type: 'couple'
-                    });
-
+                    selectedSeats.set(coupleKey, { codes, price, type: 'couple' });
                     coupleImgs.forEach(el => el.src = '/images/seat-selected.svg');
                 }
-            } else {
+            }
+            // Ghế đơn (Standard, VIP)
+            else {
                 if (selectedSeats.has(code)) {
                     selectedSeats.delete(code);
                     img.src = `/images/seat-${type}-available.svg`;
                 } else {
-                    selectedSeats.set(code, {
-                        code,
-                        seat_id: seatId,
-                        price,
-                        type
-                    });
+                    selectedSeats.set(code, { code, price, type });
                     img.src = `/images/seat-selected.svg`;
                 }
             }
@@ -293,7 +282,6 @@
             updateSummary();
         });
     });
-
 
     function updateSummary() {
         const summary = document.getElementById('selected-seats');
@@ -311,7 +299,7 @@
                 seatGroups.couple.push(seat.codes.join(' & '));
                 totalPrice += seat.price;
             } else {
-                seatGroups[seat.type]?.push(seat.code);
+                seatGroups[seat.type]?.push(seat.code); // standard hoặc vip
                 totalPrice += seat.price;
             }
         });
@@ -335,3 +323,5 @@
         sessionStorage.setItem('ticketTotal', totalPrice);
     }
 </script>
+
+

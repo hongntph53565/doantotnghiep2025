@@ -33,14 +33,14 @@
             <div class="col-md-3">
                 <div class="card p-3 mb-3 shadow-sm">
                     <label for="createdBy" class="form-label fw-bold">Người đang tạo</label>
-                    <input type="text" class="form-control" value="{{ session('my_name') ?? 'Guest' }}" id="createdBy" name="created_by"
-                        placeholder="Nhập tên người tạo" readonly>
+                    <input type="text" class="form-control" id="createdBy" name="created_by"
+                        placeholder="Nhập tên người tạo">
                 </div>
 
                 <div class="card p-3 shadow-sm">
                     <div class="d-grid gap-2">
                         <button type="submit" class="btn btn-primary py-2">
-                            <i class="bi bi-save me-2"></i> Lưu 
+                            <i class="bi bi-save me-2"></i> Lưu
                         </button>
                         <button type="reset" class="btn btn-outline-secondary py-2">
                             <i class="bi bi-arrow-counterclockwise me-2"></i> Đặt lại

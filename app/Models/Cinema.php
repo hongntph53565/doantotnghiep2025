@@ -53,4 +53,9 @@ class Cinema extends Model
             'room_id'
         );
     }
+    
+public function getFullAddressAttribute()
+{
+    return "{$this->address_detail}, {$this->ward}, {$this->district}, {$this->city}";
+}
 }

@@ -16,7 +16,7 @@ class ReviewController extends Controller
             ->latest()
             ->get();
 
-        return view('admin.show.review', compact('reviews', 'movie_id'));
+            return view('admin.show.review', compact('reviews', 'movie_id'));
     }
 
     public function create($movie_id)

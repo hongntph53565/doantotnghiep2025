@@ -3,12 +3,10 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Booking;
 use App\Models\Genre;
 use Illuminate\Http\Request;
 use App\Models\Movie;
 use App\Models\Showtime;
-use BaconQrCode\Renderer\Path\Move;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
 
@@ -152,63 +150,32 @@ class MovieController extends Controller
 
         return redirect()->route('movies.index')->with('success', 'Cập nhật phim thành công!');
     }
-
 public function show($id)
 {
-    $movie = Movie::with('genre')->findOrFail($id);
+    // Tạo dữ liệu phim giả
+    $movie = Movie::with('genre')->where('movie_id',$id)->firstOrFail();
 
-    // Lấy ID của tất cả showtimes thuộc movie
-    $showtimeIds = Showtime::where('movie_id', $movie->movie_id)->pluck('showtime_id')->toArray();
+$showtimes = Showtime::with(['room.cinema'])->where('movie_id', $id)->get();
 
-    // Lấy showtimes kèm room, cinema, bookings (phân trang)
-    $showtimes = Showtime::with(['room.cinema', 'bookings'])
-        ->whereIn('showtime_id', $showtimeIds)
-        ->orderBy('start_time', 'desc')
-        ->paginate(10);
 
-    // Tính tổng doanh thu
-    $totalRevenue = Booking::whereIn('showtime_id', $showtimeIds)->sum('total_price');
+    // Tạo thống kê giả
+    $totalTickets = 482;
+    $totalRevenue = 125600000; // 125.600.000 VND
+    $occupancyRate = 68; // 68%
 
-    // Tính tổng số vé bán (số booking)
-    $totalTickets = Booking::whereIn('showtime_id', $showtimeIds)->count();
-
-    // Tính tổng ghế từ room
-    $totalSeats = Showtime::with('room')
-        ->whereIn('showtime_id', $showtimeIds)
-        ->get()
-        ->sum(fn($showtime) => $showtime->room->total_seats);
-
-    $occupancyRate = $totalSeats > 0 ? round(($totalTickets / $totalSeats) * 100, 2) : 0;
-
-    // Doanh thu theo tháng bằng query group by
-    $revenueByMonth = Booking::selectRaw("DATE_FORMAT(created_at, '%m/%Y') as month, SUM(total_price) as revenue")
-        ->whereIn('showtime_id', $showtimeIds)
-        ->groupBy('month')
-        ->orderBy('month')
-        ->pluck('revenue', 'month')
-        ->toArray();
-
+    // Tạo dữ liệu biểu đồ giả (7 ngày gần nhất)
     $revenueChart = [
-        'labels' => array_keys($revenueByMonth),
-        'data' => array_values($revenueByMonth),
+        'labels' => ['20/3', '21/3', '22/3', '23/3', '24/3', '25/3', '26/3'],
+        'data' => [12000000, 18500000, 22400000, 18000000, 21000000, 19700000, 14000000]
     ];
 
     return view('admin.show.movie', compact(
         'movie',
         'showtimes',
-        'totalRevenue',
         'totalTickets',
+        'totalRevenue',
         'occupancyRate',
         'revenueChart'
     ));
 }
-
-
-    public function destroy($id)
-    {
-        $movie = Movie::findOrFail($id);
-        $movie->forceDelete();
-
-        return redirect()->route('movies.index')->with('success', 'xóa thành công!');
-    }
 }

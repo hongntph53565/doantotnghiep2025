@@ -69,8 +69,13 @@ class VnpayController extends Controller
             ]);
             $this->bookingService->cancelSeats($booking);
         }
-            return redirect()->route('home')->with('message', ($allParams['vnp_ResponseCode'] ?? '1') !== '00'
-            ? 'Thanh toán đã bị hủy, booking đã hủy.'
-            : 'Thanh toán thành công, booking đã xác nhận.');
+        return response()->json([
+            'success' => true,
+            'message' => $allParams['vnp_ResponseCode'] == '00'
+                ? 'Thanh toán thành công, booking đã xác nhận.'
+                : 'Thanh toán đã bị hủy, booking đã hủy.',
+
+            'booking' => $booking
+        ]);
     }
 }

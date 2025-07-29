@@ -1081,6 +1081,18 @@ strong {
 }
 
 
+.screen hr {
+    width: 80%;
+    height: 8px;
+    background: #a2ec13;
+    margin: 20px auto;
+    border-radius: 50px;
+    text-align: center;
+    line-height: 50px;
+    font-weight: bold;
+}
+
+
 /* seat */
 
 .legend {

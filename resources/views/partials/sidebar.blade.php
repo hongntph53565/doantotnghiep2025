@@ -3,8 +3,8 @@
             <span class="logo-full">LumiStar</span>
             <span class="logo-mini">LS</span>
         </div>
-        <a href="{{ route('admin.dashboard') }}"><i class="bi bi-house-door"></i><span class="menu-text">Tổng quan</span></a>
-        <a href="{{ route('admin.static') }}"><i class="bi bi-bar-chart"></i><span class="menu-text">Thống kê</span></a>
+        <a href="/"><i class="bi bi-house-door"></i><span class="menu-text">Tổng quan</span></a>
+        <a href="/static"><i class="bi bi-bar-chart"></i><span class="menu-text">Thống kê</span></a>
 
         <a data-bs-toggle="collapse" href="#heThong" role="button">
             <i class="bi bi-building"></i><span class="menu-text">Hệ thống rạp</span>
@@ -12,7 +12,6 @@
         <div class="collapse submenu" id="heThong">
             <a href="{{ route('cinemas.index') }}"><span class="menu-text">Rạp</span></a>
             <a href="{{ route('rooms.index') }}"><span class="menu-text">phòng chiếu</span></a>
-            <a href="{{ route('cinemaseatprices.index') }}"><span class="menu-text">Quản lý giá ghế</span></a>
         </div>
 
         <a data-bs-toggle="collapse" href="#phimXuatChieu" role="button">
@@ -22,6 +21,7 @@
             <a href="{{ route('genres.index') }}"><span class="menu-text">Thể Loại</span></a>
             <a href="{{ route('movies.index') }}"><span class="menu-text">Quản lý phim</span></a>
             <a href="{{ route('showtimes.index') }}"><span class="menu-text">Quản lý xuất chiếu</span></a>
+            <a href="{{ route('cinemaseatprices.index') }}"><span class="menu-text">Quản lý giá ghế</span></a>
         </div>
 
         <a data-bs-toggle="collapse" href="#sidebarfood" role="button">
@@ -55,5 +55,5 @@
             <a href="{{ route('template.index') }}"><span class="menu-text">Mẫu email</span></a>
             <a href="{{ route('emaillog.index') }}"><span class="menu-text">Mail đã gửi</span></a>
         </div>
-        <a href="{{ route('users.index') }}"><i class="bi bi-person"></i><span class="menu-text">Tài khoản</span></a>
+        <a href="#"><i class="bi bi-person"></i><span class="menu-text">Tài khoản</span></a>
     </nav>

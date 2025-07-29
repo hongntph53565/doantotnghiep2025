@@ -363,62 +363,76 @@
 </head>
 
 <body>
-    <div class="header-banner">
-        <img src="{{ asset('images/Z1-1748x155-1.jpg') }}" alt="Banner Summer" class="w-100">
-    </div>
-    <div class="topbar">
-        <div class="container d-flex justify-content-between align-items-center">
-            <div class="d-flex align-items-center">
-                <a href="{{ url('/') }}">
-                    <img style="width: 150px; height: 70px;"
-                        src="{{ asset('images/z6776223534015_3ec1a499b9bb824d97c41f77d3a677be-removebg-preview.png') }}"
-                        alt="Logo">
-                </a>
-                <nav class="navbar navbar-expand-lg align-items-center">
-                    <div class="container">
-                        <div class="collapse navbar-collapse">
-                            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                                <li class="nav-item dropdown hover-dropdown">
-                                    <a class="nav-link dropdown-toggle active" href="#">
-                                        NOW SHOWING
-                                    </a>
-                                    <ul class="dropdown-menu custom-dropdown">
-                                        <li><a class="dropdown-item" href="{{ route('Client.cinemaShowtime') }}">LỊCH
-                                                CHIẾU RẠP</a></li>
-                                        <li><a class="dropdown-item" href="{{ url('/lich-chieu-phim') }}">LỊCH CHIẾU
-                                                PHIM</a></li>
-                                    </ul>
-                                </li>
-                                <li class="nav-item"><a class="nav-link" href="#">ĐỒ ĂN/COMBO</a></li>
-                                <li class="nav-item"><a class="nav-link" href="#">KHUYẾN MÃI</a></li>
-                                <li class="nav-item"><a class="nav-link" href="#">DỊCH VỤ</a></li>
-                                <li class="nav-item dropdown hover-dropdown">
-                                    <a class="nav-link dropdown-toggle active" href="#">
-                                        VỀ BHD STAR
-                                    </a>
-                                    <ul class="dropdown-menu custom-dropdown">
-                                        <li><a class="dropdown-item" href="{{ url('/he-thong-rap') }}">HỆ THỐNG RẠP</a>
-                                        </li>
-                                        <li><a class="dropdown-item" href="#">VỀ CHÚNG TÔI</a></li>
-                                        <li><a class="dropdown-item" href="#">TUYỂN DỤNG</a></li>
-                                    </ul>
-                                </li>
-                            </ul>
-                        </div>
 
+    {{-- Navbar --}}
+    <div class="topbar">
+        <div class="topbar">
+            <div class="container d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center">
+                    <img style=" width: 100px; height: 100px;" src="{{ asset('images/logo.jpg') }}" alt="Logo">
+                    <nav class="navbar navbar-expand-lg">
+                        <div class="container">
+                            <a class="navbar-brand" href="{{ url('/home') }}">LumiStar</a>
+
+
+                            <div class="collapse navbar-collapse">
+                                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                                    <li class="nav-item dropdown">
+                                        <a class="nav-link dropdown-toggle active" href="#" role="button"
+                                            data-bs-toggle="dropdown">
+                                            NOW SHOWING
+                                        </a>
+                                        <ul class="dropdown-menu custom-dropdown">
+                                            <li>
+                                                <a class="dropdown-item" href="{{ url('/lich-chieu-theo-rap') }}">LỊCH
+                                                    CHIẾU RẠP</a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item" href="{{ url('/lich-chieu-phim') }}">LỊCH CHIẾU
+                                                    PHIM</a>
+                                            </li>
+                                        </ul>
+
+                                    </li>
+                                    <li class="nav-item"><a class="nav-link" href="#">ĐỒ ĂN/COMBO</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="#">KHUYẾN MÃI</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="#">DỊCH VỤ</a></li>
+                                    <li class="nav-item dropdown">
+                                        <a class="nav-link dropdown-toggle active" href="#" role="button"
+                                            data-bs-toggle="dropdown">
+                                            VỀ BHD STAR
+                                        </a>
+                                        <ul class="dropdown-menu custom-dropdown">
+                                            <li><a class="dropdown-item" href="{{ url('/he-thong-rap') }}">HỆ THỐNG
+                                                    RẠP</a></li>
+                                            <li><a class="dropdown-item" href="#">VỀ CHÚNG TÔI</a></li>
+                                            <li><a class="dropdown-item" href="#">TUYỂN DỤNG</a></li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </nav>
+                </div>
+                <div class="d-flex align-items-center">
+                    <div class="dropdown">
+                        <button class="btn btn-outline-success dropdown-toggle" type="button" id="dropdownLocation"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            Hà Nội
+                        </button>
+                        <ul class="dropdown-menu custom-dropdown" aria-labelledby="dropdownLocation">
+                            <li><a class="dropdown-item" href="#">Hà Nội</a></li>
+                            <li><a class="dropdown-item" href="#">TP. Hồ Chí Minh</a></li>
+                            <li><a class="dropdown-item" href="#">Đà Nẵng</a></li>
+                        </ul>
                     </div>
-                </nav>
-            </div>
-            <div class="d-flex align-items-center">
-                <div class="dropdown hover-dropdown">
-                    <button class="btn btn-outline-success dropdown-toggle" type="button">
-                        Hà Nội
-                    </button>
-                    <ul class="dropdown-menu custom-dropdown">
-                        <li><a class="dropdown-item" href="#">Hà Nội</a></li>
-                        <li><a class="dropdown-item" href="#">TP. Hồ Chí Minh</a></li>
-                        <li><a class="dropdown-item" href="#">Đà Nẵng</a></li>
-                    </ul>
+                    <a href="{{ url('/profile') }}" class="text-decoration-none text-dark">
+                        <div class="d-flex align-items-center ms-3">
+                            <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" width="24"
+                                class="me-1">
+                            <span>Gia Hưng / <strong>Thoát</strong></span>
+                        </div>
+                    </a>
                 </div>
 
                 @if (Auth::check())

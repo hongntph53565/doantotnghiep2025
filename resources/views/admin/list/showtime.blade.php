@@ -7,30 +7,22 @@
                 <div class="container-fluid bg-light p-4 rounded-top">
                     <div class="row align-items-end g-3">
                         <div class="col-xl-2 col-lg-3 col-md-6">
-                            <label for="district" class="form-label fw-semibold">Khu vực</label>
-                            <select class="form-select" id="district" name="district">
-                                <option value="" disabled {{ request('district') ? '' : 'selected' }}>--- Chọn khu vực
-                                    ---</option>
+                            <label for="chiNhanh" class="form-label fw-semibold">Khu vực</label>
+                            <select class="form-select" id="district" name="">
+                                <option value="" selected disabled>--- Chọn khu vực ---</option>
                                 @foreach ($districts as $district)
-                                    <option value="{{ $district->city }}"
-                                        {{ request('district') == $district->city ? 'selected' : '' }}>
-                                        {{ $district->city }}
-                                    </option>
+                                    <option value="{{ $district->city }}">{{ $district->city }}</option>
                                 @endforeach
                             </select>
                         </div>
-
-                        {{-- Rạp chiếu --}}
                         <div class="col-xl-2 col-lg-3 col-md-6">
                             <label for="rapChieu" class="form-label fw-semibold">Rạp chiếu <span
                                     class="text-danger">*</span></label>
                             <select class="form-select" id="rapChieu" name="cinema_id">
-                                <option value="" hidden>--- Chọn rạp ---</option>
+                                <option value="" selected disabled>--- Chọn rạp ---</option>
                                 @foreach ($cinemas as $cinema)
-                                    <option value="{{ $cinema->cinema_id }}" district-data="{{ $cinema->city }}"
-                                        {{ request('cinema_id') == $cinema->cinema_id ? 'selected' : '' }}>
-                                        {{ $cinema->name }}
-                                    </option>
+                                    <option value="{{ $cinema->cinema_id }}" district-data="{{ $cinema->city }}">
+                                        {{ $cinema->name }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -48,10 +40,9 @@
                                 <option value="">Tất cả</option>
                                 <option value="Đang chiếu" {{ request('status') == 'Đang chiếu' ? 'selected' : '' }}>Đang
                                     chiếu</option>
-                                <option value="Sắp chiếu" {{ request('status') == 'Sắp chiếu' ? 'selected' : '' }}>Sắp
-                                    chiếu
+                                <option value="Sắp chiếu" {{ request('status') == 'Sắp chiếu' ? 'selected' : '' }}>Sắp chiếu
                                 </option>
-                                <option value="Đã chiếu" {{ request('status') == 'Đã chiếu' ? 'selected' : '' }}>Đã chiếu
+                                <option value="Đã hủy" {{ request('status') == 'Đã hủy' ? 'selected' : '' }}>Đã chiếu
                                 </option>
                             </select>
                         </div>
@@ -59,10 +50,9 @@
                             <button class="btn btn-sm btn-primary flex-grow-1">
                                 <i class="bi bi-funnel me-1"></i> Lọc
                             </button>
-                            <a href="{{ route('showtimes.index') }}" class="btn btn-sm btn-outline-secondary">
+                            <button class="btn btn-sm btn-outline-secondary">
                                 <i class="bi bi-arrow-counterclockwise"></i>
-                            </a>
-
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -187,43 +177,36 @@
 
 @push('scripts')
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const districtSelect = document.getElementById('district');
-            const cinemaSelect = document.getElementById('rapChieu');
-            const selectedDistrict = districtSelect.value;
+        const districtSelect = document.getElementById('district');
+        const cinemaSelect = document.getElementById('rapChieu');
 
-            Array.from(cinemaSelect.options).forEach((option, index) => {
+        Array.from(cinemaSelect.options).forEach((option, index) => {
+            if (index !== 0) {
+                option.hidden = true;
+                option.disabled = true;
+            }
+        });
+        districtSelect.addEventListener('change', function() {
+            const selectedDistrict = this.value;
+
+            Array.from(cinemaSelect.options).forEach(option => {
                 const city = option.getAttribute('district-data');
-                if (!city) return;
 
-                if (!selectedDistrict || city !== selectedDistrict) {
-                    option.hidden = true;
-                    option.disabled = true;
-                } else {
+                if (!city) {
                     option.hidden = false;
                     option.disabled = false;
+                    return;
+                }
+
+                if (city === selectedDistrict) {
+                    option.hidden = false;
+                    option.disabled = false;
+                } else {
+                    option.hidden = true;
+                    option.disabled = true;
                 }
             });
-
-            districtSelect.addEventListener('change', function() {
-                const selected = this.value;
-
-                Array.from(cinemaSelect.options).forEach(option => {
-                    const city = option.getAttribute('district-data');
-
-                    if (!city) return;
-
-                    if (city === selected) {
-                        option.hidden = false;
-                        option.disabled = false;
-                    } else {
-                        option.hidden = true;
-                        option.disabled = true;
-                    }
-                });
-
-                cinemaSelect.selectedIndex = 0;
-            });
+            cinemaSelect.selectedIndex = 0;
         });
     </script>
 @endpush

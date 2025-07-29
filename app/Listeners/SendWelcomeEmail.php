@@ -30,6 +30,5 @@ class SendWelcomeEmail
 
         $template = EmailTemplate::where('subject', 'Chào mừng đến với Lumistar')->first();
         $this->mailService->send($event->user->email, $template->template_id, $data);
-
     }
 }

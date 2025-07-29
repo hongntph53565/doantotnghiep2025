@@ -1,42 +1,48 @@
 <div class="container mb-5">
     <div class="row">
+        {{-- Lịch chiếu bên trái --}}
         <div class="col-md-9">
             <div class="schedule-box">
                 @if ($showtimes->isEmpty())
-                    <div class="alert alert-warning text-center">
-                        Không có lịch chiếu nào ngày
-                        {{ request('date') ? \Carbon\Carbon::parse(request('date'))->format('d/m/Y') : 'này' }}
-                    </div>
-                @else
-                    @foreach ($showtimes as $cinemaId => $cinemaShowtimes)
-                        @php
-                            $firstShowtime = $cinemaShowtimes->first();
-                            $cinema = $firstShowtime && $firstShowtime->room ? $firstShowtime->room->cinema : null;
-                        @endphp
+                <div class="alert alert-warning text-center">
+                Không có lịch chiếu nào ngày {{ request('date') ? \Carbon\Carbon::parse(request('date'))->format('d/m/Y') : 'này' }}
+            </div>
+            @else
+                @foreach ($showtimes as $cinemaId => $cinemaShowtimes)
 
+                    @php
+    $firstShowtime = $cinemaShowtimes->first();
+    $cinema = $firstShowtime && $firstShowtime->room ? $firstShowtime->room->cinema : null;
+@endphp
+
+
+
+
+                    <div class="d-flex align-items-start mb-2">
                         <img src="{{ asset('images/logo.jpg') }}" alt="Logo rạp" width="60" class="me-3"
                             style="object-fit: contain;">
                         <div>
                             <h6 class="fw-bold mb-1">{{ $cinema->name }}</h6>
                             <p class="text-muted mb-0">{{ $cinema->full_address }}</p>
                         </div>
+                    </div>
 
 
+                    <div class="d-flex flex-wrap">
+                        @foreach ($cinemaShowtimes as $showtime)
+                            <div class="showtime-card text-center p-2 border rounded shadow-sm me-2 mb-3">
+    <button type="button"
+        class="showtime-btn d-block mx-auto mb-1"
+        data-showtime-id="{{ $showtime->showtime_id }}">
+        {{ \Carbon\Carbon::parse($showtime->start_time)->format('H:i') }}
+    </button>
 
-                        <div class="d-flex flex-wrap">
-                            @foreach ($cinemaShowtimes as $showtime)
-                                <div class="showtime-card text-center p-2 border rounded shadow-sm me-2 mb-3">
-                                    <button type="button" class="showtime-btn d-block mx-auto mb-1"
-                                        data-showtime-id="{{ $showtime->showtime_id }}">
-                                        {{ \Carbon\Carbon::parse($showtime->start_time)->format('H:i') }}
-                                    </button>
-
-                                    <div class="tag small">{{ $movie->language ?? 'Phụ đề' }}</div>
-                                    <div class="tag green small mt-1">{{ $movie->format ?? '2D' }}</div>
-                                </div>
-                            @endforeach
-                        </div>
-                    @endforeach
+    <div class="tag small">{{ $movie->language ?? 'Phụ đề' }}</div>
+    <div class="tag green small mt-1">{{ $movie->format ?? '2D' }}</div>
+</div>
+                        @endforeach
+                    </div>
+                @endforeach
                 @endif
             </div>
         </div>
@@ -71,12 +77,13 @@
         </div>
     </div>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const urlParams = new URLSearchParams(window.location.search);
-            if (urlParams.get('showtime_id')) {
-                goToStep(1);
-            }
-        });
-        const movieIdGlobal = {{ $movie->movie_id }};
-    </script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('showtime_id')) {
+            goToStep(1);
+        }
+    });
+    const movieIdGlobal = {{ $movie->movie_id }};
+</script>
 </div>
+

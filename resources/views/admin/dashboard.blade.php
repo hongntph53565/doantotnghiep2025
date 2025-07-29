@@ -3,7 +3,7 @@
 @section('content')
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <h4>Xin chào, <strong>{{ session('my_name') ?? 'Guest' }}!</strong></h4>
+            <h4>Xin chào, <strong>Trần Quốc Hoàn!</strong></h4>
             <p class="text-muted">Đây là bảng tổng quan các số liệu thống kê</p>
         </div>
     </div>
