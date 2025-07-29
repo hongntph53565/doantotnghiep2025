@@ -90,7 +90,7 @@
                             <!-- Nút mua vé -->
                             <a href="dat-ve.html" class="buy-button">
                                 MUA VÉ NGAY
-                                <img src="{{ asset('images/ticket-svgrepo-com.svg') }}" alt="vé">
+                                <img src="{{ asset('images/ticket-svgrepo-com.svg') }}" alt="vé">   
                             </a>
 
                         </div>

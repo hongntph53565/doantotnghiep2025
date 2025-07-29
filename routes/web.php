@@ -246,17 +246,17 @@ Route::get('/thong-tin-rap', function () {
     return view('Client.thongtinrap');
 });
 
-Route::prefix('staff')->name('staff.')->group(function () {
-    Route::get('/', [Cinema_StaffController::class, 'index'])->name('index');
-    Route::get('/booking1', [StaffBooking::class, 'step1'])->name('booking1');
-    Route::get('/booking2', [StaffBooking::class, 'step2'])->name('booking2');
-    Route::get('/now-showing', [Cinema_StaffController::class, 'nowShowing'])->name('nowShowing');
-    Route::get('/coming-soon', [Cinema_StaffController::class, 'comingSoon'])->name('comingSoon');
-    Route::get('/coming-soon', [Cinema_StaffController::class, 'comingSoon'])->name('comingSoon');
-    Route::get('/foods', [StaffFoodController::class, 'index'])->name('index');
-    Route::get('/foods/{id}', [StaffFoodController::class, 'show'])->name('foods.show');
-    Route::get('/search-ticket-online', [BookingSearchController::class, 'search'])->name('search');
-});
+// Route::prefix('staff')->name('staff.')->group(function () {
+//     Route::get('/', [Cinema_StaffController::class, 'index'])->name('index');
+//     Route::get('/booking1', [StaffBooking::class, 'step1'])->name('booking1');
+//     Route::get('/booking2', [StaffBooking::class, 'step2'])->name('booking2');
+//     Route::get('/now-showing', [Cinema_StaffController::class, 'nowShowing'])->name('nowShowing');
+//     Route::get('/coming-soon', [Cinema_StaffController::class, 'comingSoon'])->name('comingSoon');
+//     Route::get('/coming-soon', [Cinema_StaffController::class, 'comingSoon'])->name('comingSoon');
+//     Route::get('/foods', [StaffFoodController::class, 'index'])->name('index');
+//     Route::get('/foods/{id}', [StaffFoodController::class, 'show'])->name('foods.show');
+//     Route::get('/search-ticket-online', [BookingSearchController::class, 'search'])->name('search');
+// });
 
 Route::prefix('cinema')->name('cinemas.')->group(function () {
     Route::get('/',              [CinemaController::class, 'index'])->name('index');

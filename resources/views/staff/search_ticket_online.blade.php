@@ -10,51 +10,103 @@
 @section('content')
 
 
+<style>
+    form {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+    }
 
+    input[type="text"] {
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        min-width: 180px;
+        font-size: 14px;
+    }
 
+    button {
+        padding: 8px 16px;
+        background-color: #3490dc;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 14px;
+        transition: background-color 0.3s;
+    }
+
+    button:hover {
+        background-color: #2779bd;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    th, td {
+        padding: 10px;
+        border: 1px solid #ddd;
+        text-align: center;
+    }
+
+    th {
+        background-color: #f8f9fa;
+        font-weight: bold;
+    }
+
+    tbody tr:nth-child(even) {
+        background-color: #f1f1f1;
+    }
+
+    tbody tr:hover {
+        background-color: #e2e8f0;
+    }
+</style>
+@if (session('error'))
+    <div style="color: red; margin-bottom: 10px;">
+        {{ session('error') }}
+    </div>
+@endif
 <form action="{{ route('staff.search') }}" method="GET" class="mb-4">
-    <input type="text" name="booking_id" placeholder="Mã vé" value="{{ request('booking_id') }}">
-    <input type="text" name="last_name" placeholder="tên khách hàng" value="{{ request('last_name') }}">
-    <input type="text" name="show_date" placeholder="Ngày chiếu" value="{{ request('show_date') }}">
-
-
+    <input type="text" name="query" placeholder="Nhập mã vé, tên khách hàng hoặc ngày chiếu..." value="{{ request('query') }}">
     <button type="submit">Tìm kiếm</button>
 </form>
 
-{{-- Hiển thị danh sách vé --}}
-@if (isset($bookings))
 
-<table border="1">
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Người đặt</th>
-            <th>Tên phim</th>
-            <th>Ngày chiếu</th>
-            <th>Giờ chiếu</th>
-            <th>Ghế</th>
-            <th>Trạng thái</th>
-            <th>Ngày đặt</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach($bookings as $booking)
+
+@if (request('query') && isset($bookings) && $bookings->count())
+    <table>
+        <thead>
             <tr>
-                <td>{{ $booking->id }}</td>
-                <td>{{ $booking->user->last_name ?? 'Không rõ' }}</td>
-                <td>{{ $booking->showtime->movie->title ?? 'Không rõ' }}</td>
-                <td>{{ $booking->showtime->date ?? '' }}</td>
-                <td>{{ $booking->showtime->start_time ?? '' }}</td>
-                <td>{{ $booking->seat_number }}</td>
-                <td>{{ $booking->status }}</td>
-                <td>{{ $booking->created_at->format('d/m/Y') }}</td>
+                <th>ID</th>
+                <th>Người đặt</th>
+                <th>Tên phim</th>
+                <th>Ngày chiếu</th>
+                <th>Mã vé</th>
+                <th>Trạng thái</th>
+                <th>Ngày đặt</th>
             </tr>
-        @endforeach
-    </tbody>
+        </thead>
+        <tbody>
+            @foreach($bookings as $booking)
+                <tr>
+                    <td>{{ $booking->booking_id }}</td>
+                    <td>{{ $booking->user->last_name ?? 'Không rõ' }}</td>
+                    <td>{{ $booking->showtime->movie->title ?? 'Không rõ' }}</td>
+                    <td>{{ $booking->showtime->show_date ?? '' }}</td>
+                    <td>{{ $booking->booking_code }}</td>
+                    <td>{{ $booking->booking_status }}</td>
+                    <td>{{ $booking->created_at }}</td>
+                </tr>
+            @endforeach
+        </tbody>
 </table>
-
-{{ $bookings->withQueryString()->links() }}
-
+@elseif (request('query'))
+    <p>Không tìm thấy kết quả phù hợp.</p>
 @endif
 
 

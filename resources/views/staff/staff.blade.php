@@ -6,7 +6,7 @@
 @section('content')
 
     <div class="container">
-        <form method="GET" action="{{ route('staff.list') }}" class="mb-4">
+        <form method="GET" action="#" class="mb-4">
             <div class="input-group">
                 <input type="text" name="search" class="form-control" placeholder="Tìm kiếm tên phim..."
                     value="{{ request('search') }}">
