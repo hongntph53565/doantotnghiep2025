@@ -16,18 +16,18 @@ use Carbon\Carbon;
 class HomeController extends Controller
 {
     public function home()
-{
-    $movies = Movie::with('genre')->latest()->get();
+    {
+        $movies = Movie::with('genre')->latest()->get();
 
-  foreach ($movies as $movie) {
-    if (!empty($movie->trailer) && Str::contains($movie->trailer, 'watch?v=')) {
-        $videoId = explode('watch?v=', $movie->trailer)[1];
-        $movie->trailer = 'https://www.youtube.com/embed/' . $videoId;
+        foreach ($movies as $movie) {
+            if (!empty($movie->trailer) && Str::contains($movie->trailer, 'watch?v=')) {
+                $videoId = explode('watch?v=', $movie->trailer)[1];
+                $movie->trailer = 'https://www.youtube.com/embed/' . $videoId;
+            }
+        }
+
+        return view('Client.home', compact('movies'));
     }
-}
-
-    return view('Client.home', compact('movies'));
-}
     public function booking(Request $request, $movie_id)
     {
         $movie = Movie::with('genre')->findOrFail($movie_id);
@@ -97,7 +97,7 @@ class HomeController extends Controller
             ->groupBy(fn($item) => $item->movie->movie_id);
 
         $cinema = Cinema::findOrFail($cinema_id);
-return view('Client.MovieShowtimesByCinema', compact('cinema', 'showtimes', 'date'));
+        return view('Client.MovieShowtimesByCinema', compact('cinema', 'showtimes', 'date'));
     }
 
 
@@ -193,6 +193,4 @@ return view('Client.MovieShowtimesByCinema', compact('cinema', 'showtimes', 'dat
 
         return view('ajax.showtimes-by-cinema', compact('showtimes'))->render();
     }
-
-
 }

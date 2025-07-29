@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
@@ -7,58 +8,80 @@ use Illuminate\Http\Request;
 
 class CinemaController extends Controller
 {
-    public function index()
+
+    public function index(Request $request)
+    {
+        $keyword = $request->input('keyword');
+
+        $query = Cinema::query();
+
+        if ($keyword) {
+            $query->where('name', 'like', "%$keyword%")
+                ->orWhere('phone', 'like', "%$keyword%")
+                ->orWhere('email', 'like', "%$keyword%");
+        }
+
+        $cinemas = $query->latest()->paginate(10);
+        $index = 1;
+        return view('admin.list.cinema', compact('cinemas', 'index'));
+    }
+
+    public function create()
     {
         return response()->json(Cinema::all());
     }
 
     public function store(Request $request)
     {
-        $request->validate([
-            'name' => 'required|max:255',
-            'address_detail' => 'required',
-            'ward' => 'required|max:100',
-            'district' => 'required|max:100',
-            'city' => 'required|max:100',
-            'phone' => 'required|max:20',
-            'email' => 'required|email',
+        // Validate đầu vào
+        $validated = $request->validate([
+            'name'            => 'required|string|max:255',
+            'address_detail'  => 'required|string',
+            'ward'            => 'required|string|max:100',
+            'district'        => 'required|string|max:100',
+            'city'            => 'required|string|max:100',
+            'phone'           => 'nullable|string|max:20',
+            'email'           => 'nullable|email|max:255',
         ]);
 
-        $cinema = Cinema::create($request->all());
+        // Xử lý checkbox status: nếu checkbox được bật, lưu là 'active', ngược lại 'inactive'
+        $validated['status'] = $request->boolean('status') ? 'active' : 'inactive';
+        // Tạo mới rạp
+        Cinema::create($validated);
 
-        return response()->json($cinema, 201);
+        return redirect()->route('cinemas.index')->with('success', 'Thêm rạp chiếu thành công!');
     }
 
     public function show($id)
     {
         $cinema = Cinema::findOrFail($id);
-        return response()->json($cinema);
+        return view('admin.edit.cinema', compact('cinema'));
     }
 
     public function update(Request $request, $id)
     {
-        $cinema = Cinema::findOrFail($id);
-
-        $request->validate([
-            'name' => 'sometimes|required|max:255',
-            'address_detail' => 'sometimes|required',
-            'ward' => 'sometimes|required|max:100',
-            'district' => 'sometimes|required|max:100',
-            'city' => 'sometimes|required|max:100',
-            'phone' => 'sometimes|required|max:20',
-            'email' => 'sometimes|required|email',
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'address_detail' => 'required|string',
+            'ward' => 'required|string|max:100',
+            'district' => 'required|string|max:100',
+            'city' => 'required|string|max:100',
+            'phone' => 'nullable|string|max:20',
+            'email' => 'nullable|email|max:255',
         ]);
 
-        $cinema->update($request->all());
+        $validated['status'] = $request->boolean('status') ? 'active' : 'inactive';
 
-        return response()->json($cinema);
+        $cinema = Cinema::findOrFail($id);
+        $cinema->update($validated);
+
+        return redirect()->route('cinemas.index')->with('success', 'Cập nhật rạp thành công!');
     }
 
     public function destroy($id)
     {
         $cinema = Cinema::findOrFail($id);
         $cinema->delete();
-
-        return response()->json(['message' => 'Cinema deleted successfully.']);
+        return redirect()->route('cinemas.index')->with('success', 'Xoá mẫu email thành công!');
     }
 }

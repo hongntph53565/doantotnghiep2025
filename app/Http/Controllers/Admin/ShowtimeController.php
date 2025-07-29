@@ -40,26 +40,26 @@ class ShowtimeController extends Controller
             $query->whereDate('date', '<=', $request->to_date);
         }
 
-if ($request->status) {
-    $now = now();
-    $query->where(function ($q) use ($request, $now) {
-        if ($request->status === 'Đang chiếu') {
-            $q->whereDate('date', $now->toDateString())
-              ->whereTime('start_time', '<=', $now->toTimeString())
-              ->whereTime('end_time', '>=', $now->toTimeString());
-        } elseif ($request->status === 'Sắp chiếu') {
-            $q->where(function ($sub) use ($now) {
-                $sub->where('date', '>', $now->toDateString())
-                    ->orWhere(function ($sub2) use ($now) {
-                        $sub2->whereDate('date', $now->toDateString())
-                             ->whereTime('start_time', '>', $now->toTimeString());
+        if ($request->status) {
+            $now = now();
+            $query->where(function ($q) use ($request, $now) {
+                if ($request->status === 'Đang chiếu') {
+                    $q->whereDate('date', $now->toDateString())
+                        ->whereTime('start_time', '<=', $now->toTimeString())
+                        ->whereTime('end_time', '>=', $now->toTimeString());
+                } elseif ($request->status === 'Sắp chiếu') {
+                    $q->where(function ($sub) use ($now) {
+                        $sub->where('date', '>', $now->toDateString())
+                            ->orWhere(function ($sub2) use ($now) {
+                                $sub2->whereDate('date', $now->toDateString())
+                                    ->whereTime('start_time', '>', $now->toTimeString());
+                            });
                     });
+                } elseif ($request->status === 'Đã chiếu') {
+                    $q->where('status', 'sold_out');
+                }
             });
-        } elseif ($request->status === 'Đã chiếu') {
-            $q->where('status', 'sold_out');
         }
-    });
-}
 
 
         $showtimes = $query->orderBy('start_time')->paginate(10);

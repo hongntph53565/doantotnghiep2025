@@ -10,8 +10,14 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 
     <style>
-        body {
-            background-color: #f8f9fa;
+        .footer-line {
+            width: 60px;
+            height: 6px;
+            background-color: #9acd32;
+            /* màu xanh lá tương tự trong ảnh */
+            margin-top: 20px;
+            margin-bottom: 20px;
+            border-radius: 5px;
         }
 
         .section-title {
@@ -416,18 +422,19 @@
                 </div>
 
                 @if (Auth::check())
-                 <a href="{{ url('/profile') }}" class="text-decoration-none text-dark">
-                    <div class="d-flex align-items-center ms-3">
-                        <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" width="24" class="me-1">
-                        <span>{{ Auth::user()->full_name }} /
-                            <strong>
-                                <a href="#"
-                                    onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
-                                    class="text-dark text-decoration-none">Thoát</a>
-                            </strong>
-                        </span>
-                    </div>
- </a>
+                    <a href="{{ url('/profile') }}" class="text-decoration-none text-dark">
+                        <div class="d-flex align-items-center ms-3">
+                            <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" width="24"
+                                class="me-1">
+                            <span>{{ Auth::user()->full_name }} /
+                                <strong>
+                                    <a href="#"
+                                        onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
+                                        class="text-dark text-decoration-none">Thoát</a>
+                                </strong>
+                            </span>
+                        </div>
+                    </a>
                     <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
                         @csrf
                     </form>
@@ -452,8 +459,8 @@
                                 <button type="submit" class="btn btn-success mb-2">Đăng nhập</button>
                             </form>
 
-                            <a href="{{ route('register.form') }}" class="btn btn-primary w-100">Đăng ký thành
-                                viên</a>
+                            {{-- <a href="{{ route('register.form') }}" class="btn btn-primary w-100">Đăng ký thành
+                                viên</a> --}}
 
                         </div>
                         <script>
@@ -494,8 +501,7 @@
 
                 <div class="col-md-4 mb-4">
                     <h5 class="fw-bold">VỀ BHD STAR</h5>
-                    <hr class="mt-0"
-                        style="height: 5px;width: 120px;border: none;background-color: #7fe784;border-radius: 10px;filter: drop-shadow(0 0 8px #7fe784) drop-shadow(0 0 16px #7fe784);">
+                    <div class="footer-line"></div>
                     <ul class="list-unstyled mt-3">
                         <li><a href="#" class="text-white text-decoration-none">Hệ thống rạp</a></li>
                         <li><a href="#" class="text-white text-decoration-none">Cụm rạp</a></li>
@@ -506,8 +512,7 @@
 
                 <div class="col-md-4 mb-4">
                     <h5 class="fw-bold">QUY ĐỊNH & ĐIỀU KHOẢN</h5>
-                    <hr class="mt-0"
-                        style="height: 5px;width: 120px;border: none;background-color: #7fe784;border-radius: 10px;filter: drop-shadow(0 0 8px #7fe784) drop-shadow(0 0 16px #7fe784);">
+                    <div class="footer-line"></div>
 
                     <ul class="list-unstyled mt-3">
                         <li><a href="#" class="text-white text-decoration-none">Quy định thành viên</a></li>
@@ -524,8 +529,7 @@
 
                 <div class="col-md-4 mb-4">
                     <h5 class="fw-bold">CHĂM SÓC KHÁCH HÀNG</h5>
-                    <hr class="mt-0"
-                        style="height: 5px;width: 120px;border: none;background-color: #7fe784;border-radius: 10px;filter: drop-shadow(0 0 8px #7fe784) drop-shadow(0 0 16px #7fe784);">
+                    <div class="footer-line"></div>
                     <p><strong>Hotline:</strong> 19002099</p>
                     <p><strong>Giờ làm việc:</strong> 9:00 - 22:00 (Tất cả các ngày bao gồm cả Lễ, Tết)</p>
                     <p><strong>Email hỗ trợ:</strong> <a href="mailto:cskh@bhdstar.vn"
@@ -541,10 +545,10 @@
             </div>
             <hr class="border-secondary">
             <div class="row align-items-center">
-                <div class="col-md-1 mb-2">
+                <div class="col-md-1 mb-3">
                     <img style=" width: 100px; height: 100px;" src="{{ asset('images/logo.jpg') }}" alt="Logo">
                 </div>
-                <div class="col-md-11">
+                <div class="col-md-9 ms-5">
                     <p class="mb-1 fw-bold">Công ty TNHH MTV Ngôi Sao Cineplex Lumi Việt Nam</p>
                     <p class="mb-1">Giấy CNĐKDN: 0104597158. Đăng ký lần đầu ngày 15 tháng 04 năm 2010</p>
                     <p class="mb-1">Địa chỉ: Tầng 11, Tòa nhà Hồng Hà Building, Lý Thường Kiệt, P.Phăn Chu Trinh,
@@ -552,7 +556,10 @@
                         Kiếm, Hà Nội</p>
                     <p class="mb-1">Hotline: 19002099</p>
                     <p class="mb-0">COPYRIGHT 2010 BHD STAR. ALL RIGHTS RESERVED</p>
+<<<<<<< HEAD
 >>>>>>> origin/haiyen
+=======
+>>>>>>> origin/hong
                 </div>
             </div>
         </div>
@@ -561,23 +568,27 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     @stack('scripts')
     @if (session('success'))
-    <div class="position-fixed top-0 end-0 p-3" style="z-index: 9999">
-        <div id="toastSuccess" class="toast align-items-center text-white bg-success border-0 show" role="alert">
-            <div class="d-flex">
-                <div class="toast-body">
-                    {{ session('success') }}
+        <div class="position-fixed top-0 end-0 p-3" style="z-index: 9999">
+            <div id="toastSuccess" class="toast align-items-center text-white bg-success border-0 show"
+                role="alert">
+                <div class="d-flex">
+                    <div class="toast-body">
+                        {{ session('success') }}
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto"
+                        data-bs-dismiss="toast"></button>
                 </div>
-                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
             </div>
         </div>
-    </div>
 
-    <script>
-        const toastEl = document.getElementById('toastSuccess');
-        const toast = new bootstrap.Toast(toastEl, { delay: 2000 });
-        toast.show();
-    </script>
-@endif
+        <script>
+            const toastEl = document.getElementById('toastSuccess');
+            const toast = new bootstrap.Toast(toastEl, {
+                delay: 2000
+            });
+            toast.show();
+        </script>
+    @endif
 </body>
 
 </html>
