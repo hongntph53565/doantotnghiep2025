@@ -632,6 +632,84 @@ border: 1px solid #ddd;
     color: #333;
 }
 
+/* Ẩn radio */
+.voucher-option input[type="radio"] {
+    display: none;
+}
+
+/* Layout voucher */
+.voucher-option {
+    display: flex;
+    align-items: center;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    transition: border 0.2s ease;
+}
+
+.voucher-option:hover label {
+    border-color: #5CA628;
+    background-color: #fff;
+}
+
+.voucher-option img {
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
+    margin-right: 12px;
+    border-radius: 6px;
+    background: #fff;
+    border: 1px solid #ddd;
+}
+
+/* Label */
+.voucher-label {
+    flex-grow: 1;
+    font-size: 14px;
+    position: relative;
+    border: 1px solid #ccc;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+/* Hover */
+.voucher-label:hover {
+    border-color: #5CA628;
+}
+
+/* Được chọn */
+.voucher-option input[type="radio"]:checked + .voucher-label {
+    border: 2px solid #5CA628;
+    background-color: #f1fbe8;
+}
+
+.voucher-discount {
+     font-family: 'Rubik Mono One', sans-serif;
+    font-size: 24px;
+    color: #5CA628;
+    font-weight: 600;
+    transform: scale(1.8);
+    transform-origin: right center;
+    line-height: 1;
+    padding-right: 4px;
+    white-space: nowrap;
+    margin-top: 20px;
+}
+
+
+
+/* Đơn tối thiểu */
+.voucher-min-order {
+    font-size: 12px;
+    color: #6c757d;
+}
+.voucher-code {
+    font-size: 18px;
+    font-weight: 700;
+    color: #212529;
+}
+
+
+
 
   
     

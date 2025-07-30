@@ -41,7 +41,9 @@ public function returnPage(Request $request, $description)
 {
     $allParams = $request->query();
 
-    $booking = Booking::where('booking_code', $description)->first();
+    $booking = Booking::with('bookingSeats.showtimeSeat') // ✅ chuẩn nhất
+    ->where('booking_code', $description)
+    ->first();
 
     if (!$booking) {
         return response()->json([
@@ -86,7 +88,8 @@ public function returnPage(Request $request, $description)
         $this->bookingService->cancelSeats($booking);
     }
 
-    return redirect()->route('home')->with('message', 
+    return redirect()->to(route('profile') . '#transaction-history')
+    ->with('message', 
         ($allParams['cancel'] ?? 'false') === 'true'
         ? 'Thanh toán đã bị hủy, booking đã hủy.'
         : 'Thanh toán thành công, booking đã xác nhận.'

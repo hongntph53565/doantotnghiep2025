@@ -71,6 +71,7 @@
             @endphp
             <div class="seat">
                 <table>
+                    
                     @php
                         $maxSlots = $groupedSeats
                             ->map(function ($rowSeats) {
@@ -94,6 +95,9 @@
                             })
                             ->max();
                     @endphp
+                    {{-- @php
+    dump("Seat ID: " . $seat->seat_id, $showtimeSeatStatuses[$seat->seat_id] ?? 'not found');
+@endphp --}}
                     @foreach ($groupedSeats as $rowLabel => $rowSeats)
                         <tr>
                             <td class="lable">{{ $rowLabel }}</td>

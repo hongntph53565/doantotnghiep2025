@@ -1,0 +1,193 @@
+ .qty-input:focus {
+            outline: none;
+            box-shadow: none;
+            border: none;
+        }
+
+        /* Tiêu đề combo: giới hạn 2 dòng */
+        .combo-title {
+            font-weight: bold;
+            font-size: 16px;
+            line-height: 1.3;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            /* Giới hạn 2 dòng */
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Mô tả combo: giới hạn 2 dòng */
+        .combo-desc {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            /* Giới hạn 2 dòng */
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Bắt buộc cho Swiper hoạt động đúng */
+        .swiper-slide {
+            width: auto;
+            /* Không cho Swiper ép width */
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Combo phải có kích thước rõ ràng */
+        .combo-card {
+            width: 100%;
+            margin-bottom: 70px;
+            /* Để combo tự giãn trong slide */
+            max-width: 300px;
+            /* Combo không bị quá to */
+        }
+
+
+        .color {
+            color: #72be43;
+        }
+
+        .addToCart {
+            border: 1px solid #666666;
+            background-color: white;
+            color: #666666;
+            border-radius: 10px;
+            padding: 10px;
+
+        }
+
+        .addToCart:hover {
+            color: white;
+            background-color: #72be43;
+            border: 1px solid #72be43;
+        }
+
+        .text-dark {
+            line-height: 1.6;
+        }
+
+        .quantity-box {
+            width: 100px;
+            overflow: hidden;
+            background-color: #F4F5F6;
+            text-align: center;
+        }
+
+        .quantity-box button {
+            width: 30px;
+            height: 30px;
+            text-align: center;
+            border: none;
+            background-color: #F4F5F6;
+
+        }
+
+        .quantity-box input.qty-input {
+            width: 30px;
+            height: 30px;
+            border: none;
+            background-color: #F4F5F6;
+
+
+        }
+
+        .btn-buy-now {
+            background-color: #91d3b0;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 10px 24px;
+            font-weight: 600;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+            transition: 0.3s ease;
+        }
+
+        .btn-buy-now:hover {
+            background-color: #72be43;
+        }
+   
+        /* Biến container promo thành swiper */
+        .promo-container {
+            width: 100%;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Gộp từng promo-card thành slide */
+        .promo-container .swiper-wrapper {
+            display: flex;
+        }
+
+        .promo-container .swiper-slide {
+            flex-shrink: 0;
+            width: 100%;
+            box-sizing: border-box;
+            padding: 10px;
+        }
+
+        /* Điều chỉnh hiển thị trên các màn hình lớn */
+        @media (min-width: 768px) {
+            .promo-container .swiper-slide {
+                width: 50%;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .promo-container .swiper-slide {
+                width: 33.3333%;
+            }
+        }
+
+        .swiper-button-next,
+        .swiper-button-prev {
+            color: white !important;
+            padding: 20px;
+            border-radius: 50%;
+            width: 90px;
+            height: 90px;
+            top: 50%;
+            transform: translateY(-50%);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 20;
+            position: absolute;
+            cursor: pointer;
+            pointer-events: auto;
+            /* ✅ Cho phép click */
+        }
+
+        /* Mặc định ẩn nút */
+        .promo-container .swiper-button-next,
+        .promo-container .swiper-button-prev {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        /* Khi hover thì hiện ra */
+        .promo-container:hover .swiper-button-next,
+        .promo-container:hover .swiper-button-prev {
+            opacity: 1;
+            visibility: visible;
+        }
+
+
+        /* Swiper bullets */
+        .swiper-pagination-bullet {
+            width: 12px !important;
+            height: 12px !important;
+            margin: 0 6px !important;
+            background-color: #bbb !important;
+            border-radius: 50% !important;
+            opacity: 1 !important;
+            transition: all 0.3s ease !important;
+        }
+
+        .swiper-pagination-bullet-active {
+            background-color: #72BE43 !important;
+            transform: scale(1.2);
+        }

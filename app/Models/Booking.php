@@ -49,7 +49,7 @@ class Booking extends Model
             'seat_id',                  
             'booking_id',               
             'showtime_seat_id'          
-        )->join('showtime_seat', 'showtime_seat.seat_id', '=', 'seats.seat_id');
+        )->join('showtime_seats', 'showtime_seats.seat_id', '=', 'seats.seat_id');
     }
     public function bookingSeats()
     {

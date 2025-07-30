@@ -25,6 +25,8 @@ use App\Http\Controllers\Admin\ZalopayController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Client\HomeController;
 use App\Http\Controllers\Manager\DashboardController as ManagerDashboardController;
+use App\Http\Controllers\Client\CartController;
+use App\Http\Controllers\Client\ComboController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -195,7 +197,7 @@ Route::prefix('admin')->middleware(['auth', 'role:admin,employee'])->group(funct
 });
 
 
-Route::get('/cart', [HomeController::class, 'index']);
+// Route::get('/cart', [HomeController::class, 'index']);
 
 Route::get('/', function () {
     // return response()->json(['message' => 'Backend OK']);
@@ -206,6 +208,21 @@ Route::get('/lich-chieu-phim', [HomeController::class, 'MovieShowtimes'])->name(
 Route::get('/he-thong-rap', function () {
     return view('Client.CinemaSystem');
 });
+Route::get('/mua-do-an', [CartController::class, 'showCart'])->name('cart');
+
+Route::get('/cua-hang', [ComboController::class, 'getCombos'])->name('combo');
+Route::get('/combo/{id}', [ComboController::class, 'show'])->name('combo.show');
+Route::get('/cart', [CartController::class, 'showCart'])->name('cart');
+
+Route::post('/booking/food-only', [BookingController::class, 'storeFoodOnly'])->name('booking.foodOnly');
+
+
+Route::post('/add-cart', [CartController::class, 'addToCart'])->name('cart.addCart');
+// Route::post('/update-cart', [CartController::class, 'updateCart'])->name('cart.update');
+Route::post('/cart/update', [CartController::class, 'updateCart'])->name('cart.update');
+Route::post('/cart/remove', [CartController::class, 'removeFromCart'])->name('cart.remove');
+
+
 Route::get('/profile', [AuthController::class, 'profile'])->name('profile');
 
 Route::get('/thong-tin-rap', function () {
@@ -226,6 +243,7 @@ Route::get('/', [HomeController::class, 'home'])->name('home');
 Route::get('/dat-ve/{movie_id}', [HomeController::class, 'booking'])->name('Client.booking.home');
 Route::get('/ajax/showtimes', [HomeController::class, 'ajaxShowtimes']);
 Route::get('/ajax-showtimes-by-cinema', [HomeController::class, 'ajaxShowtimesByCinema'])->name('Client.ajaxShowtimesByCinema');
+
 
 
 

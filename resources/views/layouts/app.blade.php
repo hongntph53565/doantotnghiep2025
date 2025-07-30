@@ -3,6 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>@yield('title', 'Trang Phim')</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -10,6 +11,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rubik+Mono+One&display=swap" rel="stylesheet">
+<!-- Google Font: Inter (giống như ảnh) -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+
+
 
     
 
@@ -364,6 +370,13 @@
 </head>
 
 <body>
+   @if(session('message'))
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            showToast(@json(session('message')));
+        });
+    </script>
+@endif
     <div class="header-banner">
         <img src="{{ asset('images/Z1-1748x155-1.jpg') }}" alt="Banner Summer" class="w-100">
     </div>
@@ -390,7 +403,7 @@
                                                 PHIM</a></li>
                                     </ul>
                                 </li>
-                                <li class="nav-item"><a class="nav-link" href="#">ĐỒ ĂN/COMBO</a></li>
+                                <li class="nav-item"><a class="nav-link" href="{{ url('/cua-hang') }}">ĐỒ ĂN/COMBO</a></li>
                                 <li class="nav-item"><a class="nav-link" href="#">KHUYẾN MÃI</a></li>
                                 <li class="nav-item"><a class="nav-link" href="#">DỊCH VỤ</a></li>
                                 <li class="nav-item dropdown hover-dropdown">

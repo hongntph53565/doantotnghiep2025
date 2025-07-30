@@ -130,14 +130,15 @@ public function profile()
     $bookings = Booking::with([
         'showtime.room.cinema',
         'bookingSeats.showtimeSeat.seat',
-        'bookingFoods.food',
-        'bookingPromotions'
+        'bookingFoods.food.cinema', // 👈 thêm cinema ở đây
+        'bookingPromotions',
     ])
-    ->where('user_id', $user->user_id)
-    ->where('payment_status', 'paid')
-    ->orderByDesc('created_at')
-    ->get();
+        ->where('user_id', $user->user_id)
+        ->where('payment_status', 'paid')
+        ->orderByDesc('created_at')
+        ->get();
 
     return view('Client.profile', compact('user', 'bookings'));
 }
+
 }

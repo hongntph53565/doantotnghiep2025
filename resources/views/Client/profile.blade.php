@@ -136,7 +136,7 @@
 
             <!-- Lịch sử giao dịch -->
             <div class="mt-5">
-                <h5 class="fw-bold">Lịch sử giao dịch</h5>
+                <h5 id="transaction-history" class="fw-bold">Lịch sử giao dịch</h5>
                 <div class="d-flex flex-wrap justify-content-end gap-2 mb-2">
                     <select class="form-select w-auto">
                         <option>Đặt vé</option>
@@ -169,11 +169,21 @@
                                             <small>{{ $booking->booking_code }}</small>
                                         </div>
                                     </td>
+                                    @php
+                                        $cinema = null;
+
+                                        if ($booking->showtime?->room?->cinema) {
+                                            $cinema = $booking->showtime->room->cinema;
+                                        } elseif ($booking->bookingFoods->first()?->food?->cinema) {
+                                            $cinema = $booking->bookingFoods->first()->food->cinema;
+                                        }
+                                    @endphp
+
                                     <td class="td-cinema-info">
-                                        <strong>Rạp:</strong> <span
-                                            class="cinema-name">{{ $booking->showtime->room->cinema->name ?? 'N/A' }}</span><br>
-                                        <strong>Địa chỉ:</strong> <span
-                                            class="cinema-address">{{ $booking->showtime->room->cinema->address_detail ?? 'N/A' }}</span>
+                                        <strong>Rạp:</strong>
+                                        <span class="cinema-name">{{ $cinema->name ?? 'N/A' }}</span><br>
+                                        <strong>Địa chỉ:</strong>
+                                        <span class="cinema-address">{{ $cinema->address_detail ?? 'N/A' }}</span>
                                     </td>
                                     <td>{{ number_format($booking->total_price) }} VNĐ</td>
                                     <td>{{ floor($booking->total_price / 1000) }}</td>
@@ -228,100 +238,110 @@
                                                     <div class="row g-3">
                                                         {{-- LEFT: Poster --}}
                                                         <div class="col-md-3 text-center ">
-                                                            <img src="{{ asset('storage/' . $booking->showtime->movie->poster) }}"
-                                                                alt="poster" class="img-fluid rounded shadow">
-                                                        </div>
+    @if ($booking->showtime && $booking->showtime->movie)
+        {{-- Nếu có phim thì hiển thị poster phim --}}
+        <img src="{{ asset('storage/' . $booking->showtime->movie->poster) }}"
+            alt="poster" class="img-fluid rounded shadow">
+    @elseif ($booking->bookingFoods->first()?->food?->image)
+        {{-- Nếu là đơn combo-only thì hiển thị ảnh combo food --}}
+        <img src="{{ asset('storage/' . $booking->bookingFoods->first()->food->image) }}"
+            alt="combo" class="img-fluid rounded shadow">
+    @else
+        {{-- Trường hợp không có gì thì hiển thị ảnh mặc định --}}
+        <img src="{{ asset('images/default-poster.jpg') }}"
+            alt="default" class="img-fluid rounded shadow">
+    @endif
+</div>
+
 
                                                         {{-- RIGHT: Info --}}
-                                                        <div class="col-md-9 px-0"> {{-- ✅ Bỏ padding để thẳng hàng --}}
+                                                        <div class="col-md-9 px-0">
                                                             <div class="ticket-info">
-                                                                <h5 class="fw-bold text-uppercase mb-3">
-                                                                    {{ $booking->showtime->movie->title ?? 'N/A' }}
-                                                                </h5>
+                                                                @if ($booking->showtime && $booking->showtime->movie)
+                                                                    <h5 class="fw-bold text-uppercase mb-3">
+                                                                        {{ $booking->showtime->movie->title }}
+                                                                    </h5>
 
-                                                                <div class="mb-1 d-flex">
-                                                                    <span class="w-25 fw-bold">
-                                                                        <i class="bi bi-calendar-event me-1"></i> Thời
-                                                                        gian:
-                                                                    </span>
-                                                                    <span>
-                                                                        <em>
-                                                                            {{ ucfirst(
-                                                                                \Carbon\Carbon::parse($booking->showtime->start_time)->locale('vi')->isoFormat('dddd, DD [Tháng] MM, YYYY'),
-                                                                            ) }}
-                                                                        </em>
-                                                                        <strong class="mx-2">|</strong>
-                                                                        <em>
-                                                                            {{ \Carbon\Carbon::parse($booking->showtime->start_time)->format('H:i') }}
-                                                                            ~
-                                                                            {{ \Carbon\Carbon::parse($booking->showtime->end_time)->format('H:i') }}
-                                                                        </em>
-                                                                    </span>
-                                                                </div>
-
-
-                                                                <div class="mb-1 d-flex">
-                                                                    <span class="w-25 fw-bold">
-                                                                        <i class="bi bi-geo-alt-fill me-1"></i> Rạp:
-                                                                    </span>
-                                                                    <span>{{ $booking->showtime->room->cinema->name ?? 'N/A' }}</span>
-                                                                </div>
-
-                                                                <div class="mb-1 d-flex">
-                                                                    <span class="w-25 fw-bold">
-                                                                        <i class="bi bi-building me-1"></i> Địa chỉ:
-                                                                    </span>
-                                                                    <div class="text-wrap">
-                                                                        {{ $booking->showtime->room->cinema->address_detail ?? '...' }}
+                                                                    <div class="mb-1 d-flex">
+                                                                        <span class="w-25 fw-bold"><i
+                                                                                class="bi bi-calendar-event me-1"></i> Thời
+                                                                            gian:</span>
+                                                                        <span>
+                                                                            <em>
+                                                                                {{ ucfirst(
+                                                                                    \Carbon\Carbon::parse($booking->showtime->start_time)->locale('vi')->isoFormat('dddd, DD [Tháng] MM, YYYY'),
+                                                                                ) }}
+                                                                            </em>
+                                                                            <strong class="mx-2">|</strong>
+                                                                            <em>
+                                                                                {{ \Carbon\Carbon::parse($booking->showtime->start_time)->format('H:i') }}
+                                                                                ~
+                                                                                {{ \Carbon\Carbon::parse($booking->showtime->end_time)->format('H:i') }}
+                                                                            </em>
+                                                                        </span>
                                                                     </div>
-                                                                </div>
+
+                                                                    <div class="mb-1 d-flex">
+                                                                        <span class="w-25 fw-bold"><i
+                                                                                class="bi bi-geo-alt-fill me-1"></i>
+                                                                            Rạp:</span>
+                                                                        <span>{{ $booking->showtime->room->cinema->name ?? 'N/A' }}</span>
+                                                                    </div>
+
+                                                                    <div class="mb-1 d-flex">
+                                                                        <span class="w-25 fw-bold"><i
+                                                                                class="bi bi-building me-1"></i> Địa
+                                                                            chỉ:</span>
+                                                                        <div class="text-wrap">
+                                                                            {{ $booking->showtime->room->cinema->address_detail ?? '...' }}
+                                                                        </div>
+                                                                    </div>
+
+                                                                    <div class="mb-1 d-flex">
+                                                                        <span class="w-25 fw-bold"><i
+                                                                                class="bi bi-film me-1"></i> Phòng:</span>
+                                                                        <span>
+                                                                            {{ $booking->showtime->room->room_name ?? 'N/A' }}
+                                                                            |
+                                                                            <strong>Ghế:</strong>
+                                                                            @foreach ($booking->bookingSeats as $bs)
+                                                                                {{ $bs->showtimeSeat->seat->seat_code ?? 'N/A' }}
+                                                                                @if (!$loop->last)
+                                                                                    ,
+                                                                                @endif
+                                                                            @endforeach
+                                                                        </span>
+                                                                    </div>
+                                                                @else
+                                                                    <h5 class="fw-bold text-uppercase mb-3 text-danger">
+                                                                        Đơn hàng đồ ăn (Không có phim chiếu)
+                                                                    </h5>
+                                                                @endif
 
                                                                 <div class="mb-1 d-flex">
-                                                                    <span class="w-25 fw-bold">
-                                                                        <i class="bi bi-film me-1"></i> Phòng:
-                                                                    </span>
-                                                                    <span>
-                                                                        {{ $booking->showtime->room->room_name ?? 'N/A' }}
-                                                                        |
-                                                                        <strong>Ghế:</strong>
-                                                                        @foreach ($booking->bookingSeats as $bs)
-                                                                            {{ $bs->showtimeSeat->seat->seat_code ?? 'N/A' }}
-                                                                            @if (!$loop->last)
-                                                                                ,
-                                                                            @endif
-                                                                        @endforeach
-                                                                    </span>
-                                                                </div>
-
-                                                                <div class="mb-1 d-flex">
-                                                                    <span class="w-25 fw-bold">
-                                                                        <i class="bi bi-ticket-perforated me-1"></i> Mã vé:
-                                                                    </span>
+                                                                    <span class="w-25 fw-bold"><i
+                                                                            class="bi bi-ticket-perforated me-1"></i> Mã
+                                                                        vé:</span>
                                                                     <span>{{ $booking->booking_code }}</span>
                                                                 </div>
 
                                                                 <div class="mb-1 d-flex">
-                                                                    <span class="w-25 fw-bold">
-                                                                        <i class="bi bi-ticket-perforated me-1"></i> Đồ ăn:
-                                                                    </span>
+                                                                    <span class="w-25 fw-bold"><i
+                                                                            class="bi bi-cup-straw me-1"></i> Đồ ăn:</span>
                                                                     <span>
                                                                         @php
                                                                             $foodList = $booking->bookingFoods
                                                                                 ->map(function ($bf) {
                                                                                     return $bf->quantity .
                                                                                         ' x ' .
-                                                                                        ($bf->food->name ??
-                                                                                            'Đồ ăn không tồn tại');
+                                                                                        ($bf->food->name ?? 'Không rõ');
                                                                                 })
                                                                                 ->implode(', ');
                                                                         @endphp
-
                                                                         {{ $foodList ?: 'Không có' }}
                                                                     </span>
                                                                 </div>
-
                                                             </div>
-
                                                         </div>
                                                     </div>
 

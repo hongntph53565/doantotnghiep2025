@@ -77,17 +77,34 @@ class BookingService
 // }
 public function confirmSeats(Booking $booking)
 {
-    Log::info("Confirming seats for booking: " . $booking->booking_id);
+    if (!$booking->showtime_id) {
+        Log::info("⚠️ Booking ID {$booking->booking_id} has no showtime_id — skipping seat confirmation.");
+        return;
+    }
 
-    foreach ($booking->seats as $bookingSeat) {
+    Log::info("✅ Confirming seats for booking ID: {$booking->booking_id}");
+
+    $booking->loadMissing('bookingSeats.showtimeSeat'); // ✅ dùng quan hệ đúng
+
+    if ($booking->bookingSeats->isEmpty()) {
+        Log::warning("⚠️ Booking ID {$booking->booking_id} has NO seats attached.");
+        return;
+    }
+
+    foreach ($booking->bookingSeats as $bookingSeat) {
+        Log::info("🔍 BookingSeat ID: {$bookingSeat->id} - ShowtimeSeat ID: {$bookingSeat->showtime_seat_id}");
+
         $showtimeSeat = $bookingSeat->showtimeSeat;
 
         if ($showtimeSeat) {
-            Log::info("Updating seat_id {$showtimeSeat->seat_id} to 'booked'");
+            Log::info("🔒 Updating seat_id {$showtimeSeat->seat_id} (showtime_id: {$showtimeSeat->showtime_id}) to 'booked'");
             $showtimeSeat->update(['status' => 'booked']);
         } else {
-            Log::warning("No showtimeSeat found for bookingSeat ID {$bookingSeat->id}");
+            Log::warning("❌ No ShowtimeSeat found for BookingSeat ID {$bookingSeat->id}, ShowtimeSeat ID: {$bookingSeat->showtime_seat_id}");
         }
     }
 }
+
+
+
 }
