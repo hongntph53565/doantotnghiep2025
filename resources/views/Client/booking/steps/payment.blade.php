@@ -196,46 +196,68 @@
         </div>
 
         <script>
-            function submitCheckout() {
-                const paymentMethod = document.querySelector('input[name="payment"]:checked')?.id;
-                if (!paymentMethod) {
-                    alert("Vui lòng chọn hình thức thanh toán!");
-                    return;
+           function submitCheckout() {
+    const paymentMethod = document.querySelector('input[name="payment"]:checked')?.id;
+    if (!paymentMethod) {
+        alert("Vui lòng chọn hình thức thanh toán!");
+        return;
+    }
+
+    const showtimeId = localStorage.getItem("selectedShowtimeId");
+    const selectedSeatsRaw = JSON.parse(sessionStorage.getItem("selectedSeats")) || [];
+    const selectedFoods = JSON.parse(sessionStorage.getItem("selectedFoods")) || [];
+    const ticketTotal = parseInt(sessionStorage.getItem("ticketTotal")) || 0;
+    const foodTotal = parseInt(sessionStorage.getItem("foodTotal")) || 0;
+    const originalTotal = ticketTotal + foodTotal;
+
+    if (!showtimeId || selectedSeatsRaw.length === 0 || originalTotal <= 0) {
+        alert("Thiếu dữ liệu đặt vé.");
+        return;
+    }
+
+    const seatIds = [];
+    selectedSeatsRaw.forEach(item => {
+        if (item.type === 'couple' && Array.isArray(item.seat_ids)) {
+            seatIds.push(...item.seat_ids);
+        } else if (item.seat_id) {
+            seatIds.push(item.seat_id);
+        }
+    });
+
+    // 🔻 Áp dụng giảm giá trước khi submit
+    const promoCode = document.getElementById("promo_code_hidden").value;
+    let finalTotal = originalTotal;
+
+    if (promoCode) {
+        const selected = [...document.querySelectorAll('#promo-select option')].find(opt => opt.value === promoCode) 
+            || document.querySelector(`input[name="voucher"]:checked`);
+        if (selected) {
+            const type = selected.getAttribute('data-type');
+            const value = parseFloat(selected.getAttribute('data-value'));
+            const maxDiscount = parseFloat(selected.getAttribute('data-max')) || Infinity;
+            const minOrder = parseFloat(selected.getAttribute('data-min')) || 0;
+
+            if (originalTotal >= minOrder) {
+                let discount = 0;
+                if (type === 'percent') {
+                    discount = originalTotal * value / 100;
+                } else if (type === 'amount') {
+                    discount = value;
                 }
-
-                const showtimeId = localStorage.getItem("selectedShowtimeId");
-                const selectedSeatsRaw = JSON.parse(sessionStorage.getItem("selectedSeats")) || [];
-                const selectedFoods = JSON.parse(sessionStorage.getItem("selectedFoods")) || [];
-                const ticketTotal = parseInt(sessionStorage.getItem("ticketTotal")) || 0;
-                const foodTotal = parseInt(sessionStorage.getItem("foodTotal")) || 0;
-                const originalTotal = ticketTotal + foodTotal;
-
-                if (!showtimeId || selectedSeatsRaw.length === 0 || originalTotal <= 0) {
-                    alert("Thiếu dữ liệu đặt vé.");
-                    return;
-                }
-
-                const seatIds = [];
-                selectedSeatsRaw.forEach(item => {
-                    if (item.type === 'couple' && Array.isArray(item.seat_ids)) {
-                        seatIds.push(...item.seat_ids);
-                    } else if (item.seat_id) {
-                        seatIds.push(item.seat_id);
-                    }
-                });
-
-                document.getElementById("showtime_id").value = showtimeId;
-                document.getElementById("payment_method").value = paymentMethod;
-                document.getElementById("total_price_hidden").value = originalTotal; // 🟢 Gửi giá gốc
-                document.getElementById("selected_seats").value = JSON.stringify(seatIds);
-                document.getElementById("selected_foods").value = JSON.stringify(selectedFoods);
-
-                const promoSelect = document.getElementById("promo-select");
-                const promoCode = promoSelect?.value || "";
-                document.getElementById("promo_code_hidden").value = promoCode;
-
-                document.getElementById("checkout-form").submit();
+                discount = Math.min(discount, maxDiscount);
+                finalTotal = originalTotal - discount;
             }
+        }
+    }
+
+    document.getElementById("showtime_id").value = showtimeId;
+    document.getElementById("payment_method").value = paymentMethod;
+    document.getElementById("total_price_hidden").value = Math.round(finalTotal); // ✅ giá đã giảm
+    document.getElementById("selected_seats").value = JSON.stringify(seatIds);
+    document.getElementById("selected_foods").value = JSON.stringify(selectedFoods);
+    document.getElementById("checkout-form").submit();
+}
+
 
 
             let appliedDiscount = 0;
