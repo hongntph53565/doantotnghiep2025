@@ -3,12 +3,13 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Promotion extends Model
 {
     protected $primaryKey = 'promo_id';
-
+    use HasFactory;
     use SoftDeletes;
 
     protected $dates = ['deleted_at'];

@@ -308,8 +308,8 @@
                                 <button type="submit" class="btn btn-success mb-2">Đăng nhập</button>
                             </form>
 
-                            <a href="{{ route('register.form') }}" class="btn btn-primary w-100">Đăng ký thành
-                                viên</a>
+                            {{-- <a href="{{ route('register.form') }}" class="btn btn-primary w-100">Đăng ký thành
+                                viên</a> --}}
 
                         </div>
                         <script>

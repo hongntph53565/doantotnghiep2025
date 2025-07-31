@@ -12,7 +12,6 @@ class MovieSeeder extends Seeder
     {
         $genres = Genre::all();
         $ageRatings = ['P', 'T13', 'T18'];
-        $formats = ['2D', '3D', 'IMAX'];
         $languages = ['Tiếng Việt', 'Tiếng Anh', 'Tiếng Hàn', 'Tiếng Nhật'];
 
         foreach (range(1, 10) as $i) {
@@ -30,7 +29,6 @@ class MovieSeeder extends Seeder
                 'poster' => fake()->imageUrl(400, 600, 'movies', true),
                 'trailer' => 'https://www.youtube.com/watch?v=' . fake()->lexify('???????????'),
                 'age_rating' => fake()->randomElement($ageRatings),
-                'format' => fake()->randomElement($formats),
                 'language' => fake()->randomElement($languages),
                 'description' => fake()->paragraph(3),
             ]);

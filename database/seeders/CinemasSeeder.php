@@ -5,7 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use App\Models\Cinema;
 
-class CinemasTableSeeder extends Seeder
+class CinemasSeeder extends Seeder
 {
     public function run(): void
     {

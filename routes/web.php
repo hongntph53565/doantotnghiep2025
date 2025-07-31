@@ -24,6 +24,8 @@ use App\Http\Controllers\Admin\VnpayController;
 use App\Http\Controllers\Admin\ZalopayController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Client\HomeController;
+use App\Http\Controllers\Staff\StaffMovieController;
+use App\Http\Controllers\Staff\StaffBookingController;
 use App\Http\Controllers\Manager\DashboardController as ManagerDashboardController;
 use App\Http\Controllers\Manager\ShowtimeController as ManagerShowtimeController;
 use App\Http\Controllers\Manager\GenreController as ManagerGenreController;
@@ -230,9 +232,13 @@ Route::prefix('admin')->group(function () {
     });
 });
 
+Route::prefix('staff')->name('staff.')->group(function () {
+    Route::get('/', [StaffMovieController::class, 'index'])->name('list');
+    Route::get('/bookings/{movie}', [StaffBookingController::class, 'show'])->name('booking1');
 
-
-
+    Route::get('/bookings/{movie}/showtimes-by-date', [StaffBookingController::class, 'showtimesByDate'])->name('booking.showtimes_by_date');
+    Route::get('/booking/seats/{room_id}', [StaffBookingController::class, 'showSeatsByRoom'])->name('booking.seats');
+});
 
 
 Route::get('/home', [HomeController::class, 'home'])->name('home');

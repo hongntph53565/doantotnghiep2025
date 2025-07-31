@@ -3,12 +3,14 @@
 namespace App\Models;
 
 use Faker\Provider\ar_EG\Payment;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Booking extends Model
 {
     protected $primaryKey = 'booking_id';
-
+    use HasFactory;
+    
     protected $fillable = [
         'user_id',
         'showtime_id',
