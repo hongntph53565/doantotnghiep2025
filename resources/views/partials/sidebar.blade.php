@@ -56,4 +56,6 @@
             <a href="{{ route('emaillog.index') }}"><span class="menu-text">Mail đã gửi</span></a>
         </div>
         <a href="{{ route('users.index') }}"><i class="bi bi-person"></i><span class="menu-text">Tài khoản</span></a>
+
+        <a href="/"><i class="bi bi-box-arrow-right"></i><span class="menu-text">Thoát quản trị</span></a>
     </nav>

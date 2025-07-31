@@ -9,9 +9,6 @@ use App\Models\Payment;
 use App\Services\BookingService;
 use Illuminate\Http\Request;
 use App\Services\ZalopayService;
-use Illuminate\Support\Facades\Log;
-
-use function Ramsey\Uuid\v1;
 
 class ZalopayController extends Controller
 {
@@ -74,7 +71,7 @@ class ZalopayController extends Controller
             $this->bookingService->cancelSeats($booking);
         }
 
-        return redirect()->route('home')->with('message', ($allParams['status'] ?? '1') === '-49'
+        return redirect()->route('home')->with('success', ($allParams['status'] ?? '1') === '-49'
             ? 'Thanh toán đã bị hủy, booking đã hủy.'
             : 'Thanh toán thành công, booking đã xác nhận.');
     }

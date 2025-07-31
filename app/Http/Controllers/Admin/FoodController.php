@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Food;
 use App\Models\Cinema;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
@@ -56,7 +57,11 @@ class FoodController extends Controller
         }
         Food::create($data);
 
-        return redirect()->route('foods.index')->with('success', 'Đã thêm món ăn thành công');
+        if(Auth::user()->role_id == 1) {
+            return redirect()->route('foods.index')->with('success', 'Đã thêm món ăn thành công');
+        }else {
+            return redirect()->route('manager.foods.index')->with('success', 'Đã thêm món ăn thành công');
+        }
     }
 
 

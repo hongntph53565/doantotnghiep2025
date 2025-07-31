@@ -58,7 +58,8 @@
                     <h4 class="text-primary">{{ number_format($totalRevenue / 1_000_000, 2, '.', ',') }}tr
                         <small>(₫)</small>
                     </h4>
-                    <small>{{ $startDate }} → {{ $endDate }}</small>
+                    <p class="card-text small text-muted">{{ $startDate->format('d/m/Y') }} -
+                        {{ $endDate->format('d/m/Y') }}</p>
                 </div>
             </div>
         </div>
@@ -82,7 +83,7 @@
                     @if ($topMovie)
                         <h6>Phim doanh thu cao nhất</h6>
                         <h5>{{ $topMovie->title }}</h5>
-                        <small>{{ number_format($topMovie->total_revenue, 0, ',', '.') }}tr</small>
+                        <small>{{ number_format($topMovie->total_revenue / 1000000, 2, ',', '.') }}tr</small>
                     @else
                         <h6>Phim doanh thu cao nhất</h6>
                         <h5>không có doanh thu</h5>
@@ -187,37 +188,37 @@
         });
     </script>
 
-<script>
-    const ptttLabels = {!! json_encode($labels) !!};
-    const ptttData = {!! json_encode($data) !!};
+    <script>
+        const ptttLabels = {!! json_encode($plabels) !!};
+        const ptttData = {!! json_encode($pdata) !!};
 
-    const hasData = ptttData.length > 0 && ptttData.some(val => val > 0);
+        const hasData = ptttData.length > 0 && ptttData.some(val => val > 0);
 
-    const chartLabels = hasData ? ptttLabels : ['Không có dữ liệu'];
-    const chartData = hasData ? ptttData : [1]; // 1 phần tử giả để có hình bánh
-    const chartColors = hasData ? ["#0d6efd", "#20c997", "#ffc107", "#dc3545"] : ['#e0e0e0'];
+        const chartLabels = hasData ? ptttLabels : ['Không có dữ liệu'];
+        const chartData = hasData ? ptttData : [1]; // 1 phần tử giả để có hình bánh
+        const chartColors = hasData ? ["#0d6efd", "#20c997", "#ffc107", "#dc3545"] : ['#e0e0e0'];
 
-    new Chart(document.getElementById("ptttChart"), {
-        type: "pie",
-        data: {
-            labels: chartLabels,
-            datasets: [{
-                data: chartData,
-                backgroundColor: chartColors,
-            }],
-        },
-        options: {
-            plugins: {
-                legend: {
-                    position: "right",
-                },
-                tooltip: {
-                    enabled: hasData,
+        new Chart(document.getElementById("ptttChart"), {
+            type: "pie",
+            data: {
+                labels: chartLabels,
+                datasets: [{
+                    data: chartData,
+                    backgroundColor: chartColors,
+                }],
+            },
+            options: {
+                plugins: {
+                    legend: {
+                        position: "right",
+                    },
+                    tooltip: {
+                        enabled: hasData,
+                    },
                 },
             },
-        },
-    });
-</script>
+        });
+    </script>
 
 
     <script>
@@ -255,33 +256,37 @@
         });
     </script>
 
-<script>
-    const cinemaRevenue = @json($cinemaRevenue);
+    <script>
+        const cinemaRevenue = @json($cinemaRevenue);
 
-    let hasDataCinema = cinemaRevenue.length > 0 && cinemaRevenue.some(item => item.total_revenue > 0);
-    const labelsCinema = hasDataCinema ? cinemaRevenue.map(item => item.cinema_name) : ['Không có dữ liệu'];
-    const dataCinema = hasDataCinema ? cinemaRevenue.map(item => item.total_revenue) : [1];
-    const colorsCinema = hasDataCinema
-        ? ["#0d6efd", "#198754", "#ffc107", "#dc3545", "#6f42c1"]
-        : ['#e0e0e0'];
+        let hasDataCinema = cinemaRevenue.length > 0 && cinemaRevenue.some(item => item.total_revenue > 0);
+        const labelsCinema = hasDataCinema ? cinemaRevenue.map(item => item.cinema_name) : ['Không có dữ liệu'];
+        const dataCinema = hasDataCinema ? cinemaRevenue.map(item => item.total_revenue) : [1];
+        const colorsCinema = hasDataCinema ?
+            ["#0d6efd", "#198754", "#ffc107", "#dc3545", "#6f42c1"] :
+            ['#e0e0e0'];
 
-    new Chart(document.getElementById("theoRapChart"), {
-        type: "pie",
-        data: {
-            labels: labelsCinema,
-            datasets: [{
-                data: dataCinema,
-                backgroundColor: colorsCinema,
-            }],
-        },
-        options: {
-            plugins: {
-                legend: { position: "right" },
-                tooltip: { enabled: hasDataCinema },
+        new Chart(document.getElementById("theoRapChart"), {
+            type: "pie",
+            data: {
+                labels: labelsCinema,
+                datasets: [{
+                    data: dataCinema,
+                    backgroundColor: colorsCinema,
+                }],
             },
-        },
-    });
-</script>
+            options: {
+                plugins: {
+                    legend: {
+                        position: "right"
+                    },
+                    tooltip: {
+                        enabled: hasDataCinema
+                    },
+                },
+            },
+        });
+    </script>
 
 
     <script>

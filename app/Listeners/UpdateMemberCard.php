@@ -53,7 +53,6 @@ class UpdateMemberCard
             if ($cardType !== 'silver') {
                 $user = User::where('user_id', $payment->user_id)->first();
                 $template = EmailTemplate::where('subject', 'Cảm ơn bạn đã đồng hành cùng Lumistar')->first();
-
                 if ($user && $template) {
                     $this->mailService->send($user->email, $template, array(
                         'user_name' => $user->username,

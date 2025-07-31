@@ -39,11 +39,6 @@
                                 </small>
                             </div>
                         </div>
-
-
-
-
-
                         <form>
                             <div class="row g-3">
                                 <div class="col-md-6">
@@ -129,7 +124,26 @@
                     </div>
 
                     <div class="text-center mt-3">
-                        <button class="btn btn-green w-100 py-2 rounded-3 fw-bold">ĐĂNG XUẤT</button>
+                        @switch($user->role_id)
+                            @case(1)
+                                <a href="{{ route('admin.dashboard') }}" class="btn btn-green w-100 py-2 rounded-3 fw-bold">Tới
+                                    Quản trị</a>
+                            @break
+
+                            @case(2)
+                                <a href="{{ route('manager.static') }}" class="btn btn-green w-100 py-2 rounded-3 fw-bold">Tới
+                                    Quản trị</a>
+                            @break
+
+                            @case(3)
+                                <a href="{{ route('admin.dashboard') }}" class="btn btn-green w-100 py-2 rounded-3 fw-bold">Tới
+                                    Quản trị</a>
+                            @break
+
+                            @default
+                        @endswitch
+                        <button onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
+                            class="btn btn-green w-100 py-2 rounded-3 fw-bold">ĐĂNG XUẤT</button>
                     </div>
                 </div>
             </div>

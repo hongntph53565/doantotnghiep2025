@@ -28,9 +28,22 @@
                     <img src="https://i.pravatar.cc/40" class="rounded-circle me-2" width="36" height="36"
                         alt="avatar">
                     <div class="lh-sm d-none d-md-block">
-                        <div class="fw-semibold">Admin</div>
+                        <div class="fw-semibold">
+                            @switch(Auth::user()->user_id)
+                                @case(1)
+                                    Admin
+                                @break
+
+                                @case(2)
+                                    Manager
+                                @break
+
+                                @default
+                                    none
+                            @endswitch
+                        </div>
                         <small class="text-muted text-uppercase" style="font-size: 11px;">
-                            {{ session('my_name') ?? 'Guest' }}
+                            {{ Auth::user()->full_name }}
                         </small>
 
                     </div>

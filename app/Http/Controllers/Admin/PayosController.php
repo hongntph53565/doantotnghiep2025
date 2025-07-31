@@ -62,8 +62,7 @@ class PayosController extends Controller
 
         if (($allParams['cancel'] ?? 'false') !== 'true' && $booking['payment_method'] === "payos") {
             $booking->update([
-                'payment_status' => 'paid',
-                'booking_status' => 'confirmed'
+                'booking_status' => 'confirmed' 
             ]);
         } elseif (($allParams['cancel'] ?? 'false') === 'true' && $booking['payment_method'] === "payos") {
             $booking->update([
@@ -72,7 +71,7 @@ class PayosController extends Controller
             $this->bookingService->cancelSeats($booking);
         }
 
-        return redirect()->route('home')->with('message', ($allParams['cancel'] ?? 'false') == 'true'
+        return redirect()->route('home')->with('success', ($allParams['cancel'] ?? 'false') == 'true'
             ? 'Thanh toán đã bị hủy, booking đã hủy.'
             : 'Thanh toán thành công, booking đã xác nhận.');
     }

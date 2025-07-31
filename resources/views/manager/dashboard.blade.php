@@ -1,97 +1,63 @@
-@extends('layouts.admin')
+@extends('layouts.manager')
 
 @section('content')
 <div class="container-fluid py-4">
     <!-- Header Section -->
     <section class="mb-4">
         <div class="d-flex justify-content-between align-items-center">
-            <h1 class="h4 fw-bold">Thống Kê Rạp Phim</h1>
+            <h1 class="h4 fw-bold">Thống Kê Rạp {{ $cinemaName }}</h1>
             <div class="text-muted small">Cập nhật: {{ now()->format('d/m/Y') }}</div>
         </div>
     </section>
 
     <!-- Filter Section -->
-    <section class="mb-4">
-        <div class="card shadow-sm">
-            <div class="card-body">
-                <h5 class="card-title">Bộ Lọc</h5>
-                <form class="row g-3">
-                    <div class="col-md-3">
-                        <label class="form-label">Từ ngày</label>
-                        <input type="date" name="start_date" class="form-control" value="{{ request('start_date', now()->startOfMonth()->format('Y-m-d')) }}">
-                    </div>
-                    <div class="col-md-3">
-                        <label class="form-label">Đến ngày</label>
-                        <input type="date" name="end_date" class="form-control" value="{{ request('end_date', now()->format('Y-m-d')) }}">
-                    </div>
-                    <div class="col-md-3">
-                        <label class="form-label">Khu vực</label>
-                        <select class="form-select" name="district">
-                            <option value="">Tất cả</option>
-                            @foreach($districts as $district)
-                            <option value="{{ $district }}" {{ request('district') == $district ? 'selected' : '' }}>{{ $district }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="col-md-3">
-                        <label class="form-label">Rạp chiếu</label>
-                        <select class="form-select" name="cinema">
-                            <option value="">Tất cả</option>
-                            @foreach($cinemas as $cinema)
-                            <option value="{{ $cinema->id }}" {{ request('cinema') == $cinema->id ? 'selected' : '' }}>{{ $cinema->name }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="col-12">
-                        <button type="submit" class="btn btn-primary">Áp dụng</button>
-                        <a href="" class="btn btn-outline-secondary">Đặt lại</a>
-                    </div>
-                </form>
-            </div>
+    <form class="row g-3 align-items-end mb-2">
+        <div class="col-md">
+            <label class="form-label">Ngày bắt đầu</label>
+            <input type="date" name="Sdate" class="form-control" value="{{ $startDate }}">
         </div>
-    </section>
+        <div class="col-md">
+            <label class="form-label">Ngày kết thúc</label>
+            <input type="date" name="Edate" class="form-control" value="{{ $endDate }}">
+        </div>
+        <div class="">
+            <button type="submit" class="btn btn-primary w-100">Lọc</button>
+        </div>
+    </form>
 
     <!-- Summary Stats Section -->
-    <section class="mb-4">
-        <div class="row g-3">
-            <div class="col-md-3">
-                <div class="card shadow-sm h-100">
-                    <div class="card-body text-center">
-                        <h6 class="card-subtitle mb-2 text-muted">Tổng doanh thu</h6>
-                        <h3 class="card-title text-primary">{{ number_format($totalRevenue / 1000000, 2) }}tr ₫</h3>
-                        <p class="card-text small text-muted">{{ $startDate->format('d/m/Y') }} - {{ $endDate->format('d/m/Y') }}</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card shadow-sm h-100">
-                    <div class="card-body text-center">
-                        <h6 class="card-subtitle mb-2 text-muted">Rạp hàng đầu</h6>
-                        <h5 class="card-title">{{ $topCinema->name ?? 'N/A' }}</h5>
-                        <p class="card-text small text-muted">{{ $topCinema ? number_format($topCinema->total_revenue / 1000000, 2).'tr ₫' : '' }}</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card shadow-sm h-100">
-                    <div class="card-body text-center">
-                        <h6 class="card-subtitle mb-2 text-muted">Phim bán chạy</h6>
-                        <h5 class="card-title">{{ $topMovie->title ?? 'N/A' }}</h5>
-                        <p class="card-text small text-muted">{{ $topMovie ? number_format($topMovie->ticket_count).' vé' : '' }}</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card shadow-sm h-100">
-                    <div class="card-body text-center">
-                        <h6 class="card-subtitle mb-2 text-muted">PTTT phổ biến</h6>
-                        <h5 class="card-title">{{ $topPaymentMethod->method ?? 'N/A' }}</h5>
-                        <p class="card-text small text-muted">{{ $topPaymentMethod ? $topPaymentMethod->percentage.'%' : '' }}</p>
-                    </div>
+<section class="mb-4">
+    <div class="row g-3">
+        <div class="col-md-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body text-center">
+                    <h6 class="card-subtitle mb-2 text-muted">Tổng doanh thu</h6>
+                    <h3 class="card-title text-primary">{{ number_format($totalRevenue / 1000000, 2) }}tr ₫</h3>
+                    <p class="card-text small text-muted">{{ $startDate->format('d/m/Y') }} - {{ $endDate->format('d/m/Y') }}</p>
                 </div>
             </div>
         </div>
-    </section>
+        <div class="col-md-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body text-center">
+                    <h6 class="card-subtitle mb-2 text-muted">Phim bán chạy</h6>
+                    <h5 class="card-title">{{ $topMovie->title ?? 'N/A' }}</h5>
+                    <p class="card-text small text-muted">{{ $topMovie ? number_format($topMovie->ticket_count).' vé' : '' }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body text-center">
+                    <h6 class="card-subtitle mb-2 text-muted">PTTT phổ biến</h6>
+                    <h5 class="card-title">{{ $topPaymentMethod->payment_method ?? 'N/A' }}</h5>
+                    <p class="card-text small text-muted">{{ $topPaymentMethod ? $topPaymentMethod->percentage.'%' : '' }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
 
     <!-- Charts Section -->
     <section class="mb-4">
@@ -125,7 +91,7 @@
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <h5 class="card-title mb-0">Top 10 phim</h5>
-                    <a href="{{ route('admin.movies.index') }}" class="btn btn-sm btn-outline-primary">Xem tất cả</a>
+                    <a href="" class="btn btn-sm btn-outline-primary">Xem tất cả</a>
                 </div>
                 <div class="table-responsive">
                     <table class="table table-hover">
@@ -196,9 +162,9 @@
     new Chart(distCtx, {
         type: 'doughnut',
         data: {
-            labels: @json($distributionLabels),
+            labels: @json($genrebutionLabels),
             datasets: [{
-                data: @json($distributionData),
+                data: @json($genrebutionData),
                 backgroundColor: [
                     '#4e73df', '#1cc88a', '#36b9cc', '#f6c23e', 
                     '#e74a3b', '#858796', '#5a5c69', '#3a3b45'

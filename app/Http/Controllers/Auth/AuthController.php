@@ -8,66 +8,115 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
 {
-    public function indexlogin()
-    {
-        return view('admin.test.login');
-    }
 
     public function register(Request $request)
     {
-        $request->validate([
-            'username'   => 'required|string|max:50|unique:users,username',
-            'full_name'  => 'required|string|max:100',
-            'email'      => 'required|email|unique:users,email',
-            'password'   => 'required|string|min:6|confirmed',
+        $validator = Validator::make($request->all(), [
+            'last_name' => 'required|string|max:50',
+            'first_name' => 'required|string|max:50',
+            'email' => [
+                'required',
+                'email',
+                'regex:/^[\w.+\-]+@gmail\.com$/i',
+                'unique:users,email',
+            ],
+            'password' => 'required|string|min:8|confirmed',
+            'phone' => ['required', 'regex:/^0\d{9}$/'],
+            'gender' => 'required|in:nam,nu,khac',
+            'birth_day' => 'required|integer|min:1|max:31',
+            'birth_month' => 'required|integer|min:1|max:12',
+            'birth_year' => 'required|integer|min:1900|max:' . now()->year,
+            'province' => 'required|string|max:100',
+        ], [
+            'email.regex' => 'Email phải là địa chỉ Gmail hợp lệ.',
+            'phone.regex' => 'Số điện thoại phải đúng 10 chữ số và bắt đầu bằng 0.',
+            'password.confirmed' => 'Mật khẩu xác nhận không khớp.',
+            'gender.required' => 'Vui lòng chọn giới tính.',
         ]);
 
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors(['register' => $validator->errors()])->withInput();
+        }
+
+        $username = strtolower(trim($request->last_name));
+        if (User::where('username', $username)->exists()) {
+            return redirect()->back()->withErrors(['register' => ['username' => 'Tên tài khoản đã tồn tại!']])->withInput();
+        }
+
+        $birthday = sprintf('%04d-%02d-%02d', $request->birth_year, $request->birth_month, $request->birth_day);
+
         $user = User::create([
-            'username' => $request->username,
-            'full_name' => $request->full_name,
+            'username' => $username,
             'email' => $request->email,
-            'phone' => $request->phone,
             'password' => Hash::make($request->password),
+            'full_name' => trim($request->last_name . ' ' . $request->first_name),
+            'phone' => $request->phone,
+            'address' => $request->province,
+            'birthday' => $birthday,
+            'gender' => $request->gender,
+            'role_id' => 4,
         ]);
-        if ($user) {
-            Auth::login($user);
-            event(New UserRegistered($user));
-            return redirect('/admin/dashboard');
-        } else {
-            return back()->withErrors(['register' => 'Đăng ký thất bại, vui lòng thử lại.']);
+
+        event(new UserRegistered($user));
+
+        Auth::login($user);
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
         }
     }
 
+
+
+
     public function login(Request $request)
     {
-        $credentials = $request->validate([
-            'email' => 'required|email',
-            'password' => 'required',
-        ]);
+        $credentials = $request->only('email', 'password');
 
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
 
-            session(['my_name' => Auth::user()->full_name]);
-            session(['my_id' => Auth::user()->user_id]);
-
-            return redirect('/admin/dashboard');
+            return redirect()->route('home')->with('success', 'Đăng nhập thành công');
         }
 
         return back()->withErrors([
-            'email' => 'Email hoặc mật khẩu không đúng.',
-        ]);
+            'login_error' => 'Email hoặc mật khẩu không đúng!',
+        ])->withInput();
     }
+
+
+    public function showLoginForm(Request $request)
+    {
+        $credentials = $request->only('email', 'password');
+
+        if (Auth::attempt($credentials)) {
+            $request->session()->regenerate();
+
+            return redirect()->route('home')->with('success', 'Đăng nhập thành công');
+        }
+
+        return back()->withErrors([
+            'login_error' => 'Email hoặc mật khẩu không đúng!',
+        ])->withInput();
+    }
+
 
     public function logout(Request $request)
     {
         Auth::logout();
+
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect('/admin/dashboard');
+        return redirect()->route('home')->with('success', 'Đăng xuất thành công');
+    }
+    public function profile()
+    {
+        $user = Auth::user();
+        return view('Client.profile', compact('user'));
     }
 }

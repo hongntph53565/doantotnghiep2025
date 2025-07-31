@@ -21,8 +21,13 @@ class Cinema extends Model
         'status',
     ];
 
-        public function rooms()
+    public function rooms()
     {
         return $this->hasMany(Room::class, 'cinema_id');
+    }
+
+    public function managers()
+    {
+        return $this->belongsToMany(User::class, 'manager_cinema', 'cinema_id', 'user_id')->withTimestamps();
     }
 }

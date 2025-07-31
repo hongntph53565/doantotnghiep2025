@@ -9,6 +9,7 @@ use App\Models\Seat;
 use App\Models\SeatType;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class RoomController extends Controller
 {
@@ -55,8 +56,11 @@ class RoomController extends Controller
 
         $this->generateSeats($room_id, $request->input('total_seats'));
 
-
-        return redirect()->route('rooms.index')->with('success', 'Đã cập nhật template');
+        if (Auth::user()->role_id == 1) {
+            return redirect()->route('rooms.index')->with('success', 'Thêm phòng thành công');
+        } else {
+            return redirect()->route('manager.rooms.index')->with('success', 'Thêm phòng thành công');
+        }
     }
 
     public function update(Request $request, $id)

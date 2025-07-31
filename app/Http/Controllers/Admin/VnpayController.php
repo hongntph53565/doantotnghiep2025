@@ -9,9 +9,6 @@ use App\Models\Payment;
 use App\Services\BookingService;
 use App\Services\VnpayService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
-
-use function Ramsey\Uuid\v1;
 
 class VnpayController extends Controller
 {
@@ -60,7 +57,6 @@ class VnpayController extends Controller
 
         if ($allParams['vnp_ResponseCode'] == '00' && $booking['payment_method'] === "vnpay") {
             $booking->update([
-                'payment_status' => 'paid',
                 'booking_status' => 'confirmed'
             ]);
         } elseif ($allParams['vnp_ResponseCode'] !== '00' && $booking['payment_method'] === "vnpay") {
@@ -69,7 +65,7 @@ class VnpayController extends Controller
             ]);
             $this->bookingService->cancelSeats($booking);
         }
-            return redirect()->route('home')->with('message', ($allParams['vnp_ResponseCode'] ?? '1') !== '00'
+            return redirect()->route('home')->with('success', ($allParams['vnp_ResponseCode'] ?? '1') !== '00'
             ? 'Thanh toán đã bị hủy, booking đã hủy.'
             : 'Thanh toán thành công, booking đã xác nhận.');
     }

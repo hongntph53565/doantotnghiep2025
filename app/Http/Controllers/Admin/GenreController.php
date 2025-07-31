@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Genre;
 use Illuminate\Http\Request;
 use App\Http\Requests\GenreRequest;
+use Illuminate\Support\Facades\Auth;
 
 class GenreController extends Controller
 {
@@ -41,7 +42,11 @@ public function store(GenreRequest $request)
 
     Genre::create($data);
 
-    return redirect()->route('genres.index')->with('success', 'Thể loại đã được thêm thành công.');
+    if(Auth::user()->role_id == 1) {
+        return redirect()->route('genres.index')->with('success', 'Thể loại đã được thêm thành công.');
+    } else {
+        return redirect()->route('manager.genres.index')->with('success', 'Thể loại đã được thêm thành công.');
+    }
 }
 
 public function edit($id)

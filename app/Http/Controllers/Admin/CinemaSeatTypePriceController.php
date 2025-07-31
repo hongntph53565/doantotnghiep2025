@@ -50,6 +50,7 @@ public function index()
 
     public function update(Request $request, $id)
     {
+        
         $data = $request->validate([
             'cinema_id'     => 'required|exists:cinemas,cinema_id',
             'seat_type_id'  => 'required|exists:seat_types,seat_type_id',
