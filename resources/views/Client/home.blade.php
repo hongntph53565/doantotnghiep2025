@@ -28,8 +28,8 @@
             <div class="carousel-item active">
                 <div class="banner"><img src="{{ asset('images/web-phim-thang-6.jpg') }}" class="d-block w-100"
                         alt="Banner 1"></div>
-                <a href="/phim-thang-6" class="label-phim">PHIM HAY THÁNG 6</a>
-                <a href="/danh-sach-phim" class="btn-xem-them">XEM THÊM<img
+                <a href="/lich-chieu-phim" class="label-phim">PHIM HAY THÁNG 7</a>
+                <a href="/lich-chieu-phim" class="btn-xem-them">XEM THÊM<img
                         src="{{ asset('images/ticket-svgrepo-com.svg') }}" alt=""></a>
             </div>
 
@@ -37,16 +37,16 @@
             <div class="carousel-item">
                 <div class="banner"><img src="{{ asset('images/banner-2.jpg') }}" class="d-block w-100" alt="Banner 2">
                 </div>
-                <a href="/phim-thang-6" class="label-phim">ĐIỀU ƯỚC CUỐI CÙNG</a>
-                <a href="/danh-sach-phim" class="btn-xem-them">ĐẶT VÉ NGAY<img
+                <a href="/lich-chieu-phim" class="label-phim">ĐIỀU ƯỚC CUỐI CÙNG</a>
+                <a href="/lich-chieu-phim" class="btn-xem-them">ĐẶT VÉ NGAY<img
                         src="{{ asset('images/ticket-svgrepo-com.svg') }}" alt=""></a>
             </div>
             <!-- Slide 2 -->
             <div class="carousel-item">
                 <div class="banner"><img src="{{ asset('images/banner-1.jpg') }}" class="d-block w-100" alt="Banner 2">
                 </div>
-                <a href="/phim-thang-6" class="label-phim">F1</a>
-                <a href="/danh-sach-phim" class="btn-xem-them">ĐẶT VÉ NGAY<img
+                <a href="/lich-chieu-phim" class="label-phim">F1</a>
+                <a href="/lich-chieu-phim" class="btn-xem-them">ĐẶT VÉ NGAY<img
                         src="{{ asset('images/ticket-svgrepo-com.svg') }}" alt=""></a>
             </div>
         </div>

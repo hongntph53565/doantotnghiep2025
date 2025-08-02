@@ -22,22 +22,18 @@
                                 <h5>{{ Auth::user()->full_name }}</h5>
                                 <div
                                     class="d-flex flex-wrap text-muted mb-1 small gap-2 justify-content-center justify-content-md-start">
-                                    <span>Điểm RP: 0</span>
-                                    <span class="text-muted">|</span>
-                                    <span>Tổng visit: 0</span>
+                                    <span>Điểm RP: {{ $totalRP }}</span>
+
+
                                 </div>
-                                <div
-                                    class="d-flex flex-wrap text-muted mb-1 small gap-2 justify-content-center justify-content-md-start">
-                                    <span>Expired visit: 0</span>
-                                    <span class="text-muted">|</span>
-                                    <span>Active visit: 0</span>
-                                </div>
-                                <p class="mb-1 small">Tổng chi tiêu trong tháng (6/2025): 0 VNĐ</p>
-                                <small class="text-muted">
-                                    Vui lòng đăng ảnh chân dung, thấy rõ mặt cỡ kích thước ngang 200px và dọc 200px (dung
-                                    lượng dưới 1MB)
-                                </small>
+
+                                <p class="mb-1 small">
+                                    Tổng chi tiêu trong tháng ({{ now()->format('m/Y') }}):
+                                    {{ number_format($totalSpending, 0, ',', '.') }} VNĐ
+                                </p>
+
                             </div>
+
                         </div>
 
 
@@ -65,7 +61,7 @@
                                     <label class="form-label">Mật khẩu *</label>
                                     <div class="input-group">
                                         <input type="password" class="form-control">
-                                        <button type="button" class="btn btn-green">ĐỔI MẬT KHẨU</button>
+                                        {{-- <button type="button" class="btn btn-green">ĐỔI MẬT KHẨU</button>  --}}
                                     </div>
                                 </div>
                                 <div class="col-12">
@@ -106,7 +102,7 @@
                                     <input type="text" class="form-control" name="address" value="{{ $user->address }}">
                                 </div>
                                 <div class="col-12 text-center">
-                                    <button type="submit" class="btn btn-green px-4">CẬP NHẬT</button>
+                                    {{-- <button type="submit" class="btn btn-green px-4">CẬP NHẬT</button> --}}
                                 </div>
                             </div>
                         </form>
@@ -121,15 +117,36 @@
                                 class="me-md-3 mb-3 p-2 bg-white rounded shadow-sm" style="width: 100px; height: 100px;">
                             <div class="text-start small">
                                 <p class="mb-1"><strong>Tên đăng nhập:</strong><br>{{ $user->email }}</p>
-                                <p class="mb-1"><strong>Số thẻ:</strong> ONLA1187860</p>
-                                <p class="mb-1"><strong>Hạng thẻ:</strong> Star</p>
-                                <p class="mb-0"><strong>Ngày đăng ký:</strong> {{ $user->created_at }}</p>
+                                {{-- <p class="mb-1"><strong>Số thẻ:</strong> ONLA1187860</p> --}}
+                                <p class="mb-1"><strong>Hạng thẻ:</strong> {{ $cardLevel }}</p>
+                                <p class="mb-0"><strong>Ngày đăng ký:</strong> {{ $user->created_at->format('d/m/Y') }}
+                                </p>
+
                             </div>
                         </div>
                     </div>
 
-                    <div class="text-center mt-3">
-                        <button class="btn btn-green w-100 py-2 rounded-3 fw-bold">ĐĂNG XUẤT</button>
+                   
+
+                     <div class="text-center mt-3">
+                        @switch($user->role_id)
+                            @case(1)
+                                <a href="{{ route('admin.dashboard') }}" class="btn btn-green w-100 py-2 rounded-3 fw-bold">Tới
+                                    Quản trị</a>
+                            @break
+
+                            @case(2)
+                                <a href="{{ route('manager.static') }}" class="btn btn-green w-100 py-2 rounded-3 fw-bold">Tới
+                                    Quản trị</a>
+                            @break
+
+                            @case(3)
+                                <a href="{{ route('staff.list') }}" class="btn btn-green w-100 py-2 rounded-3 fw-bold">Nhân Viên</a>
+
+                            @break
+
+                            @default
+                        @endswitch
                     </div>
                 </div>
             </div>
@@ -161,7 +178,7 @@
                         <tbody>
                             @forelse ($bookings as $index => $booking)
                                 <tr>
-                                    <td>{{ $index + 1 }}</td>
+                                    <td>{{ ($bookings->currentPage() - 1) * $bookings->perPage() + $index + 1 }}</td>
                                     <td>{{ $booking->created_at->format('d/m/Y H:i') }}</td>
                                     <td>
                                         <div class="booking-barcode">
@@ -238,20 +255,20 @@
                                                     <div class="row g-3">
                                                         {{-- LEFT: Poster --}}
                                                         <div class="col-md-3 text-center ">
-    @if ($booking->showtime && $booking->showtime->movie)
-        {{-- Nếu có phim thì hiển thị poster phim --}}
-        <img src="{{ asset('storage/' . $booking->showtime->movie->poster) }}"
-            alt="poster" class="img-fluid rounded shadow">
-    @elseif ($booking->bookingFoods->first()?->food?->image)
-        {{-- Nếu là đơn combo-only thì hiển thị ảnh combo food --}}
-        <img src="{{ asset('storage/' . $booking->bookingFoods->first()->food->image) }}"
-            alt="combo" class="img-fluid rounded shadow">
-    @else
-        {{-- Trường hợp không có gì thì hiển thị ảnh mặc định --}}
-        <img src="{{ asset('images/default-poster.jpg') }}"
-            alt="default" class="img-fluid rounded shadow">
-    @endif
-</div>
+                                                            @if ($booking->showtime && $booking->showtime->movie)
+                                                                {{-- Nếu có phim thì hiển thị poster phim --}}
+                                                                <img src="{{ asset('storage/' . $booking->showtime->movie->poster) }}"
+                                                                    alt="poster" class="img-fluid rounded shadow">
+                                                            @elseif ($booking->bookingFoods->first()?->food?->image)
+                                                                {{-- Nếu là đơn combo-only thì hiển thị ảnh combo food --}}
+                                                                <img src="{{ asset('storage/' . $booking->bookingFoods->first()->food->image) }}"
+                                                                    alt="combo" class="img-fluid rounded shadow">
+                                                            @else
+                                                                {{-- Trường hợp không có gì thì hiển thị ảnh mặc định --}}
+                                                                <img src="{{ asset('images/default-poster.jpg') }}"
+                                                                    alt="default" class="img-fluid rounded shadow">
+                                                            @endif
+                                                        </div>
 
 
                                                         {{-- RIGHT: Info --}}
@@ -355,14 +372,9 @@
                                                             <p class="mt-2 mb-0">{{ $booking->booking_code }}</p>
                                                         </div>
 
-                                                        {{-- Price breakdown --}}
+                                                    
                                                         <div class="col-md-9">
-                                                            {{-- <div class="d-flex justify-content-between">
-                                                                <span><i class="bi bi-ticket-perforated me-1"></i> Giá
-                                                                    vé:</span>
-                                                                <span>{{ number_format($booking->total_price, 0, ',', '.') }}
-                                                                    đ</span>
-                                                            </div> --}}
+                                                         
 
                                                             @php
                                                                 $discount = $booking->bookingPromotions->sum(
@@ -430,16 +442,6 @@
                                                     <p class="small text-muted mb-1">
                                                         Vui lòng đưa mã số này đến quầy vé LumiStar để nhận vé của bạn
                                                     </p>
-                                                    {{-- <p class="small text-muted mb-1">
-                                                        <i class="bi bi-camera-reels-fill me-1"></i>
-                                                        Phim được phổ biến đến người xem từ đủ 16 tuổi trở lên.
-                                                    </p>
-
-                                                    <p class="small text-muted mb-0">
-                                                        <i class="bi bi-person-vcard-fill me-1"></i>
-                                                        Vui lòng cung cấp giấy tờ tùy thân để xác minh độ tuổi cho phim phân
-                                                        loại T13, T16, T18.
-                                                    </p> --}}
                                                 </div>
                                             </div>
                                         </div>
@@ -455,14 +457,29 @@
                         <tfoot class="table-light">
                             <tr>
                                 <td colspan="4" class="text-end fw-bold">Tổng cộng</td>
-                                <td>{{ number_format($bookings->sum('total_price')) }} VNĐ</td>
-                                <td>{{ $bookings->sum(fn($b) => floor($b->total_price / 1000)) }}</td>
+                                <td>{{ number_format($totalSpending) }} VNĐ</td>
+                                <td>{{ $totalRP }}</td>
                             </tr>
                         </tfoot>
                     </table>
+                    <div class="d-flex justify-content-center mt-3">
+                        {{ $bookings->appends(request()->query())->fragment('transaction-history')->links() }}
+
+                    </div>
                 </div>
             </div>
         </div>
     </body>
-
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            if (window.location.hash === "#transaction-history") {
+                const el = document.getElementById("transaction-history");
+                if (el) {
+                    el.scrollIntoView({
+                        behavior: "smooth"
+                    });
+                }
+            }
+        });
+    </script>
 @endsection

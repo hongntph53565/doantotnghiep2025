@@ -13,7 +13,7 @@ class PromotionController extends Controller
     public function index(Request $request)
     {
         $id = $request->input('id');
-        $promos = Promotion::get()->groupBy('type_discount');
+        $promos = Promotion::whereNull('deleted_at')->get()->groupBy('type_discount');
         return view('admin.list.promotion', compact('promos'));
     }
 
@@ -78,8 +78,10 @@ class PromotionController extends Controller
     public function destroy($id)
     {
         $promo = Promotion::findOrFail($id);
-        $promo->update(['deleted_at' => now()]);
-        return redirect()->route('promos.index')->with('success', 'Đã xoá mã giảm giá.');
+        // $promo->update(['deleted_at' => now()]);
+        $promo->delete();
+        return redirect()->route('promotions.index')->with('success', 'Đã xoá mã giảm giá.');
+
     }
     
 }

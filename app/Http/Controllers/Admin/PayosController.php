@@ -41,9 +41,7 @@ public function returnPage(Request $request, $description)
 {
     $allParams = $request->query();
 
-    $booking = Booking::with('bookingSeats.showtimeSeat') // ✅ chuẩn nhất
-    ->where('booking_code', $description)
-    ->first();
+    $booking = Booking::with('bookingSeats.showtimeSeat')->where('booking_code', $description)->first();
 
     if (!$booking) {
         return response()->json([
@@ -65,7 +63,6 @@ public function returnPage(Request $request, $description)
         event(new PaymentEvents($payment));
     }
 
-    // Nếu thanh toán thành công
     if (($allParams['cancel'] ?? 'false') !== 'true' && $booking['payment_method'] === "payos") {
         $booking->update([
             'payment_status' => 'paid',
@@ -74,11 +71,11 @@ public function returnPage(Request $request, $description)
 
         Log::info('Calling confirmSeats() for booking ID: ' . $booking->booking_id);
         $this->bookingService->confirmSeats($booking);
-          // ✅ Gắn lại đồ ăn cho booking sau khi thanh toán thành công
-    $foods = json_decode($booking->selected_foods, true) ?? [];
-    $this->bookingService->attachFoodsToBooking($booking->booking_id, $foods);
+
+        // Gắn lại đồ ăn cho booking
+        $foods = json_decode($booking->selected_foods, true) ?? [];
+        $this->bookingService->attachFoodsToBooking($booking->booking_id, $foods);
     }
-    // Nếu người dùng hủy
     elseif (($allParams['cancel'] ?? 'false') === 'true' && $booking['payment_method'] === "payos") {
         $booking->update([
             'booking_status' => 'cancelled'
@@ -88,12 +85,19 @@ public function returnPage(Request $request, $description)
         $this->bookingService->cancelSeats($booking);
     }
 
+    // ✅ Redirect theo role
+    $user = $booking->user; // Booking có quan hệ tới user
+    $isCancel = ($allParams['cancel'] ?? 'false') === 'true';
+
+    if ($user && $user->role_id == 3) {
+        return redirect()->route('staff.search_ticket_online')
+            ->with('message', $isCancel ? 'Đã hủy giao dịch.' : 'Thanh toán thành công. Đơn đã được xác nhận.');
+    }
+
+    // Mặc định là người dùng bình thường (role_id = 4)
     return redirect()->to(route('profile') . '#transaction-history')
-    ->with('message', 
-        ($allParams['cancel'] ?? 'false') === 'true'
-        ? 'Thanh toán đã bị hủy, booking đã hủy.'
-        : 'Thanh toán thành công, booking đã xác nhận.'
-    );
+        ->with('message', $isCancel ? 'Thanh toán đã bị hủy, booking đã hủy.' : 'Thanh toán thành công, booking đã xác nhận.');
 }
+
 
 }

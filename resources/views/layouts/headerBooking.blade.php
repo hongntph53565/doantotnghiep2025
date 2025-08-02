@@ -352,17 +352,21 @@
                 <a href="#" class="text-decoration-none text-dark fw-semibold">Quy định</a>
                 <a href="#" class="text-decoration-none text-dark fw-semibold">FAQ</a>
 
-                <div class="dropdown">
-                    <button class="btn btn-outline-success dropdown-toggle" type="button" id="locationDropdown"
-                        data-bs-toggle="dropdown" aria-expanded="false">
-                        HÀ NỘI
-                    </button>
-                    <ul class="dropdown-menu" aria-labelledby="locationDropdown">
-                        <li><a class="dropdown-item" href="#">Hà Nội</a></li>
-                        <li><a class="dropdown-item" href="#">TP. Hồ Chí Minh</a></li>
-                        <li><a class="dropdown-item" href="#">Đà Nẵng</a></li>
-                    </ul>
-                </div>
+                <div class="d-flex align-items-center">
+                @php
+    $selectedCity = session('selected_city') ?? 'Chọn khu vực của bạn';
+@endphp
+
+<div class="dropdown hover-dropdown">
+    <button class="btn btn-outline-success dropdown-toggle" type="button">
+        {{ $selectedCity }}
+    </button>
+    <ul class="dropdown-menu custom-dropdown">
+        @foreach ($cities as $city)
+            <li><a class="dropdown-item" href="{{ route('set.city', ['city' => $city]) }}">{{ $city }}</a></li>
+        @endforeach
+    </ul>
+</div>
 
                 @if (Auth::check())
                  <a href="{{ url('/profile') }}" class="text-decoration-none text-dark">

@@ -523,6 +523,17 @@ td[colspan="2"] {
     text-align: center;
     padding: 8px;
 }
+.ErrorSeat{
+
+   display: none;
+    color: black;
+    background-color: #ffe6e6;
+    border: 2px solid red;
+    padding: 10px 15px;
+    margin-top: 10px;
+    border-radius: 10px;
+    font-weight: 500;
+}
 
   
     

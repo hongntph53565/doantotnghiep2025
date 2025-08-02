@@ -58,7 +58,7 @@ public function register(Request $request)
         'address' => $request->province,
         'birthday' => $birthday,
         'gender' => $request->gender,
-        'role' => 2,
+        'role_id' => 4,
     ]);
 
     event(new UserRegistered($user));
@@ -130,15 +130,31 @@ public function profile()
     $bookings = Booking::with([
         'showtime.room.cinema',
         'bookingSeats.showtimeSeat.seat',
-        'bookingFoods.food.cinema', // 👈 thêm cinema ở đây
+        'bookingFoods.food.cinema',
         'bookingPromotions',
     ])
         ->where('user_id', $user->user_id)
         ->where('payment_status', 'paid')
         ->orderByDesc('created_at')
-        ->get();
+        ->paginate(10);
 
-    return view('Client.profile', compact('user', 'bookings'));
+    $allBookings = Booking::where('user_id', $user->user_id)
+    ->where('payment_status', 'paid')
+    ->get();
+
+$totalSpending = $allBookings->sum('total_price');
+$totalRP = $allBookings->sum(fn($b) => floor($b->total_price / 1000));
+
+    if ($totalSpending >= 100000) {
+        $cardLevel = 'Vàng';
+    } elseif ($totalSpending >= 50000) {
+        $cardLevel = 'Bạc';
+    } else {
+        $cardLevel = 'Bình thường';
+    }
+
+    return view('Client.profile', compact('user', 'bookings', 'totalSpending', 'totalRP', 'cardLevel'));
 }
+
 
 }

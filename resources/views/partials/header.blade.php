@@ -28,15 +28,43 @@
                     <img src="https://i.pravatar.cc/40" class="rounded-circle me-2" width="36" height="36"
                         alt="avatar">
                     <div class="lh-sm d-none d-md-block">
-                        <div class="fw-semibold">Admin</div>
-                        <small class="text-muted text-uppercase" style="font-size: 11px;">Nguyễn Thị
-                            Hồng</small>
+                        <div class="fw-semibold">
+                            @switch(Auth::user()->user_id)
+                                @case(1)
+                                    Admin
+                                @break
+
+                                @case(2)
+                                    Manager
+                                @break
+
+                                 @case(3)
+                                    Staff
+                                @break
+
+                                @default
+                                    none
+                            @endswitch
+                        </div>
+                        <small class="text-muted text-uppercase" style="font-size: 11px;">
+                            {{ Auth::user()->full_name }}
+                        </small>
+
                     </div>
                 </a>
-                <ul class="dropdown-menu dropdown-menu-end">
-                    <li><a class="dropdown-item" href="#">Thông tin tài khoản</a></li>
-                    <li><a class="dropdown-item" href="#">Đăng xuất</a></li>
-                </ul>
+               <ul class="dropdown-menu dropdown-menu-end">
+    
+    <li>
+        <a class="dropdown-item" href="#"
+           onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+            Đăng xuất
+        </a>
+    </li>
+    <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+        @csrf
+    </form>
+</ul>
+
             </div>
         </div>
     </div>

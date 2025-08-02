@@ -163,10 +163,11 @@ public function showCart(Request $request)
     }
 
     return response()->json([
-        'success' => true,
-        'removed' => $removed,
-        'totalAll' => number_format($totalAll, 0, '.', ',') . ' VND',
-    ]);
+    'success' => true,
+    'removed' => $removed,
+    'totalAll' => number_format($totalAll, 0, '.', ',') . ' VND',
+    'totalQuantity' => array_sum(array_column($cart, 'quantity')), // 👈 Thêm dòng này
+]);
 }
 
 }

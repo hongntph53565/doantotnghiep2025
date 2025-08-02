@@ -348,6 +348,7 @@
                         }
 
                         document.querySelector('.total-row .price').textContent = result.totalAll;
+                        
                     }
 
 

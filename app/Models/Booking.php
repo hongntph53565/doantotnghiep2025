@@ -34,11 +34,11 @@ class Booking extends Model
         return $this->hasOne(Payment::class, 'booking_id');
     }
 
-    public function foods()
+       public function foods()
     {
-        return $this->belongsToMany(Food::class, 'booking_food')
-            ->withPivot('quantity')
-            ->withTimestamps();
+        return $this->belongsToMany(Food::class, 'booking_food', 'booking_id', 'food_id')
+                    ->withPivot('quantity')
+                    ->withTimestamps();
     }
     public function seats()
     {
@@ -67,5 +67,11 @@ public function bookingPromotions()
 {
     return $this->hasMany(BookingPromotion::class, 'booking_id');
 }
+  public function getSeatsAttribute()
+    {
+        return $this->bookingSeats->map(function ($bookingSeat) {
+            return $bookingSeat->showtimeSeat->seat ?? null;
+        })->filter(); // bỏ null nếu có ghế lỗi
+    }
 
 }

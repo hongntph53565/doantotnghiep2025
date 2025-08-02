@@ -84,8 +84,7 @@ public function confirmSeats(Booking $booking)
 
     Log::info("✅ Confirming seats for booking ID: {$booking->booking_id}");
 
-    $booking->loadMissing('bookingSeats.showtimeSeat'); // ✅ dùng quan hệ đúng
-
+    $booking->loadMissing('bookingSeats.showtimeSeat');
     if ($booking->bookingSeats->isEmpty()) {
         Log::warning("⚠️ Booking ID {$booking->booking_id} has NO seats attached.");
         return;

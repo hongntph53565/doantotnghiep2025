@@ -76,7 +76,8 @@ class RoomController extends Controller
 
             $room->update($data);
 
-            return redirect()->route('show')->with('success', 'Cập nhật phòng thành công');
+            return redirect()->route('rooms.show', $room->room_id)->with('success', 'Cập nhật phòng thành công');
+
         } catch (Exception $e) {
             $logPath = storage_path('logs/RoomsLogs');
             if (!file_exists($logPath)) {
@@ -237,4 +238,13 @@ class RoomController extends Controller
         }
         return $letters;
     }
+public function edit($id)
+{
+    $room = Room::findOrFail($id);
+    $cinemas = Cinema::select('cinema_id', 'name', 'city')->get();
+    $districts = Cinema::select('city')->distinct()->get(); // ✅ thêm dòng này
+
+    return view('admin.edit.room', compact('room', 'cinemas', 'districts'));
+}
+
 }

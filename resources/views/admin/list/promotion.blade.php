@@ -1,6 +1,12 @@
 @extends('layouts.admin')
 
 @section('content')
+@if (session('success'))
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        {{ session('success') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+@endif
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
             <button class="btn btn-primary btn-sm me-2" id="toggleDrawer">☰</button>
@@ -70,9 +76,17 @@
                                                     data-bs-toggle="modal" data-bs-target="#promoModal">
                                                     <i class="bi bi-pencil"></i>
                                                 </button>
-                                                <button class="btn btn-sm btn-danger">
-                                                    <i class="bi bi-trash"></i>
-                                                </button>
+                                                <form action="{{ route('promotions.destroy', ['id' => $value->promo_id]) }}"
+      method="POST"
+      class="d-inline"
+      onsubmit="return confirm('Bạn có chắc chắn muốn xoá mã này?')">
+    @csrf
+    @method('DELETE')
+    <button class="btn btn-sm btn-danger">
+        <i class="bi bi-trash"></i>
+    </button>
+</form>
+
                                             </td>
                                         </tr>
                                     @endforeach

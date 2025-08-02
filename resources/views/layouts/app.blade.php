@@ -11,13 +11,13 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rubik+Mono+One&display=swap" rel="stylesheet">
-<!-- Google Font: Inter (giống như ảnh) -->
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rubik+Mono+One&display=swap"rel="stylesheet">
+    <!-- Google Font: Inter (giống như ảnh) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
 
 
 
-    
+
 
 
     <style>
@@ -370,13 +370,13 @@
 </head>
 
 <body>
-   @if(session('message'))
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            showToast(@json(session('message')));
-        });
-    </script>
-@endif
+    @if (session('message'))
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                showToast(@json(session('message')));
+            });
+        </script>
+    @endif
     <div class="header-banner">
         <img src="{{ asset('images/Z1-1748x155-1.jpg') }}" alt="Banner Summer" class="w-100">
     </div>
@@ -403,12 +403,13 @@
                                                 PHIM</a></li>
                                     </ul>
                                 </li>
-                                <li class="nav-item"><a class="nav-link" href="{{ url('/cua-hang') }}">ĐỒ ĂN/COMBO</a></li>
+                                <li class="nav-item"><a class="nav-link" href="{{ url('/cua-hang') }}">ĐỒ ĂN/COMBO</a>
+                                </li>
                                 <li class="nav-item"><a class="nav-link" href="#">KHUYẾN MÃI</a></li>
                                 <li class="nav-item"><a class="nav-link" href="#">DỊCH VỤ</a></li>
                                 <li class="nav-item dropdown hover-dropdown">
                                     <a class="nav-link dropdown-toggle active" href="#">
-                                        VỀ BHD STAR
+                                        VỀ LUMI STAR
                                     </a>
                                     <ul class="dropdown-menu custom-dropdown">
                                         <li><a class="dropdown-item" href="{{ url('/he-thong-rap') }}">HỆ THỐNG RẠP</a>
@@ -424,16 +425,21 @@
                 </nav>
             </div>
             <div class="d-flex align-items-center">
-                <div class="dropdown hover-dropdown">
-                    <button class="btn btn-outline-success dropdown-toggle" type="button">
-                        Hà Nội
-                    </button>
-                    <ul class="dropdown-menu custom-dropdown">
-                        <li><a class="dropdown-item" href="#">Hà Nội</a></li>
-                        <li><a class="dropdown-item" href="#">TP. Hồ Chí Minh</a></li>
-                        <li><a class="dropdown-item" href="#">Đà Nẵng</a></li>
-                    </ul>
-                </div>
+                @php
+    $selectedCity = session('selected_city') ?? 'Chọn khu vực của bạn';
+@endphp
+
+<div class="dropdown hover-dropdown">
+    <button class="btn btn-outline-success dropdown-toggle" type="button">
+        {{ $selectedCity }}
+    </button>
+    <ul class="dropdown-menu custom-dropdown">
+        @foreach ($cities as $city)
+            <li><a class="dropdown-item" href="{{ route('set.city', ['city' => $city]) }}">{{ $city }}</a></li>
+        @endforeach
+    </ul>
+</div>
+
 
                 @if (Auth::check())
                     <a href="{{ url('/profile') }}" class="text-decoration-none text-dark">
@@ -473,8 +479,11 @@
                                 <button type="submit" class="btn btn-success mb-2">Đăng nhập</button>
                             </form>
 
-                            <a href="{{ route('register.form') }}" class="btn btn-primary w-100">Đăng ký thành
-                                viên</a>
+                            <button class="btn btn-primary w-100"
+                                onclick="window.location.href='{{ route('register.form') }}'">
+                                Đăng ký thành viên
+                            </button>
+
 
                         </div>
                         <script>
@@ -515,7 +524,7 @@
 
 
                 <div class="col-md-4 mb-4">
-                    <h5 class="fw-bold">VỀ BHD STAR</h5>
+                    <h5 class="fw-bold">VỀ LUMI STAR</h5>
                     <hr class="mt-0"
                         style="height: 5px;width: 120px;border: none;background-color: #7fe784;border-radius: 10px;filter: drop-shadow(0 0 8px #7fe784) drop-shadow(0 0 16px #7fe784);">
                     <ul class="list-unstyled mt-3">
@@ -553,7 +562,7 @@
                     <p><strong>Hotline:</strong> 19002099</p>
                     <p><strong>Giờ làm việc:</strong> 9:00 - 22:00 (Tất cả các ngày bao gồm cả Lễ, Tết)</p>
                     <p><strong>Email hỗ trợ:</strong> <a href="mailto:cskh@bhdstar.vn"
-                            class="text-white">cskh@bhdstar.vn</a></p>
+                            class="text-white">cskh@lumistar.vn</a></p>
                     <p class="fw-bold">MẠNG XÃ HỘI</p>
                     <div class="d-flex gap-3">
                         <a href="#" class="social-icon facebook"><i class="fab fa-facebook-f"></i></a>
@@ -575,7 +584,7 @@
                         Q.Hoàn
                         Kiếm, Hà Nội</p>
                     <p class="mb-1">Hotline: 19002099</p>
-                    <p class="mb-0">COPYRIGHT 2010 BHD STAR. ALL RIGHTS RESERVED</p>
+                    <p class="mb-0">COPYRIGHT 2010 LUMI STAR. ALL RIGHTS RESERVED</p>
                 </div>
             </div>
         </div>

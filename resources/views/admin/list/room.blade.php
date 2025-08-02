@@ -25,7 +25,7 @@
                         <th>STT</th>
                         <th>Tên phòng</th>
                         <th>Rạp chiếu</th>
-                        <th>Định dạng</th>
+                        
                         <th>Số ghế</th>
                         <th>Ngày tạo</th>
                         <th>Thao tác</th>
@@ -37,18 +37,18 @@
                             <td>{{ $index++ }}</td>
                             <td>{{ $room->room_name }}</td>
                             <td>{{ $room->cinema->name ?? 'Không xác định' }}</td>
-                            <td>{{ $room->format ?? 'Không xác định' }}</td>
+                            
                             <td>{{ $room->total_seats }}</td>
                             <td>{{ $room->created_at->format('d/m/Y') }}</td>
                             <td>
-                                <a href="{{ route('rooms.edit', ['id' => $room->room_id]) }}"
+                                {{-- <a href="{{ route('rooms.edit', ['id' => $room->room_id]) }}"
                                    class="btn btn-outline-primary btn-sm">
                                     <i class="bi bi-pencil-fill"></i>
-                                </a>
-                                <a href="{{ route('rooms.show', ['id' => $room->room_id]) }}"
+                                </a> --}}
+                                {{-- <a href="{{ route('rooms.show', ['id' => $room->room_id]) }}"
                                    class="btn btn-outline-primary btn-sm">
                                     <i class="bi bi-eye-fill"></i>
-                                </a>
+                                </a> --}}
                                 <form action="{{ route('rooms.delete', ['id' => $room->room_id]) }}"
                                       method="POST" style="display:inline-block;"
                                       onsubmit="return confirm('Bạn có chắc chắn muốn xoá phòng này?')">

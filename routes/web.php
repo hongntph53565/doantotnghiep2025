@@ -28,7 +28,10 @@ use App\Http\Controllers\Manager\DashboardController as ManagerDashboardControll
 use App\Http\Controllers\Client\CartController;
 use App\Http\Controllers\Client\ComboController;
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\Staff\StaffMovieController;
+use App\Http\Controllers\Staff\StaffBookingController;
+use App\Http\Controllers\Staff\BookingSearchController;
+use App\Http\Controllers\Staff\BookingController as StaffBooking;
 
 
 
@@ -64,19 +67,23 @@ Route::prefix('admin')->middleware(['auth', 'role:admin,employee'])->group(funct
         Route::get('/create',         [RoomController::class, 'create'])->name('create');
         Route::post('/store',         [RoomController::class, 'store'])->name('store');
         Route::get('/edit/{id}',      [RoomController::class, 'edit'])->name('edit');
-        Route::post('/update/{id}',   [RoomController::class, 'update'])->name('update');
+        Route::post('/update/{id}', [RoomController::class, 'update'])->name('update');
+
+
+
         Route::get('/show/{id}',      [RoomController::class, 'show'])->name('show');
         Route::delete('/delete/{id}', [RoomController::class, 'delete'])->name('delete');
     });
 
     Route::prefix('genre')->name('genres.')->group(function () {
-        Route::get('/',               [GenreController::class, 'index'])->name('index');
-        Route::get('/create',         [GenreController::class, 'create'])->name('create');
-        Route::post('/store',         [GenreController::class, 'store'])->name('store');
-        Route::get('/edit/{id}',      [GenreController::class, 'edit'])->name('edit');
-        Route::post('/update/{id}',   [GenreController::class, 'update'])->name('update');
-        Route::delete('/delete/{id}', [GenreController::class, 'delete'])->name('delete');
-    });
+            Route::get('/',               [GenreController::class, 'index'])->name('index');
+            Route::get('/create',         [GenreController::class, 'create'])->name('create');
+            Route::post('/store',         [GenreController::class, 'store'])->name('store');
+            Route::get('/edit/{id}',      [GenreController::class, 'edit'])->name('edit');
+            Route::post('/update/{id}',   [GenreController::class, 'update'])->name('update');
+            Route::delete('/delete/{id}', [GenreController::class, 'destroy'])->name('delete');
+
+        });
 
 
     Route::prefix('movie')->name('movies.')->group(function () {
@@ -195,19 +202,37 @@ Route::prefix('admin')->middleware(['auth', 'role:admin,employee'])->group(funct
     //     Route::get('/', [ManagerDashboardController::class, 'index'])->name('index');
     // });
 });
+Route::prefix('staff')->name('staff.')->group(function () {
+    Route::get('/', [StaffMovieController::class, 'index'])->name('list');
+    Route::get('/bookings/{movie}', [StaffBookingController::class, 'booking'])->name('booking1');
+  Route::get('/bookings/{movie}/showtimes-by-date', [StaffBookingController::class, 'showtimesByDate'])->name('booking.showtimes_by_date');
+    Route::get('/booking/seats/{room_id}', [StaffBookingController::class, 'showSeatsByRoom'])->name('booking.seats');
+    Route::get('/search-ticket-online', [BookingSearchController::class, 'search'])->name('search_ticket_online');
+     Route::get('/staff/bookings/{booking}/print', [StaffBooking::class, 'print'])->name('booking.print');
+     Route::get('/dat-do-an', [StaffBookingController::class, 'getCombos'])->name('combo');
+Route::get('/combo/{id}', [StaffBookingController::class, 'showCombo'])->name('combo.show');
+Route::get('/cart', [StaffBookingController::class, 'showCart'])->name('cart');
+  Route::post('/cart/add', [StaffBookingController::class, 'addToCart'])->name('cart.addCart');
+  Route::get('/clear-cart-and-search', function () {
+        session()->forget('cart'); // Xoá giỏ hàng
+        return redirect()->route('staff.search_ticket_online');
+    })->name('cart.clearAndRedirect');
+  
 
+});
 
-// Route::get('/cart', [HomeController::class, 'index']);
+   
+
 
 Route::get('/', function () {
     // return response()->json(['message' => 'Backend OK']);
 });
 Route::get('/lich-chieu-phim', [HomeController::class, 'MovieShowtimes'])->name('Client.MovieShowtimes');
+Route::get('/set-city/{city}', [HomeController::class, 'setCity'])->name('set.city');
 
 
-Route::get('/he-thong-rap', function () {
-    return view('Client.CinemaSystem');
-});
+
+
 Route::get('/mua-do-an', [CartController::class, 'showCart'])->name('cart');
 
 Route::get('/cua-hang', [ComboController::class, 'getCombos'])->name('combo');
@@ -215,6 +240,8 @@ Route::get('/combo/{id}', [ComboController::class, 'show'])->name('combo.show');
 Route::get('/cart', [CartController::class, 'showCart'])->name('cart');
 
 Route::post('/booking/food-only', [BookingController::class, 'storeFoodOnly'])->name('booking.foodOnly');
+
+
 
 
 Route::post('/add-cart', [CartController::class, 'addToCart'])->name('cart.addCart');
@@ -225,13 +252,13 @@ Route::post('/cart/remove', [CartController::class, 'removeFromCart'])->name('ca
 
 Route::get('/profile', [AuthController::class, 'profile'])->name('profile');
 
-Route::get('/thong-tin-rap', function () {
-    return view('Client.infoCinema');
-});
+// web.php
+Route::get('/thong-tin-rap/{cinema_id}', [CinemaController::class, 'infoCinema'])->name('Client.infoCinema');
+
 Route::get('/dat-ve', function () {
     return view('Client.booking.home');
 });
-
+Route::get('/he-thong-rap', [CinemaController::class, 'CinemaSystem'])->name('Client.cinemaSystem');
 Route::get('/lich-chieu-rap', [CinemaController::class, 'listCinemas'])->name('Client.cinemaShowtime');
 Route::get('/lich-chieu-rap/{cinema_id}', [HomeController::class, 'ShowtimesByCinema'])->name('Client.MovieShowtimesByCinema');
 

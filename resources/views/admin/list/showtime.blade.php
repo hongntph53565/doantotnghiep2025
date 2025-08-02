@@ -1,6 +1,12 @@
 @extends('layouts.admin')
 
 @section('content')
+@if (session('success'))
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        {{ session('success') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+@endif
     <div class="card border-0 shadow-sm mt-3">
         <div class="card-body p-0">
             <form action="{{ route('showtimes.index') }}">
@@ -167,15 +173,32 @@
                     Bạn có chắc chắn muốn xóa xuất chiếu này? Thao tác này không thể hoàn tác.
                 </div>
                 <div class="modal-footer border-0">
-                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Hủy bỏ</button>
-                    <button type="button" class="btn btn-danger">Xác nhận xóa</button>
-                </div>
+    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Hủy bỏ</button>
+    <form id="deleteForm" method="POST">
+        @csrf
+        @method('DELETE')
+        <button type="submit" class="btn btn-danger">Xác nhận xóa</button>
+    </form>
+</div>
+
             </div>
         </div>
     </div>
 @endsection
 
 @push('scripts')
+
+
+<script>
+    const deleteModal = document.getElementById('deleteModal');
+    deleteModal.addEventListener('show.bs.modal', function (event) {
+        const button = event.relatedTarget;
+        const showtimeId = button.getAttribute('data-id');
+        const form = document.getElementById('deleteForm');
+        form.action = `/admin/showtime/delete/${showtimeId}`;
+    });
+</script>
+
     <script>
         const districtSelect = document.getElementById('district');
         const cinemaSelect = document.getElementById('rapChieu');

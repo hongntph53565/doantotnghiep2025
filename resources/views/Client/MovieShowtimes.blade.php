@@ -237,7 +237,7 @@
         </div>
         <div class="row g-3">
             @foreach ($nowShowing as $movie)
-                <div class="col-6 col-sm-4 col-md-2 movie-card">
+                <div class="col-6 col-sm-4 col-md-20p movie-card">
                     <div class="movie-img">
                         <img src="{{ asset('storage/' . $movie->poster) }}" alt="{{ $movie->title }}">
                         <a href="{{ route('Client.booking.home', ['movie_id' => $movie->movie_id, 'date' => now()->toDateString()]) }}"
@@ -246,18 +246,7 @@
                             <img src="{{ asset('images/ticket-svgrepo-com.svg') }}" alt="vé" width="16" class="ms-1">
                         </a>
                     </div>
-                    {{-- <div class="movie-tags">
-                        <span class="tag-red">{{ $movie->age_rating ?? 'P' }}</span>
-                        <span class="tag-black">{{ $movie->language ?? 'Phụ đề' }}</span>
-                        <span class="tag-green">{{ $movie->format ?? '2D' }}</span>
-                    </div>
-                    <div class="movie-title" title="{{ $movie->title }}">{{ $movie->title }}</div>
-
-                    <div class="movie-meta">
-                        Thể loại: <span class="genre-name">{{ $movie->genre->genre_name ?? 'Không rõ' }}</span>
-                    </div> --}}
-
-                    <div class="info">
+                     <div class="info">
                         <div class="labels">
                             <span class="label age">{{ $movie->age_rating }}</span>
                             <span class="label subtitle">{{ $movie->language }}</span>
@@ -275,14 +264,19 @@
             <div class="section-title mt-5">Phim Sắp Chiếu</div>
         </div>
         <div class="row g-3">
+            @if($comingSoon->isEmpty())
+    <div class="text-center mt-4 text-muted">
+        <em>Hiện tại chưa có phim sắp chiếu tại khu vực này.</em>
+    </div>
+@endif
             @foreach ($comingSoon as $movie)
                 <div class="col-6 col-sm-4 col-md-20p movie-card">
                     <div class="movie-img">
                         <img src="{{ asset('storage/' . $movie->poster) }}" alt="{{ $movie->title }}">
-                        <a href="#" class="buy-button">
+                        {{-- <a href="#" class="buy-button">
                             MUA VÉ NGAY
                             <img src="{{ asset('images/ticket-svgrepo-com.svg') }}" alt="vé" width="16" class="ms-1">
-                        </a>
+                        </a> --}}
                     </div>
 
                     <div class="info">

@@ -37,10 +37,7 @@ class Showtime extends Model
         return $this->belongsTo(Movie::class, 'movie_id', 'movie_id');
     }
 
-    public function cinema()
-    {
-        return $this->belongsTo(Cinema::class, 'cinema_id', 'cinema_id');
-    }
+   
 
     public function bookings()
 {

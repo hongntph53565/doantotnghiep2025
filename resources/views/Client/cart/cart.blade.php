@@ -698,27 +698,28 @@
                     const result = await response.json();
 
                     if (result.success) {
-                        if (result.removed) {
-                            // Xóa khỏi DOM nếu đã xóa
-                            wrapper.closest('.order-item').remove();
-                            if (document.querySelectorAll('.order-item').length === 0) {
-                                location.reload();
-                            }
-                        } else {
-                            // Cập nhật quantity
-                            input.value = quantity;
+    if (result.removed) {
+        wrapper.closest('.order-item').remove();
+        if (document.querySelectorAll('.order-item').length === 0) {
+            location.reload();
+        }
+    } else {
+        input.value = quantity;
 
-                            // Tính lại giá từng item
-                            const priceEl = wrapper.closest('.order-item').querySelector(
-                                '.price');
-                            priceEl.textContent = (price * quantity).toLocaleString('vi-VN') +
-                                ' VND';
-                        }
+        const priceEl = wrapper.closest('.order-item').querySelector('.price');
+        priceEl.textContent = (price * quantity).toLocaleString('vi-VN') + ' VND';
+    }
 
-                        // Cập nhật tổng đơn
-                        document.querySelector('.total-row .price').textContent = result
-                            .totalAll;
-                    }
+    // ✅ Tổng đơn
+    document.querySelector('.total-row .price').textContent = result.totalAll;
+
+    // ✅ Badge số lượng
+    const cartBadge = document.querySelector('.cart-badge');
+    if (cartBadge && result.totalQuantity !== undefined) {
+        cartBadge.textContent = result.totalQuantity;
+    }
+}
+
                 });
             });
         });
@@ -786,6 +787,8 @@
 @section('content')
     <div class="container">
         <hr>
+  
+
         <div class="content-top">
             <form method="GET" action="{{ route('combo') }}">
                 <select class="cinema-select" name="cinema_id" onchange="this.form.submit()">
@@ -815,7 +818,7 @@
         @if (empty($cart))
             <div id="empty-cart-message" class="text-center py-5">
                 <h5 class="text-muted">Giỏ hàng của bạn đang trống.</h5>
-                <a href="{{ route('combo') }}" class="btn btn-success mt-3">Tiếp tục mua sắm</a>
+                <a href="{{ route('staff.combo') }}" class="btn btn-success mt-3">Tiếp tục mua sắm</a>
             </div>
         @else
             <main class="cart-container">
@@ -936,7 +939,7 @@
                                     <span style="font-size: 14px;">Thanh toán qua VNPAY</span>
                                 </label>
                                 <label><input type="radio" name="payment" value="payos" id="payos">
-                                    <img src="{{ asset('images/momo.png') }}" alt="PayOS" /> Thanh toán bằng PayOS
+                                    <img src="{{ asset('images/payos.png') }}" alt="PayOS" /> Thanh toán bằng PayOS
                                 </label>
                                 <label><input type="radio" name="payment" value="zalopay" id="zalopay">
                                     <img src="{{ asset('images/zalopay.png') }}" alt="ZaloPay" /> Zalopay QR đa năng

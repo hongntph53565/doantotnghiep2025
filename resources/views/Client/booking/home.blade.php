@@ -72,8 +72,8 @@
     <script>
         function clearSessionAndGoHome() {
             sessionStorage.clear();
-            // window.history.back();
-            window.location.href = '{{ route('home') }}';
+            window.history.back();
+            // window.location.href = '{{ route('home') }}';
         }
     </script>
 @endpush
