@@ -104,7 +104,6 @@
                 <div class="booking-step" id="step-1" style="display: {{ $step === 1 ? 'block' : 'none' }}" class="seat">
                     @include('staff.booking.seat');
                 </div>
-
             </div>
 
             <div class="col-md-4 ms-5 mt-5">
@@ -138,7 +137,12 @@
                     <span id="total-price">0 VND</span>
                 </div>
                 <p class="note">(Đã bao gồm phụ thu)</p>
-                <a href="javascript:void(0);" class="btn-checkout" onclick="goToStep(2)">Chọn đồ ăn (2/4)</a>
+                {{-- <a href="javascript:void(0);" class="btn-checkout" onclick="goToStep(2)">Chọn đồ ăn (2/4)</a> --}}
+                <a href="{{ route('staff.booking3', ['movie' => $movie->movie_id, 'showtime' => $selectedShowtime->showtime_id]) }}" class="btn-checkout">
+    Chọn đồ ăn
+</a>
+
+
                 <div class="btn-back-wrapper">
                     <a href="javascript:void(0);" class="btn-back" onclick="goBackStep()">← Trở lại</a>
                 </div>
@@ -301,4 +305,61 @@
     </style>
 @endpush
 @push('scripts')
+<script>
+    function renderSelectedSeats() {
+        const summary = document.getElementById('seat-summary');
+        const total = document.getElementById('total-price');
+
+        let seats = JSON.parse(sessionStorage.getItem('selectedSeats') || '[]');
+        let seatGroups = {
+            standard: [],
+            vip: [],
+            couple: []
+        };
+        let groupPrices = {
+            standard: 0,
+            vip: 0,
+            couple: 0
+        };
+        let totalPrice = 0;
+
+        seats.forEach(seat => {
+            if (seat.type === 'couple') {
+                seatGroups.couple.push(seat.codes.join(' & '));
+                groupPrices.couple += seat.price;
+                totalPrice += seat.price;
+            } else {
+                seatGroups[seat.type]?.push(seat.code);
+                groupPrices[seat.type] += seat.price;
+                totalPrice += seat.price;
+            }
+        });
+
+        let html = '';
+        if (seatGroups.standard.length) {
+            html += `<p class="info">Ghế Standard: ${seatGroups.standard.join(', ')} <strong style="float:right">${formatPrice(groupPrices.standard)}</strong></p>`;
+        }
+        if (seatGroups.vip.length) {
+            html += `<p class="info">Ghế VIP: ${seatGroups.vip.join(', ')} <strong style="float:right">${formatPrice(groupPrices.vip)}</strong></p>`;
+        }
+        if (seatGroups.couple.length) {
+            html += `<p class="info">Ghế Couple: ${seatGroups.couple.join(', ')} <strong style="float:right">${formatPrice(groupPrices.couple)}</strong></p>`;
+        }
+
+        summary.innerHTML = html || '<p class="text-muted">Chưa chọn ghế</p>';
+        total.innerText = formatPrice(totalPrice);
+
+        // Lưu lại tổng để cộng vào phần thanh toán sau
+        sessionStorage.setItem('ticketTotal', totalPrice);
+    }
+
+    function formatPrice(number) {
+        return number.toLocaleString('vi-VN') + ' VND';
+    }
+
+    // Gọi khi trang load xong
+    document.addEventListener('DOMContentLoaded', renderSelectedSeats);
+</script>
+
 @endpush
+

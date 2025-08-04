@@ -24,6 +24,7 @@ class DatabaseSeeder extends Seeder
             // BookingSeeder::class,
             ReviewSeeder::class,
             EmailTemplateSeeder::class,
+            DemoMovieSeeder::class,
         ]);
     }
 }

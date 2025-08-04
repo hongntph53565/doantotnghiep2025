@@ -30,5 +30,5 @@ class BookingSeat extends Model
     {
         return $this->belongsTo(ShowtimeSeat::class, 'showtime_seat_id', 'id');
     }
-    
+
 }

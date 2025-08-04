@@ -71,7 +71,7 @@
         {{ session('error') }}
     </div>
 @endif
-<form action="{{ route('staff.search') }}" method="GET" class="mb-4">
+<form action="{{ route('staff.search_ticket_online') }}" method="GET" class="mb-4">
     <input type="text" name="query" placeholder="Nhập mã vé, tên khách hàng hoặc ngày chiếu..." value="{{ request('query') }}">
     <button type="submit">Tìm kiếm</button>
 </form>
@@ -88,19 +88,28 @@
                 <th>Ngày chiếu</th>
                 <th>Mã vé</th>
                 <th>Trạng thái</th>
-                <th>Ngày đặt</th>
+                <th>Thao tác</th>
             </tr>
         </thead>
         <tbody>
             @foreach($bookings as $booking)
                 <tr>
                     <td>{{ $booking->booking_id }}</td>
-                    <td>{{ $booking->user->last_name ?? 'Không rõ' }}</td>
+                    <td>{{ $booking->user->full_name ?? 'Không rõ' }}</td>
                     <td>{{ $booking->showtime->movie->title ?? 'Không rõ' }}</td>
-                    <td>{{ $booking->showtime->show_date ?? '' }}</td>
+                    <td>{{ $booking->showtime->date ?? '' }}</td>
                     <td>{{ $booking->booking_code }}</td>
                     <td>{{ $booking->booking_status }}</td>
-                    <td>{{ $booking->created_at }}</td>
+                    <td>
+                        {{-- <a href="{{ route('staff.booking.print', $booking->booking_id) }}" target="_blank">
+                            <button>In vé</button>
+                     </a>  --}}
+                     <a href="{{ route('staff.booking.print', $booking->booking_id) }}" target="_blank" class="btn btn-primary btn-sm">
+    🖨️ In vé
+</a>
+
+                    </td>
+
                 </tr>
             @endforeach
         </tbody>

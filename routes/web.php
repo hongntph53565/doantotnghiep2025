@@ -108,13 +108,45 @@ Route::prefix('booking')->name('booking.')->group(function () {
     Route::post('/store',         [BookingController::class, 'store'])->name('store');
     Route::delete('/delete/{id}', [BookingController::class, 'delete'])->name('delete');
 });
-Route::prefix('staff')->name('staff.')->group(function () {
-    Route::get('/', [StaffMovieController::class, 'index'])->name('list');
-    Route::get('/bookings/{movie}', [StaffBookingController::class, 'show'])->name('booking1');
+// Route::prefix('staff')->name('staff.')->group(function () {
+//     Route::get('/', [StaffMovieController::class, 'index'])->name('list');
+//     Route::get('/bookings/{movie}', [StaffBookingController::class, 'show'])->name('booking1');
 
-    Route::get('/bookings/{movie}/showtimes-by-date', [StaffBookingController::class, 'showtimesByDate'])->name('booking.showtimes_by_date');
-    Route::get('/booking/seats/{room_id}', [StaffBookingController::class, 'showSeatsByRoom'])->name('booking.seats');
+//     Route::get('/bookings/{movie}/showtimes-by-date', [StaffBookingController::class, 'showtimesByDate'])->name('booking.showtimes_by_date');
+//     Route::get('/bookings/seats/{room_id}', [StaffBookingController::class, 'showSeatsByRoom'])->name('booking.seats');
+// });
+
+Route::prefix('staff')->name('staff.')->group(function () {
+    Route::get('/search-ticket-online', [BookingSearchController::class, 'search'])->name('search_ticket_online');
+    // Route::get('/staff/bookings/{booking}/print', [StaffBooking::class, 'print'])->name('booking.print');
+    // web.php
+    Route::get('/staff/booking/{booking}/print', [StaffBooking::class, 'printView'])->name('booking.print');
+
+    Route::get('/', [StaffMovieController::class, 'index'])->name('list');
+    // // Bước 1: Chọn phim
+    // Route::get('/bookings/{movie}', [StaffBookingController::class, 'show'])->name('booking1');
+
+    // // Bước 2: Lấy suất chiếu theo ngày
+    // Route::get('/bookings/{movie}/showtimes-by-date', [StaffBookingController::class, 'showtimesByDate'])->name('booking.showtimes_by_date');
+
+    // // Bước 3: Hiển thị ghế
+    // Route::get('/bookings/{movie}/seats', [StaffBookingController::class, 'showSeatsByRoom'])->name('booking.seats');
+
+    // Route::get('/bookings/{movie}/{showtime}/foods', [StaffBookingController::class, 'selectFood'])->name('booking3');
+
+    // Route::post('/bookings/store-step3', [StaffBookingController::class, 'storeStep3'])->name('storeStep3');
+
+    // Route::get('/bookings/step4', [StaffBookingController::class, 'showStep4'])->name('showStep4');
+
+    Route::get('/dat-ve/{movie_id}', [StaffBookingController::class, 'booking'])->name('booking1');
+    Route::get('/ajax/showtimes', [StaffBookingController::class, 'ajaxShowtimes']);
+    Route::get('/ajax-showtimes-by-cinema', [StaffBookingController::class, 'ajaxShowtimesByCinema'])->name('Client.ajaxShowtimesByCinema');
+
+
+
+
 });
+
 // Route::prefix('admin')->middleware(['auth', 'role:admin,employee'])->group(function () {
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
 

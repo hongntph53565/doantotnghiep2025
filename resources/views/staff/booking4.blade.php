@@ -38,7 +38,7 @@
         </div>
     </div>
 
-   @include('staff.booking.combo', ['foods' => $foods])
+   @include('staff.booking.payment')
            <div class="col-md-4 ms-5 mt-5">
                 <h3 class="fw-bold fs-5">{{ $showtime->room->cinema->name ?? 'Tên rạp' }}</h3>
                 <p><strong style="color: #67B72F;">{{ $showtime->room->room_name }}</strong> <span> -
@@ -74,19 +74,9 @@
                 </div>
                 <p class="note">(Đã bao gồm phụ thu)</p>
                 {{-- <a href="javascript:void(0);" class="btn-checkout" onclick="goToStep(2)">Chọn đồ ăn (2/4)</a> --}}
-               <form action="{{ route('staff.storeStep3') }}" method="POST" id="step3-form">
-                    @csrf
-                    <input type="hidden" name="seats" id="seats-data">
-                    <input type="hidden" name="foods" id="foods-data">
-                    <input type="hidden" name="total_price" id="total-price-data">
-
-                    <button type="submit" class="btn-checkout">THANH TOÁN</button>
-                </form>
-                {{-- Hoặc nếu muốn dùng link --}}
-
-                {{-- <a href="{{ route('staff.booking4') }}" class="btn-checkout">
+                <a href="{{ route('staff.booking3', ['movie' => $movie->movie_id, 'showtime' => $showtime->showtime_id]) }}" class="btn-checkout">
     Thanh toán
-</a> --}}
+</a>
 
 
                 <div class="btn-back-wrapper">
@@ -307,119 +297,6 @@
     }
 
     document.addEventListener('DOMContentLoaded', renderBookingSummary);
-    document.getElementById('step3-form').addEventListener('submit', function(e) {
-        const seats = sessionStorage.getItem('selectedSeats');
-        const foods = sessionStorage.getItem('selectedFoods');
-        const total = sessionStorage.getItem('totalPrice');
-
-        document.getElementById('seats-data').value = seats;
-        document.getElementById('foods-data').value = foods;
-        document.getElementById('total-price-data').value = total;
-    });
 </script>
- <script>
-           function submitCheckout() {
-    const paymentMethod = document.querySelector('input[name="payment"]:checked')?.id;
-    if (!paymentMethod) {
-        alert("Vui lòng chọn hình thức thanh toán!");
-        return;
-    }
-
-    const showtimeId = localStorage.getItem("selectedShowtimeId");
-    const selectedSeatsRaw = JSON.parse(sessionStorage.getItem("selectedSeats")) || [];
-    const selectedFoods = JSON.parse(sessionStorage.getItem("selectedFoods")) || [];
-    const ticketTotal = parseInt(sessionStorage.getItem("ticketTotal")) || 0;
-    const foodTotal = parseInt(sessionStorage.getItem("foodTotal")) || 0;
-    const originalTotal = ticketTotal + foodTotal;
-
-    if (!showtimeId || selectedSeatsRaw.length === 0 || originalTotal <= 0) {
-        alert("Thiếu dữ liệu đặt vé.");
-        return;
-    }
-
-    const seatIds = [];
-    selectedSeatsRaw.forEach(item => {
-        if (item.type === 'couple' && Array.isArray(item.seat_ids)) {
-            seatIds.push(...item.seat_ids);
-        } else if (item.seat_id) {
-            seatIds.push(item.seat_id);
-        }
-    });
-
-    // 🔻 Áp dụng giảm giá trước khi submit
-    const promoCode = document.getElementById("promo_code_hidden").value;
-    let finalTotal = originalTotal;
-
-    if (promoCode) {
-        const selected = [...document.querySelectorAll('#promo-select option')].find(opt => opt.value === promoCode)
-            || document.querySelector(`input[name="voucher"]:checked`);
-        if (selected) {
-            const type = selected.getAttribute('data-type');
-            const value = parseFloat(selected.getAttribute('data-value'));
-            const maxDiscount = parseFloat(selected.getAttribute('data-max')) || Infinity;
-            const minOrder = parseFloat(selected.getAttribute('data-min')) || 0;
-
-            if (originalTotal >= minOrder) {
-                let discount = 0;
-                if (type === 'percent') {
-                    discount = originalTotal * value / 100;
-                } else if (type === 'amount') {
-                    discount = value;
-                }
-                discount = Math.min(discount, maxDiscount);
-                finalTotal = originalTotal - discount;
-            }
-        }
-    }
-
-    document.getElementById("showtime_id").value = showtimeId;
-    document.getElementById("payment_method").value = paymentMethod;
-    document.getElementById("total_price_hidden").value = Math.round(finalTotal); // ✅ giá đã giảm
-    document.getElementById("selected_seats").value = JSON.stringify(seatIds);
-    document.getElementById("selected_foods").value = JSON.stringify(selectedFoods);
-    document.getElementById("checkout-form").submit();
-}
-
-
-
-            let appliedDiscount = 0;
-
-            function applyPromo() {
-                const promo = document.getElementById('promo-select');
-                const selected = promo.options[promo.selectedIndex];
-                const type = selected.getAttribute('data-type');
-                const value = parseFloat(selected.getAttribute('data-value'));
-                const maxDiscount = parseFloat(selected.getAttribute('data-max')) || Infinity;
-                const minOrder = parseFloat(selected.getAttribute('data-min')) || 0;
-
-                // 🟢 Lấy tổng tiền gốc (không thay đổi finalTotal)
-                const ticketTotal = parseInt(sessionStorage.getItem("ticketTotal")) || 0;
-                const foodTotal = parseInt(sessionStorage.getItem("foodTotal")) || 0;
-                const originalTotal = ticketTotal + foodTotal;
-
-                if (originalTotal < minOrder) {
-                    document.getElementById('promo-message').innerText = "Không đủ điều kiện áp dụng mã (Đơn tối thiểu: " +
-                        minOrder + " VND)";
-                    return;
-                }
-
-                let discount = 0;
-                if (type === 'percent') {
-                    discount = (originalTotal * value / 100);
-                } else if (type === 'amount') {
-                    discount = value;
-                }
-
-                discount = Math.min(discount, maxDiscount);
-                const newTotal = originalTotal - discount;
-
-                document.getElementById("final-total-payment").innerText = newTotal.toLocaleString('vi-VN') + " VND";
-                document.getElementById("promo-message").innerText = "Đã áp dụng mã giảm " + Math.round(discount)
-                    .toLocaleString('vi-VN') + " VND";
-
-                // 🟢 Gửi promo_code nhưng không update totalPrice trong session
-                document.getElementById("promo_code_hidden").value = selected.value;
-            }
-        </script>
 @endpush
 
