@@ -12,7 +12,6 @@ return new class extends Migration {
             $table->string('genre_name', 100)->collation('utf8mb4_unicode_ci');
             $table->text('description')->nullable();
             $table->enum('status', ['active', 'inactive'])->default('active');
-
             $table->timestamps(); 
             $table->softDeletes();
         });

@@ -1,235 +1,235 @@
 @extends('layouts.app')
 
-@section('content')
-    <div class="container">
-        <div class="content-top">
-            <select class="cinema-select">
-                <option>BHD Star 3.2</option>
-                <option>BHD Star Huế</option>
-                <option>BHD Star Thảo Điền</option>
-            </select>
-            <div class="cart-wrapper">
-                <a href="{{ route('combo') }}" class="back-btn">
-                    ← TRỞ LẠI
-                </a>
-                <div class="cart-link">
-                    <a href="{{ route('cart') }}">
-                        <div class="cart-icon">
-                            <img src="{{ asset('images/cart.svg') }}" alt="">
-                        </div>
-                    </a>
-                    <div class="cart-badge">{{ $totalQuantity }}</div>
-                </div>
-            </div>
-        </div>
-        @if (empty($cart))
-            <div id="empty-cart-message" class="text-center py-5">
-                <h5 class="text-muted">Giỏ hàng của bạn đang trống.</h5>
-                <a href="{{ route('combo') }}" class="btn btn-success mt-3">Tiếp tục mua sắm</a>
-            </div>
-        @else
-            <main class="cart-container">
-                <section class="cart-summary">
-                    <div class="order-box">
-                        <h3 class="order-title fs-5 fw-bold">Chi tiết đơn hàng</h3>
-                        <hr>
-                        <span class="order-method fw-bold">NHẬN TẠI RẠP</span>
 
-                        @php $totalAll = 0; @endphp
+@push('styles')
+    <style>
+        /* Font chữ */
+        body {
+            font-family: 'Inter', sans-serif;
+            font-size: 16px;
+            color: #222;
+        }
 
-                        @foreach ($cart as $item)
-                            @php
-                                $total = $item['price'] * $item['quantity'];
-                                $totalAll += $total;
-                            @endphp
-                            <div class="order-item">
-                                <img src="{{ asset('storage/' . $item['image']) }}" alt="Combo">
-                                <div class="order-info">
-                                    <p class="combo-name fs-5">{{ $item['name'] }}</p>
-                                    <div class="d-flex row">
-                                        <p class="combo-desc col-md-8">{{ $item['description'] }}</p>
-                                        <p class="col-md-4 p-0">
-                                            <span class="price fw-bold fs-5 ms-3 me-0">
-                                                {{ number_format($item['price'], 3, '.', ',') }} VND
-                                            </span>
-                                        </p>
-                                    </div>
-                                    <div class="quantity-control d-flex align-items-center gap-2">
-                                        <button type="button" class="btn-decrease fw-bold">-</button>
-                                        <input type="text" class="qty-input text-center"
-                                            data-food-id="{{ $item['food_id'] }}" data-price="{{ $item['price'] }}"
-                                            value="{{ $item['quantity'] }}" />
-                                        <button type="button" class="btn-increase fw-bold">+</button>
+        /* ---------- TOP SECTION (Rạp + Cart) ---------- */
 
-                                    </div>
-                                </div>
-                            </div>
-                        @endforeach
+        .content-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+            margin-bottom: 30px;
+        }
 
-                        <hr>
-                        <div class="total-row">
-                            <span class="fw-bold fs-5">Tổng tiền</span>
-                            <strong class="price fw-bold fs-5">
-                                {{ number_format($totalAll, 3, '.', ',') }} VND
-                            </strong>
-                        </div>
-                    </div>
-                </section>
-                <!-- Bên phải: Thông tin giao hàng -->
-                <section class="cart-checkout">
-                    <div class="checkout-box">
+        /* Dropdown chọn rạp */
+        .cinema-select {
+            padding: 10px 14px;
+            font-size: 16px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            background-color: #fff;
+            color: #333;
+        }
 
-                        <!-- Ngày nhận hàng -->
-                        <div class="checkout-row">
-                            <label class="field-label">
-                                <i class="fa-regular fa-calendar" style="color: #72be43;"></i> Ngày nhận hàng
-                            </label>
-                            <input type="date" value="2025-05-19" />
-                        </div>
+        /* Wrapper chứa nút quay lại + giỏ */
+        .cart-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
 
-                        <!-- Thông tin khách hàng -->
-                        <div class="customer-info">
-                            <p><span class="field-label"><i class="fa-regular fa-user" style="color: #72be43;"></i>Họ
-                                    tên:</span>
-                                <br>Nguyen Hong
-                            </p>
-                            <div class="inline-fields">
-                                <p><span class="field-label"><i class="fa-solid fa-phone" style="color: #75be43;"></i>
-                                        SĐT:</span><br>
-                                    0987654321</p>
-                                <p><span class="field-label"><i class="fa-solid fa-envelope" style="color: #75be43;"></i>
-                                        Email:</span><br>
-                                    hongntph53565@gmail.com</p>
-                            </div>
-                            <p><span class="field-label"><i class="fa-solid fa-location-dot" style="color: #75be43;"></i>
-                                    Cụm
-                                    rạp:</span><br> BHD Star 3.2</p>
-                            <p><span class="field-label"><i class="fa-solid fa-location-dot" style="color: #75be43;"></i>
-                                    Địa
-                                    chỉ:</span><br> Lầu 5, Siêu Thị Vincom 3/2, 3C Đường 3/2, Quận 10, TPHCM</p>
-                        </div>
+        /* Nút trở lại */
+        .back-btn {
+            font-weight: 600;
+            font-size: 15px;
+            color: #222;
+            text-decoration: none;
+            padding: 8px 14px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            transition: background-color 0.2s ease;
+        }
 
-                        <!-- Phương thức thanh toán -->
-                        <div class="payment-methods">
-                            <p class="field-label"><i class="fa-solid fa-credit-card" style="color: #75be43;"></i></i> Hình
-                                thức
-                                thanh
-                                toán</p>
-                            <div class="payment-grid">
-                                <label><input type="radio" name="payment" />
-                                    <img src="{{ asset('images/vnpay.png') }}" alt="VNPay" />
-                                    <span style="font-size: 14px;">Thanh toán qua VNPAY
-                                        (Visa, Master, Amex,
-                                        JCB,...)
-                                    </span>
-                                </label>
-                                <label><input type="radio" name="payment" />
-                                    <img src="{{ asset('images/momo.png') }}" alt="MoMo" /> Thanh toán bằng Ví điện tử
-                                    MoMo
-                                </label>
-                                <label><input type="radio" name="payment" />
-                                    <img src="{{ asset('images/zalopay.png') }}" alt="ZaloPay" /> Zalopay QR đa năng
-                                </label>
-                                <label><input type="radio" name="payment" />
-                                    <img src="{{ asset('images/shopeepay.png') }}" alt="ShopeePay" /> Thanh toán qua
-                                    SHOPEEPAY
-                                </label>
-                            </div>
-                        </div>
-                        <hr>
-                        <!-- Xác nhận -->
-                        <div class="confirm-row">
-                            <label><input type="checkbox" /> Tôi đã đọc và đồng ý với <a href="#">Điều khoản thanh
-                                    toán</a></label>
-                            <button class="confirm-btn fw-bold">XÁC NHẬN</button>
-                        </div>
+        .back-btn:hover {
+            background-color: #f1f1f1;
+        }
 
-                    </div>
-                </section>
-            </main>
-        @endif
-        <br><br>
-        <hr>
-        <button class="btn1">ƯU ĐÃI ĐẶC BIỆT</button>
+        .cart-link {
+            position: relative;
+            background-color: #72BE43;
+            /* nền xanh lá */
+            border-radius: 50%;
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.3s ease;
+        }
 
-        <!-- Swiper Container -->
-        <div class="promo-container swiper">
-            <!-- Wrapper -->
-            <div class="swiper-wrapper">
-                <!-- Promo 1 -->
-                <div class="promo-card swiper-slide">
-                    <img src="{{ asset('images/GIA-VE-48K.jpg') }}" alt="Giữ xe miễn phí" />
-                    <div class="promo-content">
-                        <div class="promo-title">
-                            MIỄN PHÍ VÉ GỬI XE – ĐI XEM PHIM THẢ GA, KHÔNG LO PHÍ GIỮ XE
-                        </div>
-                        <div class="promo-desc">
-                            Từ nay, đi xem phim tại BHD Star Cineplex lại càng tiện lợi và
-                            tiết kiệm hơn bao giờ hết! Chúng tôi chính thức triển khai chương
-                            trình <strong>MIỄN PHÍ VÉ GỬI XE</strong> dành cho tất cả khách
-                            hàng khi mua vé xem phim tại rạp BHS Star – Huế.<br />📌 Áp dụng
-                            cho khách […]
-                        </div>
-                    </div>
-                </div>
+        .cart-link:hover {
+            background-color: #5ca836;
+        }
 
-                <!-- Promo 2 -->
-                <div class="promo-card swiper-slide">
-                    <img src="{{ asset('images/GIAI-NHIEIT-CUNG-LUMI-STAR.jpg') }}" alt="Xem phim khuyến mãi 50K" />
-                    <div class="promo-content">
-                        <div class="promo-title">
-                            🔥 XEM PHIM KHUYA – GIÁ CỰC MÊ CHỈ TỪ 50K 🔥
-                        </div>
-                        <div class="promo-desc">
-                            Bạn là “cú đêm” chính hiệu? Bạn muốn tìm một hoạt động thú vị sau
-                            22h? BHD Star Cineplex có ngay deal hấp dẫn dành cho bạn! 🎬
-                            <strong>XEM PHIM TRỄ – GIÁ CỰC MÊ</strong> 📍 Áp dụng cho tất cả
-                            các suất chiếu sau 22h tại một vài cụm rạp BHD Star Cineplex 🟢
-                            […]
-                        </div>
-                    </div>
-                </div>
+        .cart-icon img {
+            width: 24px;
+            height: 24px;
+            filter: brightness(0) invert(1);
+            /* chuyển icon thành trắng */
+        }
 
-                <!-- Promo 3 -->
-                <div class="promo-card swiper-slide">
-                    <img src="{{ asset('images/GIAI-NHIEIT-CUNG-LUMI-STAR.jpg') }}" alt="Happy Day 45K" />
-                    <div class="promo-content">
-                        <div class="promo-title">Happy Day – Vé chỉ từ 45k</div>
-                        <div class="promo-desc">
-                            Vào thứ hai hàng tuần – Happy Day, giá vé
-                            <strong>CHỈ TỪ 45K</strong>. Thưởng thức phim cả ngày không lo về
-                            giá. Ưu đãi 45.000đ/vé áp dụng tại cụm rạp: BHD Star Phú Mỹ, BHD
-                            Star Huế. Ưu đãi 50.000đ/vé áp dụng tại cụm rạp: BHD Star The
-                            Garden; BHD Star Phạm Ngọc […]
-                        </div>
-                    </div>
-                </div>
-                <!-- Promo 3 -->
-                <div class="promo-card swiper-slide">
-                    <img src="{{ asset('images/HAPPY-DAY-2.jpg') }}" alt="Happy Day 45K" />
-                    <div class="promo-content">
-                        <div class="promo-title">Happy Day – Vé chỉ từ 45k</div>
-                        <div class="promo-desc">
-                            Vào thứ hai hàng tuần – Happy Day, giá vé
-                            <strong>CHỈ TỪ 45K</strong>. Thưởng thức phim cả ngày không lo về
-                            giá. Ưu đãi 45.000đ/vé áp dụng tại cụm rạp: BHD Star Phú Mỹ, BHD
-                            Star Huế. Ưu đãi 50.000đ/vé áp dụng tại cụm rạp: BHD Star The
-                            Garden; BHD Star Phạm Ngọc […]
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Navigation + Pagination -->
-            <div class="swiper-button-next"></div>
-            <div class="swiper-button-prev"></div>
-            <div class="swiper-pagination"></div>
-        </div>
+        /* Badge hiển thị số lượng */
+        .cart-badge {
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            background-color: #fff;
+            color: #72BE43;
+            font-size: 12px;
+            font-weight: bold;
+            padding: 2px 6px;
+            border-radius: 50%;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+        }
 
 
-    </div>
-@endsection
+        /* ---------- COMBO CARD STYLE ---------- */
 
+        .card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            transition: none;
+        }
+
+        .card-img-top {
+            height: 220px;
+            object-fit: cover;
+            border-bottom: 1px solid #eee;
+        }
+
+        .card-title {
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: #72BE43;
+            margin-bottom: 10px;
+            transition: color 0.2s ease;
+        }
+
+        /* Hover: đổi màu tiêu đề sang đen (KHÔNG áp dụng trên .card:hover mà tách riêng) */
+        .card-title:hover {
+            color: #000;
+        }
+
+        /* Mô tả combo */
+        .card-text {
+            font-size: 16px;
+            color: #222;
+            margin-bottom: 6px;
+        }
+
+        /* Giá */
+        .card-text.fw-bold.text-success {
+            font-size: 15px;
+        }
+
+        /* Nút MUA NGAY */
+        .btn.btn-success {
+            background-color: #8beef1;
+            border: none;
+            font-weight: 600;
+            border-radius: 6px;
+            padding: 8px 20px;
+            font-size: 14px;
+            color: white;
+            transition: none;
+        }
+
+        /* Hover đổi màu nền và chữ */
+        .btn.btn-success:hover {
+            background-color: #5ca836;
+            color: white;
+        }
+
+        /* Căn giữa */
+        .card-body {
+            text-align: center;
+        }
+
+        .section-title {
+            background-color: white;
+            border: 2px solid #99e0c6;
+            color: #050505;
+            font-weight: bold;
+            padding: 6px 20px;
+            display: inline-block;
+            border-radius: 6px;
+            margin: 30px 0 20px;
+        }
+
+        /* Container chứa giá và nút MUA NGAY */
+        .price-buy-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        /* Giá tiền bên trái */
+        .combo-price {
+            text-align: left;
+        }
+
+        /* Màu gạch giá cũ */
+        .combo-price del {
+            color: #555;
+            font-size: 13px;
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        /* Màu giá khuyến mãi */
+        .combo-price .text-success {
+            color: #222;
+            font-weight: bold;
+            font-size: 15px;
+        }
+
+        /* Nút mua ngay */
+        .btn-buy-now {
+            background-color: #9ddfc7;
+            color: #222;
+            font-weight: bold;
+            font-size: 16px;
+            padding: 8px 18px;
+            border-radius: 6px;
+            border: none;
+            transition: background-color 0.2s ease;
+        }
+
+        .btn-buy-now:hover {
+            background-color: #71aa54;
+            color: white;
+        }
+
+        .btn-delete-item {
+            background-color: #000;
+            border: none;
+            border-radius: 50%;
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            transition: background-color 0.2s;
+        }
+
+        .btn-delete-item:hover {
+            background-color: #444;
+        }
+    </style>
+@endpush
 @push('styles')
     <style>
         p.col-md-5.p-0 {
@@ -651,29 +651,38 @@
 @endpush
 
 
+
+
+
 @push('scripts')
     <script>
-        document.querySelectorAll('.btn-increase, .btn-decrease').forEach(btn => {
-            btn.addEventListener('click', function() {
-                console.log('Clicked!');
-            });
+        document.addEventListener('DOMContentLoaded', function() {
+            const dateInput = document.getElementById('delivery-date');
+            const today = new Date().toISOString().split('T')[0];
+            dateInput.setAttribute('min', today);
+            if (!dateInput.value) {
+                dateInput.value = today;
+            }
 
-            btn.addEventListener('click', async function() {
-                const wrapper = this.closest('.quantity-control');
-                const input = wrapper.querySelector('.qty-input');
-                const foodId = input.dataset.foodId;
-                let quantity = parseInt(input.value);
+            // Tăng / Giảm số lượng
+            document.querySelectorAll('.btn-increase, .btn-decrease').forEach(button => {
+                button.addEventListener('click', async function() {
+                    const wrapper = this.closest('.quantity-control');
+                    const input = wrapper.querySelector('.qty-input');
+                    const foodId = input.dataset.foodId;
+                    const price = parseInt(input.dataset.price);
+                    let quantity = parseInt(input.value);
 
-                // Tăng/giảm
-                if (this.classList.contains('btn-increase')) {
-                    quantity++;
-                } else {
-                    quantity--; // Cho giảm về 0 để xóa
-                }
+                    // Tăng hoặc giảm
+                    if (this.classList.contains('btn-increase')) {
+                        quantity++;
+                    } else {
+                        quantity = Math.max(0, quantity - 1);
+                    }
 
-                const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+                    const token = document.querySelector('meta[name="csrf-token"]')
+                        .getAttribute('content');
 
-                try {
                     const response = await fetch("{{ route('cart.update') }}", {
                         method: 'POST',
                         headers: {
@@ -689,26 +698,60 @@
                     const result = await response.json();
 
                     if (result.success) {
-                        if (result.removed) {
-                            const orderItem = input.closest('.order-item');
-                            orderItem.remove();
+    if (result.removed) {
+        wrapper.closest('.order-item').remove();
+        if (document.querySelectorAll('.order-item').length === 0) {
+            location.reload();
+        }
+    } else {
+        input.value = quantity;
 
-                            // Nếu không còn sản phẩm nào thì reload trang
-                            if (document.querySelectorAll('.order-item').length === 0) {
-                                location.reload();
-                            }
-                        } else {
-                            input.value = quantity;
-                        }
+        const priceEl = wrapper.closest('.order-item').querySelector('.price');
+        priceEl.textContent = (price * quantity).toLocaleString('vi-VN') + ' VND';
+    }
 
-                        document.querySelector('.total-row .price').textContent = result.totalAll;
-                    }
+    // ✅ Tổng đơn
+    document.querySelector('.total-row .price').textContent = result.totalAll;
 
+    // ✅ Badge số lượng
+    const cartBadge = document.querySelector('.cart-badge');
+    if (cartBadge && result.totalQuantity !== undefined) {
+        cartBadge.textContent = result.totalQuantity;
+    }
+}
 
-                } catch (err) {
-                    console.error('Lỗi cập nhật giỏ hàng:', err);
+                });
+            });
+        });
+        document.querySelector('.confirm-btn').addEventListener('click', function(e) {
+            e.preventDefault();
+
+            // Lấy payment_method
+            const selectedPayment = document.querySelector('input[name="payment"]:checked');
+            if (!selectedPayment) {
+                alert('Vui lòng chọn phương thức thanh toán');
+                return;
+            }
+            document.getElementById('payment_method').value = selectedPayment.value;
+
+            // Lấy danh sách món ăn
+            const foodData = [];
+            document.querySelectorAll('.qty-input').forEach(input => {
+                const qty = parseInt(input.value);
+                if (qty > 0) {
+                    foodData.push({
+                        food_id: input.dataset.foodId,
+                        qty: qty
+                    });
                 }
             });
+            document.getElementById('selected_foods_input').value = JSON.stringify(foodData);
+
+            // Tính tổng
+            const totalText = document.querySelector('.total-row .price').textContent.replace(/[^\d]/g, '');
+            document.getElementById('total_price_hidden').value = parseInt(totalText);
+
+            document.getElementById('food-only-form').submit();
         });
     </script>
     <!-- SwiperJS CSS -->
@@ -741,3 +784,190 @@
         });
     </script>
 @endpush
+@section('content')
+    <div class="container">
+        <hr>
+  
+
+        <div class="content-top">
+            <form method="GET" action="{{ route('combo') }}">
+                <select class="cinema-select" name="cinema_id" onchange="this.form.submit()">
+                    <option value="">Chọn rạp</option>
+                    @foreach ($cinemas as $cinema)
+                        <option value="{{ $cinema->cinema_id }}" {{ $cinemaId == $cinema->cinema_id ? 'selected' : '' }}>
+                            {{ $cinema->name }}
+                        </option>
+                    @endforeach
+                </select>
+            </form>
+            <div class="cart-wrapper">
+                <a href="{{ route('combo') }}" class="back-btn">
+                    ← TRỞ LẠI
+                </a>
+                <div class="cart-link">
+                    <a href="{{ route('cart', ['cinema_id' => $cinemaId]) }}">
+                        <div class="cart-icon">
+                            <img src="{{ asset('images/cart.svg') }}" alt="">
+                        </div>
+                    </a>
+
+                    <div class="cart-badge">{{ $totalQuantity }}</div>
+                </div>
+            </div>
+        </div>
+        @if (empty($cart))
+            <div id="empty-cart-message" class="text-center py-5">
+                <h5 class="text-muted">Giỏ hàng của bạn đang trống.</h5>
+                <a href="{{ route('staff.combo') }}" class="btn btn-success mt-3">Tiếp tục mua sắm</a>
+            </div>
+        @else
+            <main class="cart-container">
+                <section class="cart-summary">
+                    <div class="order-box">
+                        <h3 class="order-title fs-5 fw-bold">Chi tiết đơn hàng</h3>
+                        <hr>
+                        <span class="order-method fw-bold">NHẬN TẠI RẠP</span>
+
+                        @php $totalAll = 0; @endphp
+
+                        @foreach ($cart as $item)
+                            @php
+                                $total = $item['price'] * $item['quantity'];
+                                $totalAll += $total;
+                            @endphp
+                            <div class="order-item d-flex align-items-center gap-3 mb-3">
+                                <img src="{{ asset('storage/' . $item['image']) }}" alt="Combo"
+                                    style="width: 80px; height: 100px; object-fit: cover; border-radius: 5px;">
+
+                                <div class="order-info flex-grow-1">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <p class="combo-name fs-5 fw-semibold mb-1">{{ $item['name'] }}</p>
+
+                                        <!-- 🔴 Nút xoá sản phẩm -->
+                                        <form action="{{ route('cart.remove') }}" method="POST">
+                                            @csrf
+                                            <input type="hidden" name="food_id" value="{{ $item['food_id'] }}">
+                                            <button type="submit" class="btn-delete-item">
+                                                <i class="fa-solid fa-xmark text-white"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+
+                                    <div class="d-flex justify-content-between align-items-start mb-1">
+                                        <p class="combo-desc mb-0 text-muted">{{ $item['description'] }}</p>
+                                        <span class="price fw-bold fs-5">
+                                            {{ number_format($item['price'], 0, '.', ',') }} VND
+                                        </span>
+                                    </div>
+
+                                    <div class="quantity-control d-flex align-items-center gap-2 mt-2">
+                                        <button type="button" class="btn-decrease fw-bold">-</button>
+                                        <input type="text" class="qty-input text-center"
+                                            data-food-id="{{ $item['food_id'] }}" data-price="{{ $item['price'] }}"
+                                            value="{{ $item['quantity'] }}" style="width: 50px;" />
+                                        <button type="button" class="btn-increase fw-bold">+</button>
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+
+                        <hr>
+                        <div class="d-flex justify-content-between align-items-center total-row mt-3">
+                            <span class="fw-bold fs-5">Tổng tiền</span>
+                            <strong class="price fw-bold fs-5">
+                                {{ number_format($totalAll, 0, '.', ',') }} VND
+                            </strong>
+                        </div>
+                    </div>
+                </section>
+
+
+                <!-- Bên phải: Thông tin giao hàng -->
+                <section class="cart-checkout">
+                    <div class="checkout-box">
+
+                        <!-- Ngày nhận hàng -->
+                        <div class="checkout-row">
+                            <label class="field-label">
+                                <i class="fa-regular fa-calendar" style="color: #72be43;"></i> Ngày nhận hàng
+                            </label>
+                            <input type="date" id="delivery-date" />
+                        </div>
+
+                        <div class="customer-info">
+                            <p><span class="field-label"><i class="fa-regular fa-user" style="color: #72be43;"></i>Họ
+                                    tên:</span>
+                                <br><span>{{ Auth::user()->full_name }}
+                            </p>
+                            <div class="inline-fields">
+                                <p><span class="field-label"><i class="fa-solid fa-phone" style="color: #75be43;"></i>
+                                        SĐT:</span><br>
+                                    {{ $user->phone }}
+                                </p>
+                                <p><span class="field-label"><i class="fa-solid fa-envelope" style="color: #75be43;"></i>
+                                        Email:</span><br>
+                                    {{ $user->email }}
+                                </p>
+                            </div>
+
+                            @if ($selectedCinema)
+                                <p><span class="field-label"><i class="fa-solid fa-location-dot"
+                                            style="color: #75be43;"></i>
+                                        Cụm rạp:</span><br>
+                                    {{ $selectedCinema->name }}
+                                </p>
+                                <p><span class="field-label"><i class="fa-solid fa-location-dot"
+                                            style="color: #75be43;"></i>
+                                        Địa chỉ:</span><br>
+                                    {{ $selectedCinema->address_detail }}
+                                </p>
+                            @else
+                                <p class="text-danger mt-2">Vui lòng chọn rạp để hiển thị thông tin cụm rạp.</p>
+                            @endif
+                        </div>
+
+
+                        <!-- Phương thức thanh toán -->
+                        <div class="payment-methods">
+                            <p class="field-label"><i class="fa-solid fa-credit-card" style="color: #75be43;"></i></i> Hình
+                                thức
+                                thanh
+                                toán</p>
+                            <div class="payment-grid">
+                                <label><input type="radio" name="payment" value="vnpay" id="vnpay">
+                                    <img src="{{ asset('images/vnpay.png') }}" alt="VNPay" />
+                                    <span style="font-size: 14px;">Thanh toán qua VNPAY</span>
+                                </label>
+                                <label><input type="radio" name="payment" value="payos" id="payos">
+                                    <img src="{{ asset('images/payos.png') }}" alt="PayOS" /> Thanh toán bằng PayOS
+                                </label>
+                                <label><input type="radio" name="payment" value="zalopay" id="zalopay">
+                                    <img src="{{ asset('images/zalopay.png') }}" alt="ZaloPay" /> Zalopay QR đa năng
+                                </label>
+                            </div>
+                        </div>
+                        <hr>
+                        <!-- Xác nhận -->
+                        <div class="confirm-row">
+                            <label><input type="checkbox" /> Tôi đã đọc và đồng ý với <a href="#">Điều khoản thanh
+                                    toán</a></label>
+                            <form id="food-only-form" action="{{ route('booking.foodOnly') }}" method="POST">
+                                @csrf
+                                <input type="hidden" name="user_id" value="{{ Auth::user()->user_id }}">
+                                <input type="hidden" name="payment_method" id="payment_method">
+                                <input type="hidden" name="total_price" id="total_price_hidden">
+                                <input type="hidden" name="selected_foods" id="selected_foods_input">
+                                <input type="hidden" name="promo_code" id="promo_code_hidden">
+
+                                <button type="submit" class="confirm-btn fw-bold">XÁC NHẬN</button>
+                            </form>
+                        </div>
+
+                    </div>
+                </section>
+            </main>
+        @endif
+        <br><br>
+
+    </div>
+@endsection

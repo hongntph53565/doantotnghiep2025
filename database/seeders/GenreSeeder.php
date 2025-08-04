@@ -9,7 +9,18 @@ class GenreSeeder extends Seeder
 {
     public function run(): void
     {
-        $genres = ['Hành động', 'Tình cảm', 'Kinh dị', 'Hài hước', 'Khoa học viễn tưởng'];
+        $genres = [
+            'Action',
+            'Romance',
+            'Horror',
+            'Family',
+            'Musica',
+            'Drama',
+            'Crime',
+            'Adventure',
+            'Comedy',
+            'Documentary'
+        ];
 
         foreach ($genres as $name) {
             Genre::create([
@@ -19,3 +30,5 @@ class GenreSeeder extends Seeder
         }
     }
 }
+
+

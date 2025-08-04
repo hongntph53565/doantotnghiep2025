@@ -40,7 +40,7 @@
                 <div class="card p-3 shadow-sm">
                     <div class="d-grid gap-2">
                         <button type="submit" class="btn btn-primary py-2">
-                            <i class="bi bi-save me-2"></i> Lưu
+                            <i class="bi bi-save me-2"></i> Lưu 
                         </button>
                         <button type="reset" class="btn btn-outline-secondary py-2">
                             <i class="bi bi-arrow-counterclockwise me-2"></i> Đặt lại

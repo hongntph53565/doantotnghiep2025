@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers\Admin;
 
+
 use App\Http\Controllers\Controller;
 use App\Models\Cinema;
 use Illuminate\Http\Request;
@@ -85,4 +86,37 @@ public function update(Request $request, $id)
 
         return redirect()->route('cinemas.index')->with('success', 'Xoá mẫu email thành công!');
     }
+
+ public function listCinemas()
+{
+    $selectedCity = session('selected_city'); // Lấy khu vực đã chọn từ session
+
+    if ($selectedCity) {
+        // Nếu người dùng đã chọn khu vực, chỉ lấy rạp ở khu vực đó
+        $cinemas = Cinema::where('city', $selectedCity)->latest()->get();
+    } else {
+        // Nếu chưa chọn khu vực, lấy tất cả rạp
+        $cinemas = Cinema::latest()->get();
+    }
+
+    return view('Client.cinemaShowtime', compact('cinemas'));
+}
+public function CinemaSystem()
+{
+    $cinemas = Cinema::all(); // Lấy toàn bộ rạp (không lọc gì hết)
+    return view('Client.CinemaSystem', compact('cinemas'));
+}
+public function infoCinema($cinema_id)
+{
+    $cinema = Cinema::with('rooms')->findOrFail($cinema_id); // lấy kèm số phòng
+    $otherCinemas = Cinema::where('cinema_id', '!=', $cinema_id)->get(); // rạp còn lại
+
+    return view('Client.infoCinema', compact('cinema', 'otherCinemas'));
+}
+
+public function show($id)
+{
+    $cinema = Cinema::findOrFail($id);
+    return view('Client.MovieShowtimesByCinema', compact('cinema'));
+}
 }

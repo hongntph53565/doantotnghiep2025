@@ -48,20 +48,6 @@ public function print($id)
     return $pdf->download('ve-xem-phim-' . $booking->booking_code . '.pdf');
 }
 
-    // BookingController.php
-public function printView($id)
-{
-            $booking = Booking::with([
-            'user',
-            'showtime.movie',
-            'showtime.room.cinema',
-            'foods',
-            'bookingSeats.showtimeSeat.seat' // cần để get seat_code
-        ])->findOrFail($id);
-    return view('staff.bookings.print', compact('booking'));
-}
-
-
     public function step2(Request $request)
     {
         // Logic xử lý tiếp theo

@@ -1,5 +1,53 @@
 @extends('layouts.admin')
 
+@push('styles')
+<style>
+    /* Giữ phân trang nằm trong khung, không tràn ra */
+    .card-body .pagination {
+        flex-wrap: wrap; /* Cho xuống dòng nếu quá dài */
+        justify-content: center; /* Căn giữa */
+        overflow-x: auto; /* Cho phép scroll ngang nếu quá dài */
+        gap: 4px;
+    }
+
+    .pagination li {
+        display: inline-block;
+    }
+
+    .pagination .page-link {
+        color: #007bff;
+        background-color: #fff;
+        border: 1px solid #dee2e6;
+        padding: 6px 12px;
+        font-weight: 500;
+        border-radius: 50%;
+        min-width: 38px;
+        height: 38px;
+        text-align: center;
+        line-height: 25px;
+    }
+
+    .pagination .page-item.active .page-link {
+        background-color: #0d6efd;
+        color: #fff;
+        border-color: #0d6efd;
+    }
+
+    .pagination .page-item.disabled .page-link {
+        color: #6c757d;
+        pointer-events: none;
+        background-color: #f8f9fa;
+    }
+
+    @media (max-width: 768px) {
+        .pagination {
+            flex-wrap: wrap;
+        }
+    }
+</style>
+@endpush
+
+
 @section('content')
     <div class="container-fluid">
         <div class="row">
@@ -159,6 +207,8 @@
         </div>
     </div>
 @endsection
+
+
 
 @push('scripts')
     <script>

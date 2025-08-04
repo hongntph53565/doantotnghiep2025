@@ -1,6 +1,13 @@
 @extends('layouts.admin')
 
 @section('content')
+@if (session('success'))
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        {{ session('success') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+@endif
+
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
             <h4 class="mb-0">Quản lý Đồ ăn & Thức uống</h4>
@@ -63,14 +70,15 @@
                                         class="btn btn-outline-primary btn-sm me-1">
                                         <i class="bi bi-pencil-fill"></i>
                                     </a>
-                                    <form action="" method="POST" class="d-inline"
-                                        onsubmit="return confirm('Xóa log này?')">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button class="btn btn-outline-danger btn-sm">
-                                            <i class="bi bi-trash-fill"></i>
-                                        </button>
-                                    </form>
+                                    <form action="{{ route('foods.destroy', ['id' => $value->food_id]) }}" method="POST" class="d-inline"
+    onsubmit="return confirm('Bạn có chắc chắn muốn xóa món này?')">
+    @csrf
+    @method('DELETE')
+    <button class="btn btn-outline-danger btn-sm">
+        <i class="bi bi-trash-fill"></i>
+    </button>
+</form>
+
                                             </td>
                                         </tr>
                                     @empty

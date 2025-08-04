@@ -15,7 +15,6 @@ return new class extends Migration
             $table->tinyInteger('rating');
             $table->text('comment')->nullable();
             $table->enum('status', ['active', 'inactive'])->default('active');
-
             $table->timestamps();
 
             $table->foreign('user_id')->references('user_id')->on('users')->onDelete('cascade');

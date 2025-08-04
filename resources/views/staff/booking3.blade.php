@@ -1,11 +1,12 @@
 @extends('layouts.staff')
 
-@section('title', 'Chọn đồ ăn')
+@section('title', 'Staff')
+
 
 @section('content')
-<div class="container">
+    <br>
     <div class="container-top">
-        <h1 class="entry-title text-center fs-3">Bước 3: Chọn đồ ăn</h1>
+        <h1 class="entry-title text-center fs-3">Bước 2: Chọn ghế</h1>
         <br><br>
         <div class="card mb-3 rounded-4">
             <div class="row g-0">
@@ -38,65 +39,11 @@
         </div>
     </div>
 
-   @include('staff.booking.combo', ['foods' => $foods])
-           <div class="col-md-4 ms-5 mt-5">
-                <h3 class="fw-bold fs-5">{{ $showtime->room->cinema->name ?? 'Tên rạp' }}</h3>
-                <p><strong style="color: #67B72F;">{{ $showtime->room->room_name }}</strong> <span> -
-                        {{ \Carbon\Carbon::parse($showtime->date)->format('d/m/Y') }}
+    <div class="container-seat" class="booking-step" id="step-2" style="display: none;">
 
-                        - Suất chiếu:
-                        {{ $showtime->start_time }}</span></p>
-                <hr>
-                <p class="title fw-bold fs-5" style="color: #67B72F;">{{ $showtime->movie->title }}</p>
-                <p>
-                    <span
-                        style="background: #0096FF; color: white; padding: 2px 6px; border-radius: 4px; font-size: 12px;">{{ $showtime->movie->age_rating }}</span>
-                    <span
-                        style="background: black; color: white; padding: 2px 6px; border-radius: 4px; font-size: 12px;">PHỤ
-                        ĐỀ</span>
-                    <span
-                        style="background: green; color: white; padding: 2px 6px; border-radius: 4px; font-size: 12px;">{{ $showtime->room->format }}</span>
-                </p>
-                {{-- <p class="info">1 x Adult - Stand - 2D<br>Ghế: C15 <strong style="float:right">100.000 VND</strong>
-                </p>
-                <hr>
-                <p class="info">1 x OL Combo1 - Sweet 22Oz <strong style="float:right">85.000 VND</strong></p>
-                <hr> --}}
-
-                <div id="selected-seats"></div>
-                <hr>
-                <div id="selected-foods"></div>
-                <hr>
-
-                <div class="total">
-                    <span>Tổng tiền</span>
-                    <span id="total-price">0 VND</span>
-                </div>
-                <p class="note">(Đã bao gồm phụ thu)</p>
-                {{-- <a href="javascript:void(0);" class="btn-checkout" onclick="goToStep(2)">Chọn đồ ăn (2/4)</a> --}}
-               <form action="{{ route('staff.storeStep3') }}" method="POST" id="step3-form">
-                    @csrf
-                    <input type="hidden" name="seats" id="seats-data">
-                    <input type="hidden" name="foods" id="foods-data">
-                    <input type="hidden" name="total_price" id="total-price-data">
-
-                    <button type="submit" class="btn-checkout">THANH TOÁN</button>
-                </form>
-                {{-- Hoặc nếu muốn dùng link --}}
-
-                {{-- <a href="{{ route('staff.booking4') }}" class="btn-checkout">
-    Thanh toán
-</a> --}}
-
-
-                <div class="btn-back-wrapper">
-                    <a href="javascript:void(0);" class="btn-back" onclick="goBackStep()">← Trở lại</a>
-                </div>
-                <br>
-            </div>
-        </div>
+        @include('Client.booking.steps.select-combo');
     </div>
-</div>
+
 @endsection
 @push('styles')
     <style>
@@ -251,175 +198,4 @@
     </style>
 @endpush
 @push('scripts')
-<script>
-    function formatPrice(number) {
-        return number.toLocaleString('vi-VN') + ' VND';
-    }
-
-    function renderBookingSummary() {
-        const seats = JSON.parse(sessionStorage.getItem('selectedSeats') || '[]');
-        const foods = JSON.parse(sessionStorage.getItem('selectedFoods') || '[]');
-
-        const seatGroups = { standard: [], vip: [], couple: [] };
-        let seatTotal = 0;
-
-        seats.forEach(seat => {
-            if (seat.type === 'couple') {
-                seatGroups.couple.push(seat.codes.join(' & '));
-                seatTotal += seat.price;
-            } else {
-                seatGroups[seat.type].push(seat.code);
-                seatTotal += seat.price;
-            }
-        });
-
-        let htmlSeats = '';
-        if (seatGroups.standard.length) {
-            htmlSeats += `<p class="info">Ghế Standard: ${seatGroups.standard.join(', ')} <strong style="float:right">${formatPrice(seatGroups.standard.length * getPrice(seats, 'standard'))}</strong></p>`;
-        }
-        if (seatGroups.vip.length) {
-            htmlSeats += `<p class="info">Ghế VIP: ${seatGroups.vip.join(', ')} <strong style="float:right">${formatPrice(seatGroups.vip.length * getPrice(seats, 'vip'))}</strong></p>`;
-        }
-        if (seatGroups.couple.length) {
-            htmlSeats += `<p class="info">Ghế Couple: ${seatGroups.couple.join(', ')} <strong style="float:right">${formatPrice(seatGroups.couple.length * getPrice(seats, 'couple'))}</strong></p>`;
-        }
-
-        document.getElementById('selected-seats').innerHTML = htmlSeats || '<p class="text-muted">Chưa chọn ghế</p>';
-
-        let htmlFoods = '';
-        let foodTotal = 0;
-        foods.forEach(food => {
-            const itemTotal = food.price * food.quantity;
-            foodTotal += itemTotal;
-            htmlFoods += `<p class="info">${food.name} x${food.quantity} <strong style="float:right">${formatPrice(itemTotal)}</strong></p>`;
-        });
-
-        document.getElementById('selected-foods').innerHTML = htmlFoods || '<p class="text-muted">Chưa chọn combo</p>';
-
-        const total = seatTotal + foodTotal;
-        document.getElementById('total-price').innerText = formatPrice(total);
-        sessionStorage.setItem('finalTotal', total);
-    }
-
-    function getPrice(seats, type) {
-        const seat = seats.find(s => s.type === type);
-        return seat?.price || 0;
-    }
-
-    document.addEventListener('DOMContentLoaded', renderBookingSummary);
-    document.getElementById('step3-form').addEventListener('submit', function(e) {
-        const seats = sessionStorage.getItem('selectedSeats');
-        const foods = sessionStorage.getItem('selectedFoods');
-        const total = sessionStorage.getItem('totalPrice');
-
-        document.getElementById('seats-data').value = seats;
-        document.getElementById('foods-data').value = foods;
-        document.getElementById('total-price-data').value = total;
-    });
-</script>
- <script>
-           function submitCheckout() {
-    const paymentMethod = document.querySelector('input[name="payment"]:checked')?.id;
-    if (!paymentMethod) {
-        alert("Vui lòng chọn hình thức thanh toán!");
-        return;
-    }
-
-    const showtimeId = localStorage.getItem("selectedShowtimeId");
-    const selectedSeatsRaw = JSON.parse(sessionStorage.getItem("selectedSeats")) || [];
-    const selectedFoods = JSON.parse(sessionStorage.getItem("selectedFoods")) || [];
-    const ticketTotal = parseInt(sessionStorage.getItem("ticketTotal")) || 0;
-    const foodTotal = parseInt(sessionStorage.getItem("foodTotal")) || 0;
-    const originalTotal = ticketTotal + foodTotal;
-
-    if (!showtimeId || selectedSeatsRaw.length === 0 || originalTotal <= 0) {
-        alert("Thiếu dữ liệu đặt vé.");
-        return;
-    }
-
-    const seatIds = [];
-    selectedSeatsRaw.forEach(item => {
-        if (item.type === 'couple' && Array.isArray(item.seat_ids)) {
-            seatIds.push(...item.seat_ids);
-        } else if (item.seat_id) {
-            seatIds.push(item.seat_id);
-        }
-    });
-
-    // 🔻 Áp dụng giảm giá trước khi submit
-    const promoCode = document.getElementById("promo_code_hidden").value;
-    let finalTotal = originalTotal;
-
-    if (promoCode) {
-        const selected = [...document.querySelectorAll('#promo-select option')].find(opt => opt.value === promoCode)
-            || document.querySelector(`input[name="voucher"]:checked`);
-        if (selected) {
-            const type = selected.getAttribute('data-type');
-            const value = parseFloat(selected.getAttribute('data-value'));
-            const maxDiscount = parseFloat(selected.getAttribute('data-max')) || Infinity;
-            const minOrder = parseFloat(selected.getAttribute('data-min')) || 0;
-
-            if (originalTotal >= minOrder) {
-                let discount = 0;
-                if (type === 'percent') {
-                    discount = originalTotal * value / 100;
-                } else if (type === 'amount') {
-                    discount = value;
-                }
-                discount = Math.min(discount, maxDiscount);
-                finalTotal = originalTotal - discount;
-            }
-        }
-    }
-
-    document.getElementById("showtime_id").value = showtimeId;
-    document.getElementById("payment_method").value = paymentMethod;
-    document.getElementById("total_price_hidden").value = Math.round(finalTotal); // ✅ giá đã giảm
-    document.getElementById("selected_seats").value = JSON.stringify(seatIds);
-    document.getElementById("selected_foods").value = JSON.stringify(selectedFoods);
-    document.getElementById("checkout-form").submit();
-}
-
-
-
-            let appliedDiscount = 0;
-
-            function applyPromo() {
-                const promo = document.getElementById('promo-select');
-                const selected = promo.options[promo.selectedIndex];
-                const type = selected.getAttribute('data-type');
-                const value = parseFloat(selected.getAttribute('data-value'));
-                const maxDiscount = parseFloat(selected.getAttribute('data-max')) || Infinity;
-                const minOrder = parseFloat(selected.getAttribute('data-min')) || 0;
-
-                // 🟢 Lấy tổng tiền gốc (không thay đổi finalTotal)
-                const ticketTotal = parseInt(sessionStorage.getItem("ticketTotal")) || 0;
-                const foodTotal = parseInt(sessionStorage.getItem("foodTotal")) || 0;
-                const originalTotal = ticketTotal + foodTotal;
-
-                if (originalTotal < minOrder) {
-                    document.getElementById('promo-message').innerText = "Không đủ điều kiện áp dụng mã (Đơn tối thiểu: " +
-                        minOrder + " VND)";
-                    return;
-                }
-
-                let discount = 0;
-                if (type === 'percent') {
-                    discount = (originalTotal * value / 100);
-                } else if (type === 'amount') {
-                    discount = value;
-                }
-
-                discount = Math.min(discount, maxDiscount);
-                const newTotal = originalTotal - discount;
-
-                document.getElementById("final-total-payment").innerText = newTotal.toLocaleString('vi-VN') + " VND";
-                document.getElementById("promo-message").innerText = "Đã áp dụng mã giảm " + Math.round(discount)
-                    .toLocaleString('vi-VN') + " VND";
-
-                // 🟢 Gửi promo_code nhưng không update totalPrice trong session
-                document.getElementById("promo_code_hidden").value = selected.value;
-            }
-        </script>
 @endpush
-

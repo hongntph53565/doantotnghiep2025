@@ -14,6 +14,7 @@ class SendWelcomeEmail
      * Create the event listener.
      */
     protected $mailService;
+
     public function __construct(MailService $mailService)
     {
         $this->mailService = $mailService;

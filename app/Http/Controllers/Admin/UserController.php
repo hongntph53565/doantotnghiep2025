@@ -35,7 +35,7 @@ public function index()
             'phone' => 'nullable|string|max:20',
             'role_id' => 'required|exists:roles,role_id',
             'password' => 'nullable|string|min:6|confirmed',
-            'status' => 'nullable|boolean', // status là checkbox
+            'status' => 'nullable|boolean', 
         ]);
 
         if (!empty($data['password'])) {

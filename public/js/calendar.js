@@ -25,7 +25,7 @@ const monthNames = [
 ];
 
 function renderCalendar(month, year) {
-    const now = getVietnamNow();
+    const now = getVietnamNow(); 
     const isCurrentMonth = month === now.getMonth() && year === now.getFullYear();
 
     document.getElementById("month-label").textContent = monthNames[month];
@@ -44,7 +44,7 @@ function renderCalendar(month, year) {
     let hasSelected = false;
     for (let day = 1; day <= daysInMonth; day++) {
         const thisDate = new Date(year, month, day);
-        const isPast = thisDate.setHours(0, 0, 0, 0) < now.setHours(0, 0, 0, 0);
+        const isPast = thisDate.setHours(0, 0, 0, 0) < now.setHours(0, 0, 0, 0); 
 
         const dayEl = createDayElement(day, isPast);
 

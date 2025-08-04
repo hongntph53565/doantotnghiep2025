@@ -4,84 +4,157 @@ namespace App\Http\Controllers\Auth;
 
 use App\Events\UserRegistered;
 use App\Http\Controllers\Controller;
-use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use App\Models\User;
+use App\Models\Booking;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
-    public function indexlogin()
-    {
-        return view('admin.test.login');
+public function register(Request $request)
+{
+    $validator = Validator::make($request->all(), [
+        'last_name' => 'required|string|max:50',
+        'first_name' => 'required|string|max:50',
+        'email' => [
+            'required',
+            'email',
+            'regex:/^[\w.+\-]+@gmail\.com$/i',
+            'unique:users,email',
+        ],
+        'password' => 'required|string|min:8|confirmed',
+        'phone' => ['required', 'regex:/^0\d{9}$/'],
+        'gender' => 'required|in:nam,nu,khac',
+        'birth_day' => 'required|integer|min:1|max:31',
+        'birth_month' => 'required|integer|min:1|max:12',
+        'birth_year' => 'required|integer|min:1900|max:' . now()->year,
+        'province' => 'required|string|max:100',
+    ], [
+        'email.regex' => 'Email phải là địa chỉ Gmail hợp lệ.',
+        'phone.regex' => 'Số điện thoại phải đúng 10 chữ số và bắt đầu bằng 0.',
+        'password.confirmed' => 'Mật khẩu xác nhận không khớp.',
+        'gender.required' => 'Vui lòng chọn giới tính.',
+    ]);
+
+    if ($validator->fails()) {
+        return redirect()->back()->withErrors(['register' => $validator->errors()])->withInput();
     }
 
-    public function register(Request $request)
-    {
-        $request->validate([
-            'first_name'   => 'required|string|max:50',
-            'last_name'  => 'required|string|max:100',
-            'gender'    => 'required|in:nam,nu,khac',
-            'phone'     => 'required|unique:users,phone',
-            'birth_day' => 'required|integer|min:1|max:31',
-            'birth_month' => 'required|integer|min:1|max:12',
-            'birth_year' => 'required|integer|min:1950',
-            'province' => 'required|string|max:100',
-            'email'      => 'required|email|unique:users,email',
-            'password'   => 'required|string|min:6|confirmed',
-            'role' => 'required',
-        ]);
-
-        $user = User::create([
-            'first_name' => $request->first_name,
-            'last_name' => $request->last_name,
-            'gender' => $request->gender,
-            'email' => $request->email,
-            'birth_day' => $request->birth_day,
-            'birth_month' => $request->birth_month,
-            'birth_year' => $request->birth_year,
-            'province' => $request->province,
-            'role' => $request->role,
-            'status' => 'active',
-            'phone' => $request->phone,
-            'password' => Hash::make($request->password),
-        ]);
-        if ($user) {
-            Auth::login($user);
-            event(New UserRegistered($user));
-            return redirect('/admin/dashboard');
-        } else {
-            return back()->withErrors(['register' => 'Đăng ký thất bại, vui lòng thử lại.']);
-        }
+    $username = strtolower(trim($request->last_name));
+    if (User::where('username', $username)->exists()) {
+        return redirect()->back()->withErrors(['register' => ['username' => 'Tên tài khoản đã tồn tại!']])->withInput();
     }
 
-    public function login(Request $request)
-    {
-        $credentials = $request->validate([
-            'email' => 'required|email',
-            'password' => 'required',
-        ]);
+    $birthday = sprintf('%04d-%02d-%02d', $request->birth_year, $request->birth_month, $request->birth_day);
 
-        if (Auth::attempt($credentials)) {
-            $request->session()->regenerate();
+    $user = User::create([
+        'username' => $username,
+        'email' => $request->email,
+        'password' => Hash::make($request->password),
+        'full_name' => trim($request->last_name . ' ' . $request->first_name),
+        'phone' => $request->phone,
+        'address' => $request->province,
+        'birthday' => $birthday,
+        'gender' => $request->gender,
+        'role_id' => 4,
+    ]);
 
-            session(['my_name' => Auth::user()->full_name]);
-            session(['my_id' => Auth::user()->user_id]);
+    event(new UserRegistered($user));
 
-            return redirect('/admin/dashboard');
-        }
+    // Đăng nhập ngay sau khi đăng ký
+    Auth::login($user);
 
-        return back()->withErrors([
-            'email' => 'Email hoặc mật khẩu không đúng.',
-        ]);
+    // Nếu dùng API thì tạo token
+    // $token = $user->createToken('api_token')->plainTextToken;
+
+    // Chuyển hướng về trang chủ
+    return redirect()->route('home')->with('success', 'Đăng ký và đăng nhập thành công');
+}
+
+
+
+
+ public function login(Request $request)
+{
+    $credentials = $request->only('email', 'password');
+
+    if (Auth::attempt($credentials)) {
+        $request->session()->regenerate();
+
+        return redirect()->route('home')->with('success', 'Đăng nhập thành công');
     }
+
+    return back()->withErrors([
+        'login_error' => 'Email hoặc mật khẩu không đúng!',
+    ])->withInput();
+}
+
+
+ public function showLoginForm(Request $request)
+{
+    $credentials = $request->only('email', 'password');
+
+    if (Auth::attempt($credentials)) {
+        $request->session()->regenerate();
+
+        return redirect()->route('home')->with('success', 'Đăng nhập thành công');
+    }
+
+    return back()->withErrors([
+        'login_error' => 'Email hoặc mật khẩu không đúng!',
+    ])->withInput();
+}
+
 
     public function logout(Request $request)
-    {
-        Auth::logout();
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
+{
+    Auth::logout();
 
-        return redirect('/admin/dashboard');
+    $request->session()->invalidate();
+    $request->session()->regenerateToken();
+
+    return redirect()->route('home')->with('success', 'Đăng xuất thành công');
+}
+//     public function profile()
+// {
+//     $user = Auth::user();
+//     return view('Client.profile', compact('user'));
+// }
+
+public function profile()
+{
+    $user = Auth::user();
+
+    $bookings = Booking::with([
+        'showtime.room.cinema',
+        'bookingSeats.showtimeSeat.seat',
+        'bookingFoods.food.cinema',
+        'bookingPromotions',
+    ])
+        ->where('user_id', $user->user_id)
+        ->where('payment_status', 'paid')
+        ->orderByDesc('created_at')
+        ->paginate(10);
+
+    $allBookings = Booking::where('user_id', $user->user_id)
+    ->where('payment_status', 'paid')
+    ->get();
+
+$totalSpending = $allBookings->sum('total_price');
+$totalRP = $allBookings->sum(fn($b) => floor($b->total_price / 1000));
+
+    if ($totalSpending >= 100000) {
+        $cardLevel = 'Vàng';
+    } elseif ($totalSpending >= 50000) {
+        $cardLevel = 'Bạc';
+    } else {
+        $cardLevel = 'Bình thường';
     }
+
+    return view('Client.profile', compact('user', 'bookings', 'totalSpending', 'totalRP', 'cardLevel'));
+}
+
+
 }

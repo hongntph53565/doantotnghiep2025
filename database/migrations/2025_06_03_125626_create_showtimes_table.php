@@ -18,8 +18,11 @@ return new class extends Migration
             $table->date('date');
             $table->time('start_time');
             $table->time('end_time');
+
             $table->enum('status', ['active', 'inactive', 'sold_out'])->default('active');
+
             $table->timestamps();
+
             $table->foreign('movie_id')->references('movie_id')->on('movies')->onDelete('cascade');
             $table->foreign('room_id')->references('room_id')->on('rooms')->onDelete('cascade');
         });

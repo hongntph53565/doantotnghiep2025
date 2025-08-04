@@ -9,6 +9,7 @@ class Seat extends Model
     protected $primaryKey = 'seat_id';
     public $incrementing = true;
     protected $keyType = 'int';
+
     protected $fillable = ['room_id', 'seat_code', 'seat_type_id'];
 
     public function room()

@@ -219,16 +219,17 @@ class ShowtimeController extends Controller
 
 
     public function delete(string $id)
-    {
-        try {
-            $showtime = Showtime::findOrFail($id);
-            $showtime->delete();
-            return redirect("/Showtime")->with('success', 'Xóa suất chiếu thành công');
-        } catch (Exception $e) {
-            Log::error('[Showtime Delete] ' . $e->getMessage());
-            return back()->withErrors(['error' => 'Lỗi khi xóa suất chiếu']);
-        }
+{
+    try {
+        $showtime = Showtime::findOrFail($id);
+        $showtime->delete();
+        return redirect()->route('showtimes.index')->with('success', 'Xóa suất chiếu thành công');
+    } catch (Exception $e) {
+        Log::error('[Showtime Delete] ' . $e->getMessage());
+        return back()->withErrors(['error' => 'Lỗi khi xóa suất chiếu']);
     }
+}
+
 
     public function dele()
     {

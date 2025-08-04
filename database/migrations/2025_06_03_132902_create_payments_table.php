@@ -25,7 +25,6 @@ Schema::create('payments', function (Blueprint $table) {
 
     $table->foreign('booking_id')->references('booking_id')->on('bookings')->onDelete('cascade');
 });
-
     }
 
     public function down(): void

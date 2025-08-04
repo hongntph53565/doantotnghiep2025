@@ -100,6 +100,7 @@
             <h3 class="text-center mb-4">Danh sách rạp chiếu</h3>
             <div class="row justify-content-center">
                 @foreach ($cinemas as $cinema)
+                
                     <div class="col-md-4 text-center mb-3">
                         <a href="{{ route('Client.MovieShowtimesByCinema', $cinema->cinema_id) }}" class="cinema-name d-block">
                             <img style="max-width: 220px; width: 100%; height: auto;" src="{{ asset('images/logo.jpg') }}"
@@ -108,6 +109,7 @@
                         </a>
                     </div>
                 @endforeach
+                
             </div>
         </div>
 

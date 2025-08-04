@@ -75,15 +75,15 @@
         <!-- Đăng nhập -->
         <div class="col-12 col-md-5 col-lg-4">
             <h2>ĐĂNG NHẬP TÀI KHOẢN</h2>
-            @if ($errors->any())
-                <div class="alert alert-danger">
-                    <ul class="mb-0">
-                        @foreach ($errors->login_error->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            @endif
+         @if ($errors->has('login_error'))
+    <div class="alert alert-danger">
+        <ul class="mb-0">
+            <li>{{ $errors->first('login_error') }}</li>
+        </ul>
+    </div>
+@endif
+
+        
 
             <form method="POST" action="{{ route('login') }}">
                 @csrf
@@ -109,7 +109,7 @@
                 <div class="alert alert-danger">
                     <ul>
                         @foreach ($errors->register->all() as $error)
-                            <li>{{ $error }}</li>
+                            <li>{{ $errors->first('login_error') }}</li>
                         @endforeach
                     </ul>
                 </div>

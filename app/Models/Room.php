@@ -18,6 +18,7 @@ class Room extends Model
         'created_at',
         'updated_at'
     ];
+
     public function cinema()
     {
         return $this->belongsTo(Cinema::class, 'cinema_id');
@@ -26,5 +27,4 @@ class Room extends Model
     {
         return $this->hasMany(Seat::class, 'room_id');
     }
-
 }
