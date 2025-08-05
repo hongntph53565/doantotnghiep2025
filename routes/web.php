@@ -205,23 +205,24 @@ Route::prefix('admin')->middleware(['auth', 'role:admin,employee'])->group(funct
 Route::prefix('staff')->name('staff.')->group(function () {
     Route::get('/', [StaffMovieController::class, 'index'])->name('list');
     Route::get('/bookings/{movie}', [StaffBookingController::class, 'booking'])->name('booking1');
-  Route::get('/bookings/{movie}/showtimes-by-date', [StaffBookingController::class, 'showtimesByDate'])->name('booking.showtimes_by_date');
+    Route::get('/bookings/{movie}/showtimes-by-date', [StaffBookingController::class, 'showtimesByDate'])->name('booking.showtimes_by_date');
     Route::get('/booking/seats/{room_id}', [StaffBookingController::class, 'showSeatsByRoom'])->name('booking.seats');
     Route::get('/search-ticket-online', [BookingSearchController::class, 'search'])->name('search_ticket_online');
-     Route::get('/staff/bookings/{booking}/print', [StaffBooking::class, 'print'])->name('booking.print');
-     Route::get('/dat-do-an', [StaffBookingController::class, 'getCombos'])->name('combo');
-Route::get('/combo/{id}', [StaffBookingController::class, 'showCombo'])->name('combo.show');
-Route::get('/cart', [StaffBookingController::class, 'showCart'])->name('cart');
-  Route::post('/cart/add', [StaffBookingController::class, 'addToCart'])->name('cart.addCart');
-  Route::get('/clear-cart-and-search', function () {
+    // Route::get('/staff/bookings/{booking}/print', [StaffBooking::class, 'print'])->name('booking.print');
+    Route::get('/staff/booking/{booking}/print', [StaffBooking::class, 'printView'])->name('booking.print');
+    Route::get('/dat-do-an', [StaffBookingController::class, 'getCombos'])->name('combo');
+    Route::get('/combo/{id}', [StaffBookingController::class, 'showCombo'])->name('combo.show');
+    Route::get('/cart', [StaffBookingController::class, 'showCart'])->name('cart');
+    Route::post('/cart/add', [StaffBookingController::class, 'addToCart'])->name('cart.addCart');
+    Route::get('/clear-cart-and-search', function () {
         session()->forget('cart'); // Xoá giỏ hàng
         return redirect()->route('staff.search_ticket_online');
     })->name('cart.clearAndRedirect');
-  
+
 
 });
 
-   
+
 
 
 Route::get('/', function () {

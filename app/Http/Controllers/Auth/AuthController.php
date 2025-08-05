@@ -134,12 +134,12 @@ public function profile()
         'bookingPromotions',
     ])
         ->where('user_id', $user->user_id)
-        ->where('payment_status', 'paid')
+        // ->where('payment_status', 'paid')
         ->orderByDesc('created_at')
         ->paginate(10);
 
     $allBookings = Booking::where('user_id', $user->user_id)
-    ->where('payment_status', 'paid')
+    // ->where('payment_status', 'paid')
     ->get();
 
 $totalSpending = $allBookings->sum('total_price');

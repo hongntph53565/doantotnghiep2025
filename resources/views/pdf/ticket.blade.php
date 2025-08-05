@@ -2,16 +2,18 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
+    <title>Vé {{ $booking->booking_code }}</title>
     <style>
         body {
-            font-family: DejaVu Sans, sans-serif;
+            font-family: Arial, sans-serif;
             font-size: 14px;
             line-height: 1.4;
+            padding: 20px;
         }
         .ticket {
-            width: 300px;
-            padding: 20px;
-            border: 1px dashed #ccc;
+            width: 320px;
+            padding: 16px;
+            border: 1px dashed #999;
             margin: 0 auto;
         }
         .title {
@@ -20,66 +22,60 @@
             font-size: 18px;
             margin-bottom: 10px;
         }
+        .movie-title {
+            font-weight: bold;
+            font-size: 20px;
+            margin-bottom: 6px;
+        }
         .section {
-            margin-bottom: 10px;
+            margin-bottom: 12px;
         }
         .barcode {
             text-align: center;
-            margin-top: 15px;
-        }
-        .barcode img {
-            width: 100%;
+            margin-top: 20px;
         }
         .footer {
             text-align: center;
             font-size: 12px;
-            margin-top: 10px;
+            margin-top: 16px;
         }
-        .movie-title {
-            font-weight: bold;
-            font-size: 20px;
-            margin-bottom: 5px;
+        @media print {
+            body {
+                padding: 0;
+            }
         }
     </style>
 </head>
-<body>
+<body >
+    @php
+    $seatCodes = implode(', ', $booking->seats->pluck('seat_code')->toArray());
+    $seatCount = $booking->seats->count();
+@endphp
+
+@for ($i = 0; $i < $seatCount; $i++)
     <div class="ticket">
-        <div class="title">VE VAO PHONG CHIEU PHIM</div>
+        <div class="title">VÉ VÀO PHÒNG CHIẾU PHIM</div>
 
-        @if ($booking->showtime)
-            <div class="section">
-                <p><strong>{{ $booking->showtime->room->cinema->name ?? 'Không xác định' }}</strong></p>
-                {{ $booking->showtime->room->cinema->address_detail ?? '' }},
-                {{ $booking->showtime->room->cinema->ward ?? '' }},
-                {{ $booking->showtime->room->cinema->district ?? '' }},
-                {{ $booking->showtime->room->cinema->city ?? '' }}
-            </div>
+        <div class="section">
+            <p><strong>{{ $booking->showtime->room->cinema->name }}</strong></p>
+            {{ $booking->showtime->room->cinema->address_detail }},
+            {{ $booking->showtime->room->cinema->ward }},
+            {{ $booking->showtime->room->cinema->district }},
+            {{ $booking->showtime->room->cinema->city }}
+        </div>
 
-            <div class="section">
-                <p class="movie-title">{{ $booking->showtime->movie->title ?? 'Không xác định' }}</p>
-                <br>
-                <strong>Slot:</strong>
-                {{ \Carbon\Carbon::parse($booking->showtime->start_time)->format('H:i') }} -
-                {{ \Carbon\Carbon::parse($booking->showtime->end_time)->format('H:i') }},
-                {{ \Carbon\Carbon::parse($booking->showtime->date)->format('d/m/Y') }}
-            </div>
+        <div class="section">
+            <p class="movie-title">{{ $booking->showtime->movie->title }}</p>
+            <strong>Suất:</strong>
+            {{ \Carbon\Carbon::parse($booking->showtime->start_time)->format('H:i') }} -
+            {{ \Carbon\Carbon::parse($booking->showtime->end_time)->format('H:i') }},
+            {{ \Carbon\Carbon::parse($booking->showtime->date)->format('d/m/Y') }}
+        </div>
 
-            <div class="section">
-                <strong>Room:</strong> {{ $booking->showtime->room->room_name ?? 'Không xác định' }}<br>
-                <strong>Seat(s):</strong>
-                {{ implode(', ', $booking->seats->pluck('seat_code')->toArray()) }}
-            </div>
-        @else
-            <div class="section">
-                <p><strong>Thông tin vé đồ ăn</strong></p>
-                <strong>Rạp:</strong> {{ $booking->foods->first()?->cinema->name ?? 'Không xác định' }}<br>
-                <strong>Địa chỉ:</strong>
-                {{ $booking->foods->first()?->cinema->address_detail ?? '' }},
-                {{ $booking->foods->first()?->cinema->ward ?? '' }},
-                {{ $booking->foods->first()?->cinema->district ?? '' }},
-                {{ $booking->foods->first()?->cinema->city ?? '' }}
-            </div>
-        @endif
+        <div class="section">
+            <strong>Phòng:</strong> {{ $booking->showtime->room->room_name }}<br>
+            <strong>Ghế:</strong> {{ $seatCodes }}
+        </div>
 
         @if($booking->foods->count())
             <div class="section">
@@ -88,15 +84,27 @@
             </div>
         @endif
 
-        <div class="barcode" style="text-align: center; margin-top: 20px;">
-            {!! DNS1D::getBarcodeHTML($booking->booking_code, 'C128', 2, 60) !!}
-            <p>Mã vé: {{ $booking->booking_code }}</p>
+        <div class="barcode">
+            <img src="data:image/png;base64,{{ $barcode }}" alt="barcode" />
+            <p><strong>Mã vé:</strong> {{ $booking->booking_code }}</p>
         </div>
 
         <div class="footer">
-            Cảm ơn quý khách đã sử dụng dịch vụ của LumiStar<br> 
+            Cảm ơn quý khách đã sử dụng dịch vụ LumiStar<br>
             Nhân viên: {{ auth()->user()->name ?? 'N/A' }}
         </div>
     </div>
+@endfor
+
 </body>
 </html>
+<script>
+    window.addEventListener('load', function () {
+        const barcodeImg = document.querySelector('.barcode img');
+        if (barcodeImg && !barcodeImg.complete) {
+            barcodeImg.onload = () => window.print();
+        } else {
+            window.print();
+        }
+    });
+</script>

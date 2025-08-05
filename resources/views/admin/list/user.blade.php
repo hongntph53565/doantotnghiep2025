@@ -18,10 +18,10 @@
                 </li>
                 @foreach($roles as $role)
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="role{{ $role->roel_id }}-tab" 
-                            data-bs-toggle="tab" 
-                            data-bs-target="#role{{ $role->role_id }}" 
-                            type="button" 
+                    <button class="nav-link" id="role{{ $role->roel_id }}-tab"
+                            data-bs-toggle="tab"
+                            data-bs-target="#role{{ $role->role_id }}"
+                            type="button"
                             role="tab">
                         {{ $role->name }}
                         <span class="badge bg-primary ms-1">{{ $users->where('role_id', $role->role_id)->count() }}</span>
@@ -67,21 +67,21 @@
                                             </span>
                                         </td>
                                         <td>
-                                            <a href="{{ route('users.edit', $user->user_id) }}" 
+                                            <a href="{{ route('users.edit', $user->user_id) }}"
                                                class="btn btn-outline-primary btn-sm me-1"
-                                               data-bs-toggle="tooltip" 
+                                               data-bs-toggle="tooltip"
                                                title="Chỉnh sửa">
                                                 <i class="bi bi-pencil-fill"></i>
                                             </a>
-                                            <form action="{{ route('users.destroy', $user->user_id) }}" 
-                                                  method="POST" 
+                                            <form action="{{ route('users.destroy', $user->user_id) }}"
+                                                  method="POST"
                                                   class="d-inline"
                                                   onsubmit="return confirm('Bạn chắc chắn muốn xóa người dùng này?')">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" 
+                                                <button type="submit"
                                                         class="btn btn-outline-danger btn-sm"
-                                                        data-bs-toggle="tooltip" 
+                                                        data-bs-toggle="tooltip"
                                                         title="Xóa">
                                                     <i class="bi bi-trash-fill"></i>
                                                 </button>
@@ -118,29 +118,29 @@
                                 @php
                                     $roleUsers = $users->where('role_id', $role->role_id);
                                 @endphp
-                                
+
                                 @forelse ($roleUsers as $user)
                                     <tr>
                                         <td>{{ $user->user_id }}</td>
                                         <td>{{ $user->full_name }}</td>
                                         <td>{{ $user->email }}</td>
-                                        <td>{{ $user->created_at->format('d/m/Y H:i') }}</td>
+                                        <td>{{ $user->created_at ? $user->created_at->format('d/m/Y') : 'Không rõ' }}</td>
                                         <td>
                                             <span class="badge {{ $user->is_active ? 'bg-success' : 'bg-secondary' }}">
                                                 {{ $user->is_active ? 'Hoạt động' : 'Khóa' }}
                                             </span>
                                         </td>
                                         <td>
-                                            <a href="{{ route('users.edit', $user->user_id) }}" 
+                                            <a href="{{ route('users.edit', $user->user_id) }}"
                                                class="btn btn-outline-primary btn-sm me-1">
                                                 <i class="bi bi-pencil-fill"></i>
                                             </a>
-                                            <form action="{{ route('users.destroy', $user->user_id) }}" 
-                                                  method="POST" 
+                                            <form action="{{ route('users.destroy', $user->user_id) }}"
+                                                  method="POST"
                                                   class="d-inline">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" 
+                                                <button type="submit"
                                                         class="btn btn-outline-danger btn-sm"
                                                         onclick="return confirm('Bạn chắc chắn muốn xóa người dùng này?')">
                                                     <i class="bi bi-trash-fill"></i>
@@ -170,22 +170,22 @@
         padding: 0.75rem 1.25rem;
         position: relative;
     }
-    
+
     .nav-tabs .nav-link.active {
         color: #0d6efd;
         background-color: transparent;
         border-bottom: 3px solid #0d6efd;
     }
-    
+
     .nav-tabs .nav-link:hover:not(.active) {
         border-bottom: 3px solid #dee2e6;
     }
-    
+
     .table th {
         background-color: #f8f9fa;
         font-weight: 600;
     }
-    
+
     .badge {
         font-size: 0.85em;
         padding: 0.35em 0.65em;

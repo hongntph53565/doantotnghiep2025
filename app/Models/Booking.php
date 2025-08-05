@@ -45,10 +45,10 @@ class Booking extends Model
         return $this->hasManyThrough(
             Seat::class,
             BookingSeat::class,
-            'booking_id',               
-            'seat_id',                  
-            'booking_id',               
-            'showtime_seat_id'          
+            'booking_id',
+            'seat_id',
+            'booking_id',
+            'showtime_seat_id'
         )->join('showtime_seats', 'showtime_seats.seat_id', '=', 'seats.seat_id');
     }
     public function bookingSeats()
@@ -67,6 +67,8 @@ public function bookingPromotions()
 {
     return $this->hasMany(BookingPromotion::class, 'booking_id');
 }
+
+
   public function getSeatsAttribute()
     {
         return $this->bookingSeats->map(function ($bookingSeat) {
