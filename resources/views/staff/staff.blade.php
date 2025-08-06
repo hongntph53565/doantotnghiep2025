@@ -52,37 +52,42 @@
 
 
         <button class="btn1">PHIM SẮP CHIẾU</button>
-        <div class="swiper mySwiper">
-            <div class="swiper-wrapper">
+        <div class="slider-container d-flex flex-wrap justify-content-center gap-3">
+            @forelse ($comingSoon as $movie)
+                <div class="movie-box">
+                    <div class="movie-img">
+                        <img src="{{ asset('storage/' . $movie->poster) }}" alt="{{ $movie->title }}">
 
-                @forelse ($comingSoon as $movie)
-                    <div class="swiper-slide">
-                        <div class="movie-box">
-                            <div class="movie-img position-relative overflow-hidden">
-                                <img src="{{ asset('storage/' . ($movie->poster ?? 'default.png')) }}"
-                                    alt="{{ $movie->title }}" class="img-fluid d-block mx-auto">
-                            </div>
-                            <div class="info">
-                                <div class="labels">
-                                    <span class="label age">{{ $movie->age_rating }}</span>
-                                    <span class="label subtitle">{{ $movie->language }}</span>
-                                    <span class="label type">{{ $movie->format ?? '2D' }}</span>
-                                </div>
-                                <h4>{{ $movie->title }}</h4>
-                                <p>Thể loại: <span class="tag horror">{{ $movie->genre->genre_name ?? '' }}</span>
-                                </p>
-                            </div>
-                        </div>
+                        {{-- @if (!empty($movie->trailer))
+                            <a href="javascript:void(0);" class="play-button" onclick="openTrailer(this)"
+                                data-trailer="{{ $movie->trailer }}"></a>
+                        @endif --}}
+
+                        <a href="{{ route('staff.booking1', $movie->movie_id) }}" class="buy-button">
+                            ĐẶT VÉ
+                            <img src="{{ asset('images/ticket-svgrepo-com.svg') }}" alt="vé">
+                        </a>
                     </div>
-                @empty
-                    <p class="alert alert-warning text-center mt-4 form-control p-3">Không có phim
-                        {{ $search }}
-                        trong
-                        phim sắp chiếu.</p>
-                @endforelse
-                {{ $comingSoon->appends(['search' => $search, 'now_page' => $nowShowing->currentPage()])->links('pagination::bootstrap-4') }}
-            </div>
+
+                    <div class="info">
+                        <div class="labels">
+                            <span class="label age">{{ $movie->age_rating }}</span>
+                            <span class="label subtitle">{{ $movie->language ?? 'PHỤ ĐỀ' }}</span>
+                            <span class="label type">{{ $movie->format ?? '2D' }}</span>
+                        </div>
+                        <h4 title="{{ $movie->title }}">{{ $movie->title }}</h4>
+                        <p>Thể loại: <span class="tag horror">{{ $movie->genre->genre_name ?? 'Không rõ' }}</span></p>
+                    </div>
+                </div>
+            @empty
+                <p class="alert alert-warning text-center mt-4 form-control p-3">
+                    Không có phim {{ $search }} trong phim đang chiếu.
+                </p>
+            @endforelse
+
+            {{ $comingSoon->appends(['search' => $search, 'soon_page' => $comingSoon->currentPage()])->links('pagination::bootstrap-4') }}
         </div>
+        
     </div>
 @endsection
 @push('styles')

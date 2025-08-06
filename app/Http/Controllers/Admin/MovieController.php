@@ -8,7 +8,8 @@ use App\Models\Genre;
 use Illuminate\Http\Request;
 use App\Models\Movie;
 use App\Models\Showtime;
-use Illuminate\Support\Facades\Auth;
+use BaconQrCode\Renderer\Path\Move;
+use Carbon\Carbon;
 use Illuminate\Support\Str;
 
 class MovieController extends Controller
@@ -84,11 +85,7 @@ class MovieController extends Controller
 
         Movie::create($data);
 
-        if(Auth::user()->role_id == 1) {
-            return redirect()->route('movies.index')->with('success', 'Thêm phim thành công!');
-        } else {
-            return redirect()->route('manager.movies.index')->with('success', 'Thêm phim thành công!');
-        }
+        return redirect()->route('movies.index')->with('success', 'Thêm phim thành công!');
     }
 
     public function edit($id)

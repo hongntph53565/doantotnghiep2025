@@ -6,6 +6,8 @@ use App\Services\MailService;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\View;
+use App\Models\Cinema;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -36,5 +38,10 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Paginator::useBootstrap();
+        View::composer(['layouts.app', 'layouts.headerBooking'], function ($view) {
+        $cities = Cinema::select('city')->distinct()->pluck('city');
+        $view->with('cities', $cities);
+    });
+        
     }
 }

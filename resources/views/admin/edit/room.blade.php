@@ -11,7 +11,6 @@
     <div class="card-body p-4">
         <form action="{{ route('rooms.update', $room->room_id) }}" method="POST">
             @csrf
-            @method('PUT')
             <div class="row g-3">
                 <!-- Tên phòng -->
                 <div class="col-md-6">

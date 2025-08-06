@@ -3,21 +3,20 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>@yield('title', 'Trang Phim')</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rubik+Mono+One&display=swap"rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
 
     <style>
-        .footer-line {
-            width: 60px;
-            height: 6px;
-            background-color: #9acd32;
-            /* màu xanh lá tương tự trong ảnh */
-            margin-top: 20px;
-            margin-bottom: 20px;
-            border-radius: 5px;
+        body {
+            background-color: #f8f9fa;
         }
 
         .section-title {
@@ -136,9 +135,21 @@
         }
 
         .topbar {
-            background-color: #f8f8f8;
-            padding: 1px 0;
-        }
+    background-color: #f8f8f8;
+    padding: 12px 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+.topbar {
+    transition: all 0.3s ease;
+    padding: 12px 0;
+}
+
+.topbar.shrink {
+    padding: 4px 0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+
 
         .topbar .nav-link {
             color: rgb(153, 152, 152);
@@ -360,140 +371,144 @@
         footer a.social-icon:hover {
             color: white !important;
         }
+        .nav-link.active-link {
+    color: #7bc043 !important;
+    font-weight: 700;
+}
+
     </style>
     @stack('styles')
 </head>
 
 <body>
+    @if (session('message'))
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                showToast(@json(session('message')));
+            });
+        </script>
+    @endif
     <div class="header-banner">
         <img src="{{ asset('images/Z1-1748x155-1.jpg') }}" alt="Banner Summer" class="w-100">
     </div>
-    <div class="topbar">
-        <div class="container d-flex justify-content-between align-items-center">
-            <div class="d-flex align-items-center">
-                <a href="{{ url('/') }}">
-                    <img style="width: 150px; height: 70px;"
-                        src="{{ asset('images/z6776223534015_3ec1a499b9bb824d97c41f77d3a677be-removebg-preview.png') }}"
-                        alt="Logo">
-                </a>
-                <nav class="navbar navbar-expand-lg align-items-center">
-                    <div class="container">
-                        <div class="collapse navbar-collapse">
-                            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                                <li class="nav-item dropdown hover-dropdown">
-                                    <a class="nav-link dropdown-toggle active" href="#">
-                                        NOW SHOWING
-                                    </a>
-                                    <ul class="dropdown-menu custom-dropdown">
-                                        <li><a class="dropdown-item" href="{{ route('Client.cinemaShowtime') }}">LỊCH
-                                                CHIẾU RẠP</a></li>
-                                        <li><a class="dropdown-item" href="{{ url('/lich-chieu-phim') }}">LỊCH CHIẾU
-                                                PHIM</a></li>
-                                    </ul>
-                                </li>
-                                <li class="nav-item"><a class="nav-link" href="#">ĐỒ ĂN/COMBO</a></li>
-                                <li class="nav-item"><a class="nav-link" href="#">KHUYẾN MÃI</a></li>
-                                <li class="nav-item"><a class="nav-link" href="#">DỊCH VỤ</a></li>
-                                <li class="nav-item dropdown hover-dropdown">
-                                    <a class="nav-link dropdown-toggle active" href="#">
-                                        VỀ BHD STAR
-                                    </a>
-                                    <ul class="dropdown-menu custom-dropdown">
-                                        <li><a class="dropdown-item" href="{{ url('/he-thong-rap') }}">HỆ THỐNG RẠP</a>
-                                        </li>
-                                        <li><a class="dropdown-item" href="#">VỀ CHÚNG TÔI</a></li>
-                                        <li><a class="dropdown-item" href="#">TUYỂN DỤNG</a></li>
-                                    </ul>
-                                </li>
-                            </ul>
-                        </div>
-
+    <div class="topbar sticky-top">
+    <div class="container d-flex justify-content-between align-items-center">
+        <div class="d-flex align-items-center">
+            <a href="{{ url('/') }}">
+                <img style="width: 150px; height: 70px;"
+                    src="{{ asset('images/z6776223534015_3ec1a499b9bb824d97c41f77d3a677be-removebg-preview.png') }}"
+                    alt="Logo">
+            </a>
+            <nav class="navbar navbar-expand-lg align-items-center">
+                <div class="container">
+                    <div class="collapse navbar-collapse">
+                        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                            <li class="nav-item dropdown hover-dropdown">
+                                <a class="nav-link dropdown-toggle {{ request()->is('lich-chieu-rap') || request()->is('lich-chieu-phim') ? 'active-link' : '' }}"
+                                    href="#">
+                                    NOW SHOWING
+                                </a>
+                                <ul class="dropdown-menu custom-dropdown">
+                                    <li><a class="dropdown-item" href="{{ route('Client.cinemaShowtime') }}">LỊCH
+                                            CHIẾU RẠP</a></li>
+                                    <li><a class="dropdown-item" href="{{ url('/lich-chieu-phim') }}">LỊCH CHIẾU
+                                            PHIM</a></li>
+                                </ul>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link {{ request()->is('cua-hang*') ? 'active-link' : '' }}"
+                                    href="{{ url('/cua-hang') }}">THỨC ĂN & NƯỚC</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link {{ request()->is('khuyen-mai') ? 'active-link' : '' }}"
+                                    href="#">KHUYẾN MÃI</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link {{ request()->is('dich-vu') ? 'active-link' : '' }}"
+                                    href="#">DỊCH VỤ</a>
+                            </li>
+                            <li class="nav-item dropdown hover-dropdown">
+                                <a class="nav-link dropdown-toggle {{ request()->is('he-thong-rap') || request()->is('ve-chung-toi') || request()->is('tuyen-dung') ? 'active-link' : '' }}"
+                                    href="#">
+                                    GIỚI THIỆU
+                                </a>
+                                <ul class="dropdown-menu custom-dropdown">
+                                    <li><a class="dropdown-item" href="{{ url('/he-thong-rap') }}">HỆ THỐNG RẠP</a>
+                                    </li>
+                                    <li><a class="dropdown-item" href="#">VỀ CHÚNG TÔI</a></li>
+                                    <li><a class="dropdown-item" href="#">TUYỂN DỤNG</a></li>
+                                </ul>
+                            </li>
+                        </ul>
                     </div>
-                </nav>
-            </div>
-            <div class="d-flex align-items-center">
-                <div class="dropdown hover-dropdown">
-                    <button class="btn btn-outline-success dropdown-toggle" type="button">
-                        Hà Nội
-                    </button>
-                    <ul class="dropdown-menu custom-dropdown">
-                        <li><a class="dropdown-item" href="#">Hà Nội</a></li>
-                        <li><a class="dropdown-item" href="#">TP. Hồ Chí Minh</a></li>
-                        <li><a class="dropdown-item" href="#">Đà Nẵng</a></li>
-                    </ul>
                 </div>
+            </nav>
+        </div>
 
-                @if (Auth::check())
-                    <a href="{{ url('/profile') }}" class="text-decoration-none text-dark">
-                        <div class="d-flex align-items-center ms-3">
-                            <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" width="24"
-                                class="me-1">
-                            <span>{{ Auth::user()->full_name }} /
-                                <strong>
-                                    <a href="#"
-                                        onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
-                                        class="text-dark text-decoration-none">Thoát</a>
-                                </strong>
-                            </span>
-                        </div>
-                    </a>
-                    <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
-                        @csrf
-                    </form>
-                @else
-                    <div class="auth-hover-parent">
-                        <button class="btn btn-success">Đăng nhập/Đăng ký</button>
+        <div class="d-flex align-items-center">
+            @php
+                $selectedCity = session('selected_city') ?? 'Chọn khu vực của bạn';
+            @endphp
 
-                        <div class="auth-hover-box">
-                            <form action="{{ route('login') }}" method="POST">
-                                @csrf
-                                <div class="mb-2">
-                                    <label>Email *</label>
-                                    <input type="email" name="email" class="form-control" required>
-                                </div>
-                                <div class="mb-2">
-                                    <label>Mật khẩu *</label>
-                                    <input type="password" name="password" class="form-control" required>
-                                </div>
-                                <div class="mb-2 text-end">
-                                    <a href="#" class="small text-white">Quên mật khẩu?</a>
-                                </div>
-                                <button type="submit" class="btn btn-success mb-2">Đăng nhập</button>
-                            </form>
-
-                            {{-- <a href="{{ route('register.form') }}" class="btn btn-primary w-100">Đăng ký thành
-                                viên</a> --}}
-
-                        </div>
-                        <script>
-                            document.getElementById("registerForm").addEventListener("submit", function(e) {
-                                e.preventDefault();
-                                const formData = new FormData(this);
-
-                                fetch("{{ route('register') }}", {
-                                        method: "POST",
-                                        body: formData,
-                                        headers: {
-                                            'X-Requested-With': 'XMLHttpRequest',
-                                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                                        }
-                                    })
-                                    .then(res => res.json())
-                                    .then(data => {
-                                        if (data.message === "Đăng ký thành công") {
-                                            window.location.href = "{{ route('login.form') }}";
-                                        } else {
-                                            alert(data.message || "Có lỗi xảy ra!");
-                                        }
-                                    })
-                                    .catch(err => console.error(err));
-                            });
-                        </script>
-                    </div>
-                @endif
+            <div class="dropdown hover-dropdown">
+                <button class="btn btn-outline-success dropdown-toggle" type="button">
+                    {{ $selectedCity }}
+                </button>
+                <ul class="dropdown-menu custom-dropdown">
+                    @foreach ($cities as $city)
+                        <li><a class="dropdown-item"
+                                href="{{ route('set.city', ['city' => $city]) }}">{{ $city }}</a></li>
+                    @endforeach
+                </ul>
             </div>
+
+            @if (Auth::check())
+                <a href="{{ url('/profile') }}" class="text-decoration-none text-dark">
+                    <div class="d-flex align-items-center ms-3">
+                        <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" width="24" class="me-1">
+                        <span>{{ Auth::user()->full_name }} /
+                            <strong>
+                                <a href="#"
+                                    onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
+                                    class="text-dark text-decoration-none">Thoát</a>
+                            </strong>
+                        </span>
+                    </div>
+                </a>
+                <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                    @csrf
+                </form>
+            @else
+                <div class="auth-hover-parent">
+                    <button class="btn btn-success">Đăng nhập/Đăng ký</button>
+                    <div class="auth-hover-box">
+                        <form action="{{ route('login') }}" method="POST">
+                            @csrf
+                            <div class="mb-2">
+                                <label>Email *</label>
+                                <input type="email" name="email" class="form-control" required>
+                            </div>
+                            <div class="mb-2">
+                                <label>Mật khẩu *</label>
+                                <input type="password" name="password" class="form-control" required>
+                            </div>
+                            <div class="mb-2 text-end">
+                                <a href="#" class="small text-white">Quên mật khẩu?</a>
+                            </div>
+                            <button type="submit" class="btn btn-success mb-2">Đăng nhập</button>
+                        </form>
+
+                        <button class="btn btn-primary w-100"
+                            onclick="window.location.href='{{ route('register.form') }}'">
+                            Đăng ký thành viên
+                        </button>
+                    </div>
+                </div>
+            @endif
         </div>
     </div>
+</div>
+
 
     @yield('content')
 
@@ -503,8 +518,9 @@
 
 
                 <div class="col-md-4 mb-4">
-                    <h5 class="fw-bold">VỀ BHD STAR</h5>
-                    <div class="footer-line"></div>
+                    <h5 class="fw-bold">VỀ LUMI STAR</h5>
+                    <hr class="mt-0"
+                        style="height: 5px;width: 120px;border: none;background-color: #7fe784;border-radius: 10px;filter: drop-shadow(0 0 8px #7fe784) drop-shadow(0 0 16px #7fe784);">
                     <ul class="list-unstyled mt-3">
                         <li><a href="#" class="text-white text-decoration-none">Hệ thống rạp</a></li>
                         <li><a href="#" class="text-white text-decoration-none">Cụm rạp</a></li>
@@ -516,7 +532,8 @@
 
                 <div class="col-md-4 mb-4">
                     <h5 class="fw-bold">QUY ĐỊNH & ĐIỀU KHOẢN</h5>
-                    <div class="footer-line"></div>
+                    <hr class="mt-0"
+                        style="height: 5px;width: 120px;border: none;background-color: #7fe784;border-radius: 10px;filter: drop-shadow(0 0 8px #7fe784) drop-shadow(0 0 16px #7fe784);">
 
                     <ul class="list-unstyled mt-3">
                         <li><a href="#" class="text-white text-decoration-none">Quy định thành viên</a></li>
@@ -534,11 +551,12 @@
 
                 <div class="col-md-4 mb-4">
                     <h5 class="fw-bold">CHĂM SÓC KHÁCH HÀNG</h5>
-                    <div class="footer-line"></div>
+                    <hr class="mt-0"
+                        style="height: 5px;width: 120px;border: none;background-color: #7fe784;border-radius: 10px;filter: drop-shadow(0 0 8px #7fe784) drop-shadow(0 0 16px #7fe784);">
                     <p><strong>Hotline:</strong> 19002099</p>
                     <p><strong>Giờ làm việc:</strong> 9:00 - 22:00 (Tất cả các ngày bao gồm cả Lễ, Tết)</p>
                     <p><strong>Email hỗ trợ:</strong> <a href="mailto:cskh@bhdstar.vn"
-                            class="text-white">cskh@bhdstar.vn</a></p>
+                            class="text-white">cskh@lumistar.vn</a></p>
                     <p class="fw-bold">MẠNG XÃ HỘI</p>
                     <div class="d-flex gap-3">
                         <a href="#" class="social-icon facebook"><i class="fab fa-facebook-f"></i></a>
@@ -550,23 +568,37 @@
             </div>
             <hr class="border-secondary">
             <div class="row align-items-center">
-                <div class="col-md-1 mb-3">
+                <div class="col-md-1 mb-2">
                     <img style=" width: 100px; height: 100px;" src="{{ asset('images/logo.jpg') }}" alt="Logo">
                 </div>
-                <div class="col-md-9 ms-5">
+                <div class="col-md-11">
                     <p class="mb-1 fw-bold">Công ty TNHH MTV Ngôi Sao Cineplex Lumi Việt Nam</p>
                     <p class="mb-1">Giấy CNĐKDN: 0104597158. Đăng ký lần đầu ngày 15 tháng 04 năm 2010</p>
                     <p class="mb-1">Địa chỉ: Tầng 11, Tòa nhà Hồng Hà Building, Lý Thường Kiệt, P.Phăn Chu Trinh,
                         Q.Hoàn
                         Kiếm, Hà Nội</p>
                     <p class="mb-1">Hotline: 19002099</p>
-                    <p class="mb-0">COPYRIGHT 2010 BHD STAR. ALL RIGHTS RESERVED</p>
+                    <p class="mb-0">COPYRIGHT 2010 LUMI STAR. ALL RIGHTS RESERVED</p>
                 </div>
             </div>
         </div>
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const topbar = document.querySelector('.topbar');
+
+        window.addEventListener('scroll', function () {
+            if (window.scrollY > 50) {
+                topbar.classList.add('shrink');
+            } else {
+                topbar.classList.remove('shrink');
+            }
+        });
+    });
+</script>
+
     @stack('scripts')
     @if (session('success'))
         <div class="position-fixed top-0 end-0 p-3" style="z-index: 9999">
@@ -585,11 +617,33 @@
         <script>
             const toastEl = document.getElementById('toastSuccess');
             const toast = new bootstrap.Toast(toastEl, {
-                delay: 2000
+                delay: 4000
             });
             toast.show();
         </script>
     @endif
+    @if ($errors->has('login_error'))
+        <div class="position-fixed top-0 end-0 p-3" style="z-index: 9999">
+            <div id="toastError" class="toast align-items-center text-white bg-danger border-0 show" role="alert">
+                <div class="d-flex">
+                    <div class="toast-body">
+                        {{ $errors->first('login_error') }}
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto"
+                        data-bs-dismiss="toast"></button>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            const toastErrorEl = document.getElementById('toastError');
+            const toastError = new bootstrap.Toast(toastErrorEl, {
+                delay: 4000
+            });
+            toastError.show();
+        </script>
+    @endif
+
 </body>
 
 </html>

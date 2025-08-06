@@ -38,6 +38,10 @@
                                     Manager
                                 @break
 
+                                 @case(3)
+                                    Staff
+                                @break
+
                                 @default
                                     none
                             @endswitch
@@ -48,10 +52,19 @@
 
                     </div>
                 </a>
-                <ul class="dropdown-menu dropdown-menu-end">
-                    <li><a class="dropdown-item" href="#">Thông tin tài khoản</a></li>
-                    <li><a class="dropdown-item" href="{{ route('logout') }}">Đăng xuất</a></li>
-                </ul>
+               <ul class="dropdown-menu dropdown-menu-end">
+    
+    <li>
+        <a class="dropdown-item" href="#"
+           onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+            Đăng xuất
+        </a>
+    </li>
+    <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+        @csrf
+    </form>
+</ul>
+
             </div>
         </div>
     </div>

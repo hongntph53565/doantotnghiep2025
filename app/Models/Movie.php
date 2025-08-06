@@ -24,7 +24,8 @@ class Movie extends Model
         'age_rating',
         'language',
         'description',
-        'status'
+        'status',
+        'format',
     ];
 
     protected $dates = ['deleted_at'];

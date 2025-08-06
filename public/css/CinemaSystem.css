@@ -1,0 +1,143 @@
+.theater-grid {
+  margin-top: 30px;
+}
+
+.theater-card {
+  text-align: center;
+  background: white;
+  border-radius: 8px;
+  padding: 10px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.theater-card img {
+  width: 100%;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.theater-name {
+  font-size: 16px;
+  font-weight: 500;
+  margin: 10px 0;
+  color: #333;
+}
+
+.btn-theater-detail {
+  background-color: #7bc043;
+  color: white;
+  font-weight: 500;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+}
+
+.btn-theater-detail:hover {
+  background-color: #5fa334;
+}
+
+
+        .topbar {
+            background-color: #f8f8f8;
+            padding: 10px 0;
+        }
+
+        .topbar .nav-link {
+            color: black;
+            font-weight: 500;
+        }
+
+        .topbar .btn-location {
+            background-color: #d9f3cc;
+            border: 1px solid #a8e38b;
+            font-weight: 600;
+            color: black;
+        }
+
+        .navbar-nav .nav-link:hover,
+        .navbar-nav .dropdown-toggle:hover {
+            color: #7bc043 !important;
+            font-weight: 600;
+        }
+
+        /* Dropdown custom style */
+        .dropdown-menu.custom-dropdown {
+            background-color: rgba(0, 0, 0, 0.6);
+            border: none;
+            border-radius: 10px;
+            padding: 10px;
+        }
+
+        .dropdown-menu.custom-dropdown a {
+            color: #f1f1f1;
+            font-weight: 500;
+        }
+
+        .dropdown-menu.custom-dropdown a:hover {
+            color: #7bc043;
+            background-color: transparent;
+        }
+
+        .navbar {
+            background-color: transparent !important;
+            box-shadow: none !important;
+            padding: 0;
+        }
+
+        footer a:hover {
+            color: #8bc34a !important;
+            transition: 0.3s;
+        }
+
+        footer a.social-icon:hover {
+            color: white !important;
+        }
+
+        .social-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            font-size: 24px;
+            color: white;
+            text-decoration: none;
+            background-color: gray;
+            /* fallback nếu class riêng không có */
+        }
+
+        /* Màu cố định theo mạng xã hội */
+        .social-icon.facebook {
+            background-color: #1877f2;
+        }
+
+        .social-icon.instagram {
+            background-color: #e1306c;
+        }
+
+        .social-icon.tiktok {
+            background-color: #000000;
+        }
+
+        .social-icon.youtube {
+            background-color: #ff0000;
+        }
+
+        /* Loại bỏ mọi hiệu ứng hover/focus/active */
+        .social-icon:hover,
+        .social-icon:focus,
+        .social-icon:active {
+            background-color: inherit;
+            color: white;
+            filter: none;
+            transform: none;
+            outline: none;
+            box-shadow: none;
+        }
+
+           hr {
+            border: none;
+            border-top: 2px solid rgba(0, 0, 0, 0.2);
+            margin: 20px 0;
+        }

@@ -71,6 +71,33 @@
             @endphp
             <div class="seat">
                 <table>
+
+                    @php
+                        $maxSlots = $groupedSeats
+                            ->map(function ($rowSeats) {
+                                $sorted = $rowSeats->sortBy(fn($s) => intval(substr($s->seat_code, 1)))->values();
+                                $slots = 0;
+                                for ($i = 0; $i < $sorted->count(); $i++) {
+                                    $seat = $sorted[$i];
+                                    $type = strtolower($seat->seatType->name);
+                                    if (
+                                        $type === 'double' &&
+                                        isset($sorted[$i + 1]) &&
+                                        strtolower($sorted[$i + 1]->seatType->name) === 'double'
+                                    ) {
+                                        $slots += 2;
+                                        $i++; // Skip next seat
+                                    } else {
+                                        $slots++;
+                                    }
+                                }
+                                return $slots;
+                            })
+                            ->max();
+                    @endphp
+                    {{-- @php
+    dump("Seat ID: " . $seat->seat_id, $showtimeSeatStatuses[$seat->seat_id] ?? 'not found');
+@endphp --}}
                     @foreach ($groupedSeats as $rowLabel => $rowSeats)
                         <tr>
                             <td class="lable">{{ $rowLabel }}</td>
@@ -81,7 +108,7 @@
                                     ->values();
                                 $slotCount = 0;
                                 $cells = [];
-                                $maxSlots = 8;
+
                             @endphp
 
                             @for ($i = 0; $i < $sortedSeats->count(); $i++)
@@ -94,12 +121,16 @@
                                         $mappedType === 'couple' &&
                                         $nextSeat &&
                                         strtolower($nextSeat->seatType->name) === 'couple';
+                                    $status = $showtimeSeatStatuses[$seat->seat_id] ?? 'available';
 
-                                    $imgPath = match ($mappedType) {
-                                        'standard' => 'seat-standard-available.svg',
-                                        'vip' => 'seat-vip-available.svg',
-                                        'couple' => 'seat-couple-available.svg',
-                                        default => 'seat-standard-available.svg',
+                                    $imgPath = match ($status) {
+                                         'booked', 'pending' => 'seat-booked.svg',
+                                        default => match ($mappedType) {
+                                            'standard' => 'seat-standard-available.svg',
+                                            'vip' => 'seat-vip-available.svg',
+                                            'couple' => 'seat-couple-available.svg',
+                                            default => 'seat-standard-available.svg',
+                                        },
                                     };
 
                                     $price = $seatPrices[$seat->seat_type_id]->price ?? 0;
@@ -109,6 +140,30 @@
                                 @if ($isCouple)
                                     @php
                                         $coupleId = $seat->seat_code . '_' . $nextSeat->seat_code;
+
+                                        $status1 = $showtimeSeatStatuses[$seat->seat_id] ?? 'available';
+                                        $status2 = $showtimeSeatStatuses[$nextSeat->seat_id] ?? 'available';
+
+                                        // Ưu tiên booked > pending > available
+                                        $finalStatus =
+                                            $status1 === 'booked' || $status2 === 'booked'
+                                                ? 'booked'
+                                                : ($status1 === 'pending' || $status2 === 'pending'
+                                                    ? 'pending'
+                                                    : 'available');
+
+                                        $imgPath = match ($finalStatus) {
+                                            'booked', 'pending' => 'seat-booked.svg',
+                                            default => match ($mappedType) {
+                                                'standard' => 'seat-standard-available.svg',
+                                                'vip' => 'seat-vip-available.svg',
+                                                'couple' => 'seat-couple-available.svg',
+                                                default => 'seat-standard-available.svg',
+                                            },
+                                        };
+                                    @endphp
+
+                                    @php
                                         $cells[] =
                                             '<td colspan="2"><div style="display: flex; gap: 0;">
 <img src="' .
@@ -117,10 +172,11 @@
                                             $seat->seat_code .
                                             '" data-seat-id="' .
                                             $seat->seat_id .
-                                            '" ' . // Thêm ở đây
-                                            'data-couple-id="' .
+                                            '" data-couple-id="' .
                                             $coupleId .
-                                            '" data-status="available" data-price="' .
+                                            '" data-status="' .
+                                            $finalStatus .
+                                            '" data-price="' .
                                             $price .
                                             '" title="Ghế ' .
                                             $seat->seat_code .
@@ -133,10 +189,11 @@
                                             $nextSeat->seat_code .
                                             '" data-seat-id="' .
                                             $nextSeat->seat_id .
-                                            '" ' . // Thêm ở đây
-                                            'data-couple-id="' .
+                                            '" data-couple-id="' .
                                             $coupleId .
-                                            '" data-status="available" data-price="' .
+                                            '" data-status="' .
+                                            $finalStatus .
+                                            '" data-price="' .
                                             $price .
                                             '" title="Ghế ' .
                                             $nextSeat->seat_code .
@@ -160,7 +217,9 @@
                                             '" data-seat-id="' .
                                             $seat->seat_id .
                                             '" ' . // Thêm ở đây
-                                            'data-status="available" data-price="' .
+                                            'data-status="' .
+                                            $status .
+                                            '" data-price="' .
                                             $price .
                                             '" title="Ghế ' .
                                             $seat->seat_code .
@@ -231,9 +290,12 @@
                 <span>Tổng tiền</span>
                 <span id="total-price">0 VND</span>
             </div>
+            <div id="invalidSeatMessage" class="ErrorSeat">
+                Bạn không được để 1 ghế trống ngoài cùng bên trái hoặc phải và ở giữa trên cùng hàng ghế mà bạn chọn.
+            </div>
 
-            <p class="note">(Đã bao gồm phụ thu)</p>
-            <a href="javascript:void(0);" class="btn-checkout" onclick="goToStep(2)">Chọn đồ ăn (2/4)</a>
+            <a href="javascript:void(0);" id="payButton" class="btn-checkout" onclick="goToStep(2)">Chọn đồ ăn (2/4)</a>
+
             <div class="btn-back-wrapper">
                 <a href="javascript:void(0);" class="btn-back" onclick="goBackStep()">← Trở lại</a>
             </div>
@@ -276,6 +338,7 @@
                     coupleImgs.forEach(el => el.src = '/images/seat-selected.svg');
                 }
             } else {
+
                 if (selectedSeats.has(code)) {
                     selectedSeats.delete(code);
                     img.src = `/images/seat-${type}-available.svg`;
@@ -291,6 +354,7 @@
             }
 
             updateSummary();
+            updateUIAfterSeatChange();
         });
     });
 
@@ -330,8 +394,182 @@
         summary.innerHTML = html || '<p class="text-muted">Chưa chọn ghế</p>';
         total.innerText = totalPrice.toLocaleString() + ' VND';
 
-        // 👉 Lưu vào sessionStorage để dùng ở bước combo
+    
         sessionStorage.setItem('selectedSeats', JSON.stringify(Array.from(selectedSeats.values())));
         sessionStorage.setItem('ticketTotal', totalPrice);
+    }
+
+
+    window.userRole = {{ auth()->user()->role_id ?? 'null' }};
+
+    // function isIsolatedSeat(img) {
+    //     const seatCode = img.dataset.seatCode;
+    //     const row = seatCode.charAt(0);
+    //     const col = parseInt(seatCode.slice(1));
+
+    //     // Lấy tất cả ghế trong hàng này
+    //     const allSeatsInRow = Array.from(document.querySelectorAll(`img[data-seat-code^="${row}"]`));
+    //     const sortedCols = allSeatsInRow
+    //         .map(seat => parseInt(seat.dataset.seatCode.slice(1)))
+    //         .sort((a, b) => a - b);
+
+    //     const minCol = sortedCols[0];
+    //     const maxCol = sortedCols[sortedCols.length - 1];
+    //     const secondFromLeft = minCol + 1;
+    //     const secondFromRight = maxCol - 1;
+
+    //     const isAtEdge = (col === secondFromLeft || col === secondFromRight);
+
+    //     const leftSeat = document.querySelector(`img[data-seat-code="${row}${col - 1}"]`);
+    //     const rightSeat = document.querySelector(`img[data-seat-code="${row}${col + 1}"]`);
+
+    //     const isLeftChosenOrBooked = leftSeat &&
+    //         (leftSeat.dataset.status === 'booked' || selectedSeats.has(leftSeat.dataset.seatCode));
+    //     const isRightChosenOrBooked = rightSeat &&
+    //         (rightSeat.dataset.status === 'booked' || selectedSeats.has(rightSeat.dataset.seatCode));
+
+    //     // ❌ Trường hợp 1: Ghế ở mép và bị lẻ
+    //     if (isAtEdge && !isLeftChosenOrBooked && !isRightChosenOrBooked) return true;
+
+    //     // ❌ Trường hợp 2: 1 ghế trống giữa 2 ghế đã chọn/đã bán (VD: chọn A2, A4, để A3 trống)
+    //     const seatBefore = document.querySelector(`img[data-seat-code="${row}${col - 1}"]`);
+    //     const seatAfter = document.querySelector(`img[data-seat-code="${row}${col + 1}"]`);
+    //     if (seatBefore && seatAfter) {
+    //         const isBeforeChosen = seatBefore.dataset.status === 'booked' || selectedSeats.has(seatBefore.dataset.seatCode);
+    //         const isAfterChosen = seatAfter.dataset.status === 'booked' || selectedSeats.has(seatAfter.dataset.seatCode);
+
+    //         if (isBeforeChosen && isAfterChosen) return true;
+    //     }
+
+    //     // ❌ Trường hợp 3: Bỏ 1 ghế ở giữa khi chọn 2 ghế cách nhau (VD: A2 & A5)
+    //     const allChosenSeatsInRow = allSeatsInRow.filter(seat =>
+    //         selectedSeats.has(seat.dataset.seatCode) || seat.dataset.status === 'booked'
+    //     );
+    //     const selectedCols = allChosenSeatsInRow.map(seat => parseInt(seat.dataset.seatCode.slice(1)));
+    //     selectedCols.push(col); // thêm ghế đang click
+    //     selectedCols.sort((a, b) => a - b);
+
+    //     for (let i = 0; i < selectedCols.length - 1; i++) {
+    //         if (selectedCols[i + 1] - selectedCols[i] === 2) {
+    //             const inBetweenCol = selectedCols[i] + 1;
+    //             const inBetweenSeat = document.querySelector(`img[data-seat-code="${row}${inBetweenCol}"]`);
+    //             if (inBetweenSeat &&
+    //                 inBetweenSeat.dataset.status !== 'booked' &&
+    //                 !selectedSeats.has(inBetweenSeat.dataset.seatCode)
+    //             ) {
+    //                 return true;
+    //             }
+    //         }
+    //     }
+
+    //     return false;
+    // }
+    function isIsolatedSeat(img) {
+        if (window.userRole !== 4) return false;
+
+        const seatCode = img.dataset.seatCode;
+        const row = seatCode.charAt(0);
+        const col = parseInt(seatCode.slice(1));
+
+        const allSeatsInRow = Array.from(document.querySelectorAll(`img[data-seat-code^="${row}"]`));
+        const seatMap = new Map();
+
+        allSeatsInRow.forEach(seat => {
+            const c = parseInt(seat.dataset.seatCode.slice(1));
+            seatMap.set(c, {
+                isSelected: selectedSeats.has(seat.dataset.seatCode),
+                isBooked: seat.dataset.status === 'booked'
+            });
+        });
+
+        // Đảm bảo thêm ghế hiện tại đang click (phòng trường hợp chưa add vào selectedSeats)
+        seatMap.set(col, {
+            isSelected: true,
+            isBooked: false
+        });
+
+        const selectedCols = Array.from(seatMap.entries())
+            .filter(([_, v]) => v.isSelected || v.isBooked)
+            .map(([k, _]) => k)
+            .sort((a, b) => a - b);
+
+        const minCol = Math.min(...selectedCols);
+        const maxCol = Math.max(...selectedCols);
+
+        // ✅ Điều kiện 1: không được để lại ghế trống kẹt giữa
+        for (let i = minCol + 1; i < maxCol; i++) {
+            const current = seatMap.get(i);
+            const prev = seatMap.get(i - 1);
+            const next = seatMap.get(i + 1);
+
+            if (!current || !prev || !next) continue;
+
+            if (!current.isSelected && !current.isBooked &&
+                (prev.isSelected || prev.isBooked) &&
+                (next.isSelected || next.isBooked)) {
+                return true; // Ghế trống bị kẹp giữa
+            }
+        }
+
+        // ✅ Điều kiện 2: không được để ghế đơn ở mép hàng
+        const sortedColsAll = allSeatsInRow.map(seat => parseInt(seat.dataset.seatCode.slice(1))).sort((a, b) => a - b);
+        const secondFromLeft = sortedColsAll[0] + 1;
+        const secondFromRight = sortedColsAll[sortedColsAll.length - 1] - 1;
+
+        const isAtEdge = (col === secondFromLeft || col === secondFromRight);
+
+        const leftSeat = seatMap.get(col - 1);
+        const rightSeat = seatMap.get(col + 1);
+
+        const isLeftOccupied = leftSeat && (leftSeat.isSelected || leftSeat.isBooked);
+        const isRightOccupied = rightSeat && (rightSeat.isSelected || rightSeat.isBooked);
+
+        if (isAtEdge && !isLeftOccupied && !isRightOccupied) {
+            return true;
+        }
+
+        // ✅ Điều kiện 3: không được để lại 1 ghế đơn giữa 2 ghế đã chọn/bán
+        if (isLeftOccupied && isRightOccupied) {
+            const middleSeat = seatMap.get(col);
+            if (middleSeat && !middleSeat.isSelected && !middleSeat.isBooked) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+
+
+
+
+
+
+
+    function hasInvalidSeatSelection() {
+        if (window.userRole !== 4) return false; 
+
+        for (const key of selectedSeats.keys()) {
+            if (key.startsWith('couple-')) continue;
+
+            const img = document.querySelector(`img[data-seat-code="${key}"]`);
+            if (img && isIsolatedSeat(img)) return true;
+        }
+        return false;
+    }
+
+    function updateUIAfterSeatChange() {
+        const hasInvalid = hasInvalidSeatSelection();
+
+        const payButton = document.querySelector('#payButton'); 
+        const errorBox = document.querySelector('#invalidSeatMessage');
+
+        if (hasInvalid) {
+            payButton.style.display = 'none';
+            errorBox.style.display = 'block';
+        } else {
+            payButton.style.display = 'block';
+            errorBox.style.display = 'none';
+        }
     }
 </script>

@@ -9,7 +9,6 @@ use App\Models\Seat;
 use App\Models\SeatType;
 use Exception;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class RoomController extends Controller
 {
@@ -56,11 +55,8 @@ class RoomController extends Controller
 
         $this->generateSeats($room_id, $request->input('total_seats'));
 
-        if (Auth::user()->role_id == 1) {
-            return redirect()->route('rooms.index')->with('success', 'Thêm phòng thành công');
-        } else {
-            return redirect()->route('manager.rooms.index')->with('success', 'Thêm phòng thành công');
-        }
+
+        return redirect()->route('rooms.index')->with('success', 'Đã cập nhật template');
     }
 
     public function update(Request $request, $id)
@@ -80,7 +76,8 @@ class RoomController extends Controller
 
             $room->update($data);
 
-            return redirect()->route('show')->with('success', 'Cập nhật phòng thành công');
+            return redirect()->route('rooms.show', $room->room_id)->with('success', 'Cập nhật phòng thành công');
+
         } catch (Exception $e) {
             $logPath = storage_path('logs/RoomsLogs');
             if (!file_exists($logPath)) {
@@ -241,4 +238,13 @@ class RoomController extends Controller
         }
         return $letters;
     }
+public function edit($id)
+{
+    $room = Room::findOrFail($id);
+    $cinemas = Cinema::select('cinema_id', 'name', 'city')->get();
+    $districts = Cinema::select('city')->distinct()->get(); // ✅ thêm dòng này
+
+    return view('admin.edit.room', compact('room', 'cinemas', 'districts'));
+}
+
 }

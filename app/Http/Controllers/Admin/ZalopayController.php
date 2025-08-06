@@ -9,6 +9,9 @@ use App\Models\Payment;
 use App\Services\BookingService;
 use Illuminate\Http\Request;
 use App\Services\ZalopayService;
+use Illuminate\Support\Facades\Log;
+
+use function Ramsey\Uuid\v1;
 
 class ZalopayController extends Controller
 {
@@ -22,17 +25,21 @@ class ZalopayController extends Controller
     }
 
     public function createLink($amount, $description)
-    {
-        $returnUrl = route('zalopay.return', ['description' => $description]);
-        $amount = (int) $amount;
-        $response = $this->zalopay->createPaymentLink($amount, $description, $returnUrl);
-        $response = json_decode($response, true);
-        if (isset($response['return_code']) && $response['return_code'] == '1') {
-            return redirect($response['order_url']);
-        } else {
-            return back()->with('error', 'Tạo link thanh toán thất bại: ' . ($response['desc'] ?? 'Không rõ lý do'));
-        }
+{
+    $returnUrl = route('zalopay.return', ['description' => $description]);
+    $amount = (int) $amount;
+    $response = $this->zalopay->createPaymentLink($amount, $description, $returnUrl);
+    $response = json_decode($response, true);
+
+    if (isset($response['return_code']) && $response['return_code'] == '1') {
+        // Debug thêm
+        Log::info('ZaloPay Link', ['url' => $response['order_url']]);
+        return redirect($response['order_url']);
+    } else {
+        Log::error('ZaloPay Error', $response);
+        return back()->with('error', 'Tạo link thanh toán thất bại: ' . ($response['desc'] ?? 'Không rõ lý do'));
     }
+}
 
     public function returnPage(Request $request, $description)
     {
@@ -71,7 +78,7 @@ class ZalopayController extends Controller
             $this->bookingService->cancelSeats($booking);
         }
 
-        return redirect()->route('home')->with('success', ($allParams['status'] ?? '1') === '-49'
+        return redirect()->route('home')->with('message', ($allParams['status'] ?? '1') === '-49'
             ? 'Thanh toán đã bị hủy, booking đã hủy.'
             : 'Thanh toán thành công, booking đã xác nhận.');
     }

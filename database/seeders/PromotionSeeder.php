@@ -13,6 +13,6 @@ class PromotionSeeder extends Seeder
      */
     public function run(): void
     {
-        // Promotion::factory()->count(10)->create();
+        Promotion::factory()->count(10)->create();
     }
 }

@@ -1,3 +1,4 @@
+
     <nav class="sidebar" id="sidebar">
         <div class="logo">
             <span class="logo-full">LumiStar</span>

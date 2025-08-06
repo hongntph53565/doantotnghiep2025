@@ -5,6 +5,7 @@ namespace App\Services;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Mail;
 use App\Models\EmailTemplate;
+use Illuminate\Http\Request;
 use App\Models\EmailLog;
 use App\Mail\Mailler;
 
@@ -12,10 +13,11 @@ class MailService
 {
     public function send($email, $templateID, $data = null, $userID = 1)
     {
-        $userID = 1;
-        $template = EmailTemplate::findOrFail($templateID);
 
+        $userID = 1;
         try {
+
+            $template = EmailTemplate::findOrFail($templateID);
 
             $htmlContent = Blade::render($template->content ?? '', $data ?? []);
 

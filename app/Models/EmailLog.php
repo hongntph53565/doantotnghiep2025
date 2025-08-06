@@ -24,4 +24,3 @@ class EmailLog extends Model
         return $this->belongsTo(EmailTemplate::class);
     }
 }
-

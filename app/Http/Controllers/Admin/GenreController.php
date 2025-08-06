@@ -83,7 +83,8 @@ public function update(Request $request, $id)
         $genre = Genre::findOrFail($id);
         $genre->delete();
 
-        return response()->json(['message' => 'Genre đã được xóa mềm.']);
+        return redirect()->route('genres.index')->with('success', 'Thể loại đã được xóa thành công.');
+
     }
 
     public function restore($id)

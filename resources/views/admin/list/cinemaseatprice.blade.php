@@ -31,12 +31,12 @@
                                     <td>{{ $price->seatType->name }}</td>
                                     <td>{{ number_format($price->price) }}đ</td>
                                     <td>
-                                        <button class="btn btn-sm btn-outline-primary edit-btn" data-bs-toggle="modal"
+                                        {{-- <button class="btn btn-sm btn-outline-primary edit-btn" data-bs-toggle="modal"
                                             data-bs-target="#editPriceModal" data-id="{{ $price->id }}"
                                             data-cinema-id="{{ $price->cinema_id }}"
                                             data-seat-type-id="{{ $price->seat_type_id }}" data-price="{{ $price->price }}">
                                             <i class="bi bi-pencil-square"></i>
-                                        </button>
+                                        </button> --}}
                                         <form action="{{ route('cinemaseatprices.destroy', $price->id) }}" method="POST"
                                             class="d-inline">
                                             @csrf
@@ -116,65 +116,69 @@
     </div>
 
     <!-- Modal Chỉnh sửa -->
-    <div class="modal fade" id="editPriceModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title"><i class="bi bi-pencil-square me-2"></i>Chỉnh sửa giá vé</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <form id="editForm" method="POST">
-                    @csrf
-                    <div class="modal-body">
-                        <div class="mb-3">
-                            <label class="form-label">Rạp <span class="text-danger">*</span></label>
-                            <input type="hidden" value="{{ $cinema->cinema_id }}" name="cinema_id" id="">
-                            <input type="text" class="form-control" value="{{ $cinema->name }}" name="" id="" readonly>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">Loại ghế <span class="text-danger">*</span></label>
-                            <select class="form-select" name="seat_type_id" id="editSeatTypeId" required>
-                                @foreach ($seatTypes as $seatType)
-                                    <option value="{{ $seatType->seat_type_id }}">{{ $seatType->name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">Giá vé <span class="text-danger">*</span></label>
-                            <input type="number" class="form-control" name="price" id="editPrice" min="0"
-                                required>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-                        <button type="submit" class="btn btn-primary">Cập nhật</button>
-                    </div>
-                </form>
+<div class="modal fade" id="editPriceModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="bi bi-pencil-square me-2"></i>Chỉnh sửa giá vé</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
+            <form id="editForm" method="POST">
+                @csrf
+                @method('POST') {{-- quan trọng nếu bạn dùng route POST update --}}
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Rạp <span class="text-danger">*</span></label>
+                        <input type="hidden" name="cinema_id" id="editCinemaId">
+                        <input type="text" class="form-control" name="cinema_name" id="editCinemaName" readonly>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Loại ghế <span class="text-danger">*</span></label>
+                        <select class="form-select" name="seat_type_id" id="editSeatTypeId" required>
+                            @foreach ($seatTypes as $seatType)
+                                <option value="{{ $seatType->seat_type_id }}">{{ $seatType->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Giá vé <span class="text-danger">*</span></label>
+                        <input type="number" class="form-control" name="price" id="editPrice" min="0" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                    <button type="submit" class="btn btn-primary">Cập nhật</button>
+                </div>
+            </form>
         </div>
     </div>
+</div>
+
 @endsection
 
 @push('scripts')
     <script>
-        // Xử lý popup chỉnh sửa
-        document.addEventListener('DOMContentLoaded', function() {
-            document.querySelectorAll('.edit-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const id = this.getAttribute('data-id');
-                    const cinemaId = this.getAttribute('data-cinema-id');
-                    const seatTypeId = this.getAttribute('data-seat-type-id');
-                    const price = this.getAttribute('data-price');
+       document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.edit-btn').forEach(btn => {
+        btn.addEventListener('click', function () {
+            const id = this.getAttribute('data-id');
+            const cinemaId = this.getAttribute('data-cinema-id');
+            const seatTypeId = this.getAttribute('data-seat-type-id');
+            const price = this.getAttribute('data-price');
 
-                    document.getElementById('editForm').action = `/cinemaseatprice/update/${id}`;
-                    document.getElementById('editCinemaId').value = cinemaId;
-                    document.getElementById('editSeatTypeId').value = seatTypeId;
-                    document.getElementById('editPrice').value = price;
-                });
-            });
+            const cinemaName = this.closest('tr').querySelector('td:nth-child(2)').innerText;
+
+            document.getElementById('editForm').action = `/cinemaseatprice/update/${id}`;
+            document.getElementById('editCinemaId').value = cinemaId;
+            document.getElementById('editCinemaName').value = cinemaName;
+            document.getElementById('editSeatTypeId').value = seatTypeId;
+            document.getElementById('editPrice').value = price;
         });
+    });
+});
+
     </script>
     <script>
         const districtSelect = document.getElementById('district');

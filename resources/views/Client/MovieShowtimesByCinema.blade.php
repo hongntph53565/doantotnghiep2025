@@ -2,7 +2,7 @@
 
 @section('title', 'Lịch Chiếu Rạp')
 @push('styles')
-<link rel="stylesheet" href="{{ asset('css/lichchieurap.css') }}">
+<link rel="stylesheet" href="{{ asset('css/MovieShowtimesByCinema.css') }}">
 @endpush
 
 @section('content')

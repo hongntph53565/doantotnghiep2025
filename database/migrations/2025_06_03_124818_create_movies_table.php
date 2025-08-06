@@ -24,7 +24,8 @@ return new class extends Migration
             $table->string('poster', 255)->nullable();
             $table->string('trailer', 255)->nullable();
             $table->enum('age_rating', ['P', 'T13', 'T18']);
-            $table->enum('language', ['Tiếng Việt', 'Tiếng Anh', 'Tiếng Hàn', 'Tiếng Nhật']);
+            $table->enum('language', ['Phụ đề', 'Lồng tiếng']);
+            $table->string('format', 50)->default('HD');    
             $table->text('description')->nullable();
             $table->enum('status', ['active', 'inactive'])->default('active');
             $table->timestamps();

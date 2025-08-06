@@ -1,114 +1,146 @@
 <?php
 
-namespace App\Http\Controllers\Manager;
+// namespace App\Http\Controllers\Manager;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use Carbon\Carbon;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
+// use App\Http\Controllers\Controller;
+// use Illuminate\Http\Request;
+// use App\Models\Cinema;
+// use App\Models\Payment;
+// use App\Models\Movie;
+// use App\Models\Genre;
+// use App\Models\Review;
+// use App\Models\Showtime;
+// use Carbon\Carbon;
+// use Carbon\CarbonPeriod;
+// use Illuminate\Support\Arr;
+// use Illuminate\Support\Facades\DB;
 
-class DashboardController extends Controller
-{
-    public function index(Request $request)
-    {
-        $startDate = $request->input('Sdate') ? Carbon::parse($request->input('Sdate')) : now()->startOfMonth();
-        $endDate = $request->input('Edate') ? Carbon::parse($request->input('Edate')) : now();
+// class DashboardController extends Controller
+// {
+// public function index(Request $request)
+// {
+//     $manager = auth()->user(); // assuming user is authenticated manager
+//     $cinemas = $manager->cinemas; // Quan hệ: 1 manager có nhiều rạp
 
-        $managerId = Auth::user()->user_id;
+//     if ($cinemas->isEmpty()) {
+//         abort(403, 'Bạn không có quyền xem thống kê vì chưa được phân rạp.');
+//     }
 
-        $cinemaId = DB::table('manager_cinema')
-            ->where('user_id', $managerId)
-            ->value('cinema_id');
+//     // Ngày bắt đầu và kết thúc
+//     $startDate = $request->filled('start_date')
+//         ? Carbon::parse($request->start_date)->startOfDay()
+//         : now()->startOfMonth();
 
-        $cinemaName = null;
-        if ($cinemaId) {
-            $cinemaName = DB::table('cinemas')->where('cinema_id', $cinemaId)->value('name');
-        }
+//     $endDate = $request->filled('end_date')
+//         ? Carbon::parse($request->end_date)->endOfDay()
+//         : now();
 
-        $paymentQuery = DB::table('payments')
-            ->join('bookings', 'bookings.booking_id', '=', 'payments.booking_id')
-            ->join('showtimes', 'showtimes.showtime_id', '=', 'bookings.showtime_id')
-            ->join('movies', 'movies.movie_id', '=', 'showtimes.movie_id')
-            ->join('rooms', 'rooms.room_id', '=', 'showtimes.room_id')
-            ->join('cinemas', 'cinemas.cinema_id', '=', 'rooms.cinema_id')
-            ->whereBetween('payments.created_at', [$startDate, $endDate]);
+//     $cinemaIds = $cinemas->pluck('id');
 
-        if ($cinemaId) {
-            $paymentQuery->where('cinemas.cinema_id', $cinemaId);
-        }
+//     // Tổng doanh thu
+//     $totalRevenue = DB::table('tickets')
+//         ->whereBetween('created_at', [$startDate, $endDate])
+//         ->whereIn('cinema_id', $cinemaIds)
+//         ->sum('price');
 
-        $totalRevenue = (clone $paymentQuery)->sum('payments.price_amount');
+//     // Top cinema theo doanh thu
+//     $topCinema = DB::table('tickets')
+//         ->select('cinema_id', DB::raw('SUM(price) as total_revenue'))
+//         ->whereBetween('created_at', [$startDate, $endDate])
+//         ->whereIn('cinema_id', $cinemaIds)
+//         ->groupBy('cinema_id')
+//         ->orderByDesc('total_revenue')
+//         ->first();
 
-        $topMovie = DB::table('payments')
-            ->join('bookings', 'bookings.booking_id', '=', 'payments.booking_id')
-            ->join('showtimes', 'showtimes.showtime_id', '=', 'bookings.showtime_id')
-            ->join('movies', 'movies.movie_id', '=', 'showtimes.movie_id')
-            ->whereBetween('payments.created_at', [$startDate, $endDate])
-            ->select('movies.title', DB::raw('COUNT(*) as ticket_count'))
-            ->groupBy('movies.movie_id', 'movies.title')
-            ->orderByDesc('ticket_count')
-            ->first();
+//     $topCinemaModel = $topCinema ? Cinema::find($topCinema->cinema_id) : null;
 
-        $methodStats = (clone $paymentQuery)
-            ->select('payments.payment_method', DB::raw('COUNT(*) as count'))
-            ->groupBy('payments.payment_method')
-            ->orderByDesc('count')
-            ->get();
+//     // Phim bán chạy
+//     $topMovie = DB::table('tickets')
+//         ->select('movie_id', DB::raw('COUNT(*) as ticket_count'))
+//         ->whereBetween('created_at', [$startDate, $endDate])
+//         ->whereIn('cinema_id', $cinemaIds)
+//         ->groupBy('movie_id')
+//         ->orderByDesc('ticket_count')
+//         ->first();
 
-        $totalCount = $methodStats->sum('count');
+//     $topMovieModel = $topMovie ? Movie::find($topMovie->movie_id) : null;
 
-        $topPaymentMethod = $methodStats->map(function ($item) use ($totalCount) {
-            $item->percentage = round($item->count / max($totalCount, 1) * 100, 1);
-            return $item;
-        })->first();
+//     // Phương thức thanh toán phổ biến
+//     $topPayment = DB::table('payments')
+//         ->select('method', DB::raw('COUNT(*) as total'))
+//         ->whereBetween('created_at', [$startDate, $endDate])
+//         ->groupBy('method')
+//         ->orderByDesc('total')
+//         ->first();
 
-        $trend = (clone $paymentQuery)
-            ->select(DB::raw('DATE(payments.created_at) as date'), DB::raw('SUM(payments.price_amount) as total'))
-            ->groupBy(DB::raw('DATE(payments.created_at)'))
-            ->orderBy('date')
-            ->get();
+//     $totalPayments = DB::table('payments')
+//         ->whereBetween('created_at', [$startDate, $endDate])
+//         ->count();
 
-        $trendLabels = $trend->pluck('date');
-        $trendData = $trend->pluck('total');
+//     if ($topPayment) {
+//         $topPayment->percentage = $totalPayments > 0
+//             ? round($topPayment->total / $totalPayments * 100, 1)
+//             : 0;
+//     }
 
-        $genrebution = (clone $paymentQuery)
-            ->join('genres', 'genres.genre_id', '=', 'movies.genre_id')
-            ->select('genres.genre_name as genre', DB::raw('SUM(payments.price_amount) as revenue'))
-            ->groupBy('genres.genre_id', 'genres.genre_name')
-            ->orderByDesc('revenue')
-            ->get();
+//     // Xu hướng doanh thu theo ngày
+//     $trendLabels = [];
+//     $trendData = [];
 
-        $genrebutionLabels = $genrebution->pluck('genre');
-        $genrebutionData = $genrebution->pluck('revenue');
+//     $period = CarbonPeriod::create($startDate, $endDate);
+//     foreach ($period as $date) {
+//         $trendLabels[] = $date->format('d/m');
+//         $revenue = DB::table('tickets')
+//             ->whereDate('created_at', $date)
+//             ->whereIn('cinema_id', $cinemaIds)
+//             ->sum('price');
+//         $trendData[] = $revenue;
+//     }
 
-        $topMovies = DB::table('payments')
-            ->join('bookings', 'bookings.booking_id', '=', 'payments.booking_id')
-            ->join('showtimes', 'showtimes.showtime_id', '=', 'bookings.showtime_id')
-            ->join('movies', 'movies.movie_id', '=', 'showtimes.movie_id')
-            ->whereBetween('payments.created_at', [$startDate, $endDate])
-            ->select(
-                'movies.title',
-                DB::raw('SUM(payments.price_amount) as revenue'),
-                DB::raw('COUNT(*) as ticket_count')
-            )
-            ->groupBy('movies.movie_id', 'movies.title')
-            ->orderByDesc('revenue')
-            ->limit(10)
-            ->get();
+//     // Phân bổ doanh thu theo rạp
+//     $distributionLabels = [];
+//     $distributionData = [];
 
-        return view('manager.dashboard', [
-            'startDate' => $startDate,
-            'endDate' => $endDate,
-            'totalRevenue' => $totalRevenue,
-            'topMovie' => $topMovie,
-            'topPaymentMethod' => $topPaymentMethod,
-            'trendLabels' => $trendLabels,
-            'trendData' => $trendData,
-            'genrebutionLabels' => $genrebutionLabels,
-            'genrebutionData' => $genrebutionData,
-            'topMovies' => $topMovies,
-            'cinemaName' => $cinemaName,
-        ]);
-    }
-}
+//     foreach ($cinemas as $cinema) {
+//         $revenue = DB::table('tickets')
+//             ->where('cinema_id', $cinema->id)
+//             ->whereBetween('created_at', [$startDate, $endDate])
+//             ->sum('price');
+
+//         if ($revenue > 0) {
+//             $distributionLabels[] = $cinema->name;
+//             $distributionData[] = $revenue;
+//         }
+//     }
+
+//     // Top 10 phim
+//     $topMovies = DB::table('tickets')
+//         ->select('movie_id', DB::raw('SUM(price) as revenue'), DB::raw('COUNT(*) as ticket_count'))
+//         ->whereBetween('created_at', [$startDate, $endDate])
+//         ->whereIn('cinema_id', $cinemaIds)
+//         ->groupBy('movie_id')
+//         ->orderByDesc('revenue')
+//         ->limit(10)
+//         ->get()
+//         ->map(function ($item) {
+//             $movie = Movie::find($item->movie_id);
+//             $item->title = $movie->title ?? 'N/A';
+//             return $item;
+//         });
+
+//     return view('manager.dashboard.index', [
+//         'startDate' => $startDate,
+//         'endDate' => $endDate,
+//         'cinemas' => $cinemas,
+//         'totalRevenue' => $totalRevenue,
+//         'topCinema' => $topCinemaModel,
+//         'topMovie' => $topMovieModel,
+//         'topPaymentMethod' => $topPayment,
+//         'trendLabels' => $trendLabels,
+//         'trendData' => $trendData,
+//         'distributionLabels' => $distributionLabels,
+//         'distributionData' => $distributionData,
+//         'topMovies' => $topMovies,
+//     ]);
+// }
+// }

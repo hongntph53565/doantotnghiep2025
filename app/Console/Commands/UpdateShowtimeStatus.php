@@ -4,7 +4,6 @@ namespace App\Console\Commands;
 
 use App\Models\Showtime;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Log;
 
 class UpdateShowtimeStatus extends Command
 {
@@ -30,7 +29,8 @@ class UpdateShowtimeStatus extends Command
         $now = now();
 
         Showtime::whereNotIn('status', ['inactive', 'sold_out'])
-            ->whereRaw("STR_TO_DATE(CONCAT(date, ' ', end_time), '%Y-%m-%d %H:%i:%s') <= ?", [$now])
+            ->where('date', '<=', $now->toDateString())
+            ->where('end_time', '<=', $now->format('H:i:s'))
             ->update(['status' => 'sold_out']);
     }
 }

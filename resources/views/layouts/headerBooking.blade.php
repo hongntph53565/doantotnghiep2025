@@ -228,8 +228,101 @@
             width: 100%;
             max-width: 1140px;
         }
+        
+        .auth-hover-parent {
+            position: relative;
+            margin-left: 20px;
+        }
+
+        .auth-hover-box {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            width: 320px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            display: none;
+            z-index: 1000;
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .auth-hover-parent:hover .auth-hover-box {
+            display: block;
+        }
+
+        .auth-hover-box form {
+            margin-bottom: 8px;
+        }
+
+        .auth-hover-box input {
+            background: white;
+            color: black;
+            border-radius: 6px;
+            font-size: 14px;
+            padding: 8px 12px;
+        }
+
+        .auth-hover-box button {
+            width: 100%;
+            border-radius: 6px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .auth-hover-box .mb-2 label {
+            font-weight: 500;
+            font-size: 13px;
+            margin-bottom: 4px;
+        }
+
+        .auth-hover-box a {
+            font-size: 12px;
+            color: white;
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .auth-hover-box a:hover {
+            color: #4caf50;
+        }
+
+        .auth-hover-box button.btn-success {
+            background: #87d8a6;
+            border: none;
+            transition: background 0.3s ease, transform 0.2s ease;
+        }
+
+        .auth-hover-box button.btn-success:hover {
+            background: #6ec893;
+            transform: translateY(-2px);
+        }
+
+        .auth-hover-box button.btn-primary {
+            background: #4caf50;
+            border: none;
+            transition: background 0.3s ease, transform 0.2s ease;
+        }
+
+        .auth-hover-box button.btn-primary:hover {
+            background: #43a047;
+            transform: translateY(-2px);
+        }
+
+        footer a:hover {
+            color: #8bc34a !important;
+            transition: 0.3s;
+        }
+
+        footer a.social-icon:hover {
+            color: white !important;
+        }
+        
     </style>
     @stack('styles')
+    
 </head>
 
 <body>
@@ -259,17 +352,21 @@
                 <a href="#" class="text-decoration-none text-dark fw-semibold">Quy định</a>
                 <a href="#" class="text-decoration-none text-dark fw-semibold">FAQ</a>
 
-                <div class="dropdown">
-                    <button class="btn btn-outline-success dropdown-toggle" type="button" id="locationDropdown"
-                        data-bs-toggle="dropdown" aria-expanded="false">
-                        HÀ NỘI
-                    </button>
-                    <ul class="dropdown-menu" aria-labelledby="locationDropdown">
-                        <li><a class="dropdown-item" href="#">Hà Nội</a></li>
-                        <li><a class="dropdown-item" href="#">TP. Hồ Chí Minh</a></li>
-                        <li><a class="dropdown-item" href="#">Đà Nẵng</a></li>
-                    </ul>
-                </div>
+                <div class="d-flex align-items-center">
+                @php
+    $selectedCity = session('selected_city') ?? 'Chọn khu vực của bạn';
+@endphp
+
+<div class="dropdown hover-dropdown">
+    <button class="btn btn-outline-success dropdown-toggle" type="button">
+        {{ $selectedCity }}
+    </button>
+    <ul class="dropdown-menu custom-dropdown">
+        @foreach ($cities as $city)
+            <li><a class="dropdown-item" href="{{ route('set.city', ['city' => $city]) }}">{{ $city }}</a></li>
+        @endforeach
+    </ul>
+</div>
 
                 @if (Auth::check())
                  <a href="{{ url('/profile') }}" class="text-decoration-none text-dark">
@@ -308,8 +405,8 @@
                                 <button type="submit" class="btn btn-success mb-2">Đăng nhập</button>
                             </form>
 
-                            {{-- <a href="{{ route('register.form') }}" class="btn btn-primary w-100">Đăng ký thành
-                                viên</a> --}}
+                            <a href="{{ route('register.form') }}" class="btn btn-primary w-100">Đăng ký thành
+                                viên</a>
 
                         </div>
                         <script>
@@ -422,7 +519,22 @@
 
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
+    @stack('scripts')
+</body>
+
+</html>
+
+
+
+
+
+
+
+
+
+
+
+ <script>
     document.addEventListener("DOMContentLoaded", function () {
         const logoLink = document.getElementById("logo-link");
         if (logoLink) {
@@ -434,7 +546,3 @@
         }
     });
 </script>
-    @stack('scripts')
-</body>
-
-</html>

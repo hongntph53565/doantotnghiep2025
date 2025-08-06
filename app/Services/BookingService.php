@@ -6,7 +6,7 @@ use App\Models\Booking;
 use App\Models\BookingSeat;
 use App\Models\BookingFood;
 use App\Models\ShowtimeSeat;
-
+use Illuminate\Support\Facades\Log;
 class BookingService
 {
     public function createSeats(Booking $booking, array $seatIds)
@@ -21,8 +21,8 @@ class BookingService
                 ->firstOrFail();
 
             if ($showtimeSeat->status === 'pending') {
-                throw new \Exception("Seat ID $seatId is already booked.");
-            }
+    throw new \Exception("Ghế đã được chọn, vui lòng chọn ghế khác.");
+}
 
             BookingSeat::create([
                 'booking_id'        => $booking->booking_id,
@@ -65,4 +65,45 @@ class BookingService
             $bookingSeat->delete();
         }
     }
+
+// public function confirmSeats(Booking $booking)
+// {
+//     foreach ($booking->seats as $bookingSeat) {
+//         $showtimeSeat = $bookingSeat->showtimeSeat;
+//         if ($showtimeSeat) {
+//             $showtimeSeat->update(['status' => 'booked']);
+//         }
+//     }
+// }
+public function confirmSeats(Booking $booking)
+{
+    if (!$booking->showtime_id) {
+        Log::info("⚠️ Booking ID {$booking->booking_id} has no showtime_id — skipping seat confirmation.");
+        return;
+    }
+
+    Log::info("✅ Confirming seats for booking ID: {$booking->booking_id}");
+
+    $booking->loadMissing('bookingSeats.showtimeSeat');
+    if ($booking->bookingSeats->isEmpty()) {
+        Log::warning("⚠️ Booking ID {$booking->booking_id} has NO seats attached.");
+        return;
+    }
+
+    foreach ($booking->bookingSeats as $bookingSeat) {
+        Log::info("🔍 BookingSeat ID: {$bookingSeat->id} - ShowtimeSeat ID: {$bookingSeat->showtime_seat_id}");
+
+        $showtimeSeat = $bookingSeat->showtimeSeat;
+
+        if ($showtimeSeat) {
+            Log::info("🔒 Updating seat_id {$showtimeSeat->seat_id} (showtime_id: {$showtimeSeat->showtime_id}) to 'booked'");
+            $showtimeSeat->update(['status' => 'booked']);
+        } else {
+            Log::warning("❌ No ShowtimeSeat found for BookingSeat ID {$bookingSeat->id}, ShowtimeSeat ID: {$bookingSeat->showtime_seat_id}");
+        }
+    }
+}
+
+
+
 }

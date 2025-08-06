@@ -7,7 +7,8 @@
             @if (isset($foods) && count($foods))
                 @foreach ($foods as $type => $items)
                     @foreach ($items as $food)
-                        <div class="combo-item mb-3" data-price="{{ $food->price }}">
+                        <div class="combo-item mb-3" data-id="{{ $food->food_id }}" data-price="{{ $food->price }}">
+
                             <div class="col">
                                 <img src="{{ asset('storage/' . $food->image) }}" alt="{{ $food->name }}">
                                 <div class="row">

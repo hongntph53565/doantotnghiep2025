@@ -3,14 +3,12 @@
 namespace App\Models;
 
 use Faker\Provider\ar_EG\Payment;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Booking extends Model
 {
     protected $primaryKey = 'booking_id';
-    use HasFactory;
-    
+
     protected $fillable = [
         'user_id',
         'showtime_id',
@@ -36,10 +34,44 @@ class Booking extends Model
         return $this->hasOne(Payment::class, 'booking_id');
     }
 
-    public function foods()
+       public function foods()
+    {
+        return $this->belongsToMany(Food::class, 'booking_food', 'booking_id', 'food_id')
+                    ->withPivot('quantity')
+                    ->withTimestamps();
+    }
+    public function seats()
+    {
+        return $this->hasManyThrough(
+            Seat::class,
+            BookingSeat::class,
+            'booking_id',               
+            'seat_id',                  
+            'booking_id',               
+            'showtime_seat_id'          
+        )->join('showtime_seats', 'showtime_seats.seat_id', '=', 'seats.seat_id');
+    }
+    public function bookingSeats()
+    {
+        return $this->hasMany(BookingSeat::class, 'booking_id');
+    }
+    public function promotion()
+    {
+        return $this->hasOne(BookingPromotion::class, 'booking_id', 'booking_id');
+    }
+    public function bookingFoods()
 {
-    return $this->belongsToMany(Food::class, 'booking_food')
-                ->withPivot('quantity')
-                ->withTimestamps();
+    return $this->hasMany(BookingFood::class, 'booking_id');
 }
+public function bookingPromotions()
+{
+    return $this->hasMany(BookingPromotion::class, 'booking_id');
+}
+  public function getSeatsAttribute()
+    {
+        return $this->bookingSeats->map(function ($bookingSeat) {
+            return $bookingSeat->showtimeSeat->seat ?? null;
+        })->filter(); // bỏ null nếu có ghế lỗi
+    }
+
 }

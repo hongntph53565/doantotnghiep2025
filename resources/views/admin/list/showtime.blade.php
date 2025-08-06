@@ -1,36 +1,34 @@
 @extends('layouts.admin')
 
 @section('content')
+@if (session('success'))
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        {{ session('success') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+@endif
     <div class="card border-0 shadow-sm mt-3">
         <div class="card-body p-0">
             <form action="{{ route('showtimes.index') }}">
                 <div class="container-fluid bg-light p-4 rounded-top">
                     <div class="row align-items-end g-3">
                         <div class="col-xl-2 col-lg-3 col-md-6">
-                            <label for="district" class="form-label fw-semibold">Khu vực</label>
-                            <select class="form-select" id="district" name="district">
-                                <option value="" disabled {{ request('district') ? '' : 'selected' }}>--- Chọn khu vực
-                                    ---</option>
+                            <label for="chiNhanh" class="form-label fw-semibold">Khu vực</label>
+                            <select class="form-select" id="district" name="">
+                                <option value="" selected disabled>--- Chọn khu vực ---</option>
                                 @foreach ($districts as $district)
-                                    <option value="{{ $district->city }}"
-                                        {{ request('district') == $district->city ? 'selected' : '' }}>
-                                        {{ $district->city }}
-                                    </option>
+                                    <option value="{{ $district->city }}">{{ $district->city }}</option>
                                 @endforeach
                             </select>
                         </div>
-
-                        {{-- Rạp chiếu --}}
                         <div class="col-xl-2 col-lg-3 col-md-6">
                             <label for="rapChieu" class="form-label fw-semibold">Rạp chiếu <span
                                     class="text-danger">*</span></label>
                             <select class="form-select" id="rapChieu" name="cinema_id">
-                                <option value="" hidden>--- Chọn rạp ---</option>
+                                <option value="" selected disabled>--- Chọn rạp ---</option>
                                 @foreach ($cinemas as $cinema)
-                                    <option value="{{ $cinema->cinema_id }}" district-data="{{ $cinema->city }}"
-                                        {{ request('cinema_id') == $cinema->cinema_id ? 'selected' : '' }}>
-                                        {{ $cinema->name }}
-                                    </option>
+                                    <option value="{{ $cinema->cinema_id }}" district-data="{{ $cinema->city }}">
+                                        {{ $cinema->name }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -48,10 +46,9 @@
                                 <option value="">Tất cả</option>
                                 <option value="Đang chiếu" {{ request('status') == 'Đang chiếu' ? 'selected' : '' }}>Đang
                                     chiếu</option>
-                                <option value="Sắp chiếu" {{ request('status') == 'Sắp chiếu' ? 'selected' : '' }}>Sắp
-                                    chiếu
+                                <option value="Sắp chiếu" {{ request('status') == 'Sắp chiếu' ? 'selected' : '' }}>Sắp chiếu
                                 </option>
-                                <option value="Đã chiếu" {{ request('status') == 'Đã chiếu' ? 'selected' : '' }}>Đã chiếu
+                                <option value="Đã hủy" {{ request('status') == 'Đã hủy' ? 'selected' : '' }}>Đã chiếu
                                 </option>
                             </select>
                         </div>
@@ -59,10 +56,9 @@
                             <button class="btn btn-sm btn-primary flex-grow-1">
                                 <i class="bi bi-funnel me-1"></i> Lọc
                             </button>
-                            <a href="{{ route('showtimes.index') }}" class="btn btn-sm btn-outline-secondary">
+                            <button class="btn btn-sm btn-outline-secondary">
                                 <i class="bi bi-arrow-counterclockwise"></i>
-                            </a>
-
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -141,7 +137,7 @@
                                 <td class="text-center">
                                     <div class="d-flex justify-content-center gap-2">
                                         <a href="{{ route('showtimes.edit', $showtime->showtime_id) }}"
-                                            class="btn btn-icon btn-sm btn-outline-primary">
+                                            class="btn btn-icon btn-sm btn-outline-primary">    
                                             <i class="bi bi-pencil-fill"></i>
                                         </a>
                                         <button class="btn btn-icon btn-sm btn-outline-danger" data-bs-toggle="modal"
@@ -177,53 +173,63 @@
                     Bạn có chắc chắn muốn xóa xuất chiếu này? Thao tác này không thể hoàn tác.
                 </div>
                 <div class="modal-footer border-0">
-                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Hủy bỏ</button>
-                    <button type="button" class="btn btn-danger">Xác nhận xóa</button>
-                </div>
+    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Hủy bỏ</button>
+    <form id="deleteForm" method="POST">
+        @csrf
+        @method('DELETE')
+        <button type="submit" class="btn btn-danger">Xác nhận xóa</button>
+    </form>
+</div>
+
             </div>
         </div>
     </div>
 @endsection
 
 @push('scripts')
+
+
+<script>
+    const deleteModal = document.getElementById('deleteModal');
+    deleteModal.addEventListener('show.bs.modal', function (event) {
+        const button = event.relatedTarget;
+        const showtimeId = button.getAttribute('data-id');
+        const form = document.getElementById('deleteForm');
+        form.action = `/admin/showtime/delete/${showtimeId}`;
+    });
+</script>
+
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const districtSelect = document.getElementById('district');
-            const cinemaSelect = document.getElementById('rapChieu');
-            const selectedDistrict = districtSelect.value;
+        const districtSelect = document.getElementById('district');
+        const cinemaSelect = document.getElementById('rapChieu');
 
-            Array.from(cinemaSelect.options).forEach((option, index) => {
+        Array.from(cinemaSelect.options).forEach((option, index) => {
+            if (index !== 0) {
+                option.hidden = true;
+                option.disabled = true;
+            }
+        });
+        districtSelect.addEventListener('change', function() {
+            const selectedDistrict = this.value;
+
+            Array.from(cinemaSelect.options).forEach(option => {
                 const city = option.getAttribute('district-data');
-                if (!city) return;
 
-                if (!selectedDistrict || city !== selectedDistrict) {
-                    option.hidden = true;
-                    option.disabled = true;
-                } else {
+                if (!city) {
                     option.hidden = false;
                     option.disabled = false;
+                    return;
+                }
+
+                if (city === selectedDistrict) {
+                    option.hidden = false;
+                    option.disabled = false;
+                } else {
+                    option.hidden = true;
+                    option.disabled = true;
                 }
             });
-
-            districtSelect.addEventListener('change', function() {
-                const selected = this.value;
-
-                Array.from(cinemaSelect.options).forEach(option => {
-                    const city = option.getAttribute('district-data');
-
-                    if (!city) return;
-
-                    if (city === selected) {
-                        option.hidden = false;
-                        option.disabled = false;
-                    } else {
-                        option.hidden = true;
-                        option.disabled = true;
-                    }
-                });
-
-                cinemaSelect.selectedIndex = 0;
-            });
+            cinemaSelect.selectedIndex = 0;
         });
     </script>
 @endpush
