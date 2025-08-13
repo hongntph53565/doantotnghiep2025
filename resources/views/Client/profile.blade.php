@@ -28,19 +28,19 @@
                                 </div>
 
                                 <p class="mb-1 small">
-                                    Tổng chi tiêu trong tháng ({{ now()->format('m/Y') }}):
+                                    Tổng chi tiêu trong tháng
+                                    (
+                                    {{ $monthFilter ? \Carbon\Carbon::createFromFormat('Y-m', $monthFilter)->format('m/Y') : now()->format('m/Y') }}
+                                    ):
                                     {{ number_format($totalSpending, 0, ',', '.') }} VNĐ
                                 </p>
+
 
                             </div>
 
                         </div>
-
-
-
-
-
-                        <form>
+                        <form action="{{ route('profile.updateInside') }}" method="POST">
+                            @csrf
                             <div class="row g-3">
                                 <div class="col-md-6">
                                     <label class="form-label">Họ *</label>
@@ -55,27 +55,44 @@
                                 </div>
                                 <div class="col-12">
                                     <label class="form-label">Email *</label>
-                                    <input type="email" class="form-control" name="email" value="{{ $user->email }}">
+                                    <input type="email" class="form-control" value="{{ $user->email }}" readonly>
                                 </div>
                                 <div class="col-12">
                                     <label class="form-label">Mật khẩu *</label>
-                                    <div class="input-group">
-                                        <input type="password" class="form-control">
-                                        {{-- <button type="button" class="btn btn-green">ĐỔI MẬT KHẨU</button>  --}}
+                                    <div class="input-group mb-3">
+                                        <input type="password" class="form-control" readonly value="************">
+                                        <button type="button" id="btn-change-password" class="btn btn-green">ĐỔI MẬT
+                                            KHẨU</button>
+                                    </div>
+
+                                    <div id="change-password-fields" style="display: none;">
+                                        <div class="row g-3">
+                                            <div class="col-md-6">
+                                                <label class="form-label">Mật khẩu mới *</label>
+                                                <input type="password" class="form-control" name="password"
+                                                    placeholder="Mật khẩu mới">
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label">Nhập lại mật khẩu *</label>
+                                                <input type="password" class="form-control" name="password_confirmation"
+                                                    placeholder="Nhập lại mật khẩu">
+                                            </div>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary mt-3">Lưu mật khẩu</button>
                                     </div>
                                 </div>
                                 <div class="col-12">
                                     <label class="form-label">Số điện thoại *</label>
                                     <input type="text" class="form-control" name="phone" value="{{ $user->phone }}">
                                 </div>
-                                <div class="col-12">
+                                {{-- <div class="col-12">
                                     <label class="form-label">Giới tính *</label>
                                     <select class="form-select" name="gender">
-                                        <option {{ $user->gender === 'nam' ? 'selected' : '' }}>Nam</option>
-                                        <option {{ $user->gender === 'nu' ? 'selected' : '' }}>Nữ</option>
-                                        <option {{ $user->gender === 'khac' ? 'selected' : '' }}>Khác</option>
-                                    </select>
-                                </div>
+    <option value="nam" {{ $user->gender === 'nam' ? 'selected' : '' }}>Nam</option>
+    <option value="nu" {{ $user->gender === 'nu' ? 'selected' : '' }}>Nữ</option>
+    <option value="khac" {{ $user->gender === 'khac' ? 'selected' : '' }}>Khác</option>
+</select>
+                                </div> --}}
                                 <div class="col-12">
                                     <label class="form-label">Ngày sinh *</label>
                                     @php
@@ -85,24 +102,33 @@
                                     <div class="row">
                                         <div class="col-md-4">
                                             <input type="number" name="birth_day" class="form-control" placeholder="Ngày"
-                                                value="{{ old('birth_day', $birthdate?->day) }}">
+                                                value="{{ old('birth_day', $birthdate?->day) }}" min="1"
+                                                max="31" oninput="limitNumber(this, 31)">
                                         </div>
                                         <div class="col-md-4">
                                             <input type="number" name="birth_month" class="form-control"
-                                                placeholder="Tháng" value="{{ old('birth_month', $birthdate?->month) }}">
+                                                placeholder="Tháng" value="{{ old('birth_month', $birthdate?->month) }}"
+                                                min="1" max="12" oninput="limitNumber(this, 12)">
                                         </div>
                                         <div class="col-md-4">
                                             <input type="number" name="birth_year" class="form-control" placeholder="Năm"
-                                                value="{{ old('birth_year', $birthdate?->year) }}">
+                                                value="{{ old('birth_year', $birthdate?->year) }}" min="1990"
+                                                max="{{ date('Y') }}"
+                                                oninput="limitNumber(this, {{ date('Y') }}, 1990)">
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-12">
                                     <label class="form-label">Tỉnh/Thành phố *</label>
-                                    <input type="text" class="form-control" name="address" value="{{ $user->address }}">
+                                    <select name="address" id="province" class="form-select">
+                                        <option disabled selected>Chọn Tỉnh/Thành phố</option>
+                                    </select>
+                                    @error('address')
+                                        <div class="text-danger mt-1">{{ $message }}</div>
+                                    @enderror
                                 </div>
                                 <div class="col-12 text-center">
-                                    {{-- <button type="submit" class="btn btn-green px-4">CẬP NHẬT</button> --}}
+                                    <button type="submit" class="btn btn-green px-4">CẬP NHẬT</button>
                                 </div>
                             </div>
                         </form>
@@ -126,9 +152,9 @@
                         </div>
                     </div>
 
-                   
 
-                     <div class="text-center mt-3">
+
+                    <div class="text-center mt-3">
                         @switch($user->role_id)
                             @case(1)
                                 <a href="{{ route('admin.dashboard') }}" class="btn btn-green w-100 py-2 rounded-3 fw-bold">Tới
@@ -141,8 +167,8 @@
                             @break
 
                             @case(3)
-                                <a href="{{ route('staff.list') }}" class="btn btn-green w-100 py-2 rounded-3 fw-bold">Nhân Viên</a>
-
+                                <a href="{{ route('staff.list') }}" class="btn btn-green w-100 py-2 rounded-3 fw-bold">Nhân
+                                    Viên</a>
                             @break
 
                             @default
@@ -155,12 +181,18 @@
             <div class="mt-5">
                 <h5 id="transaction-history" class="fw-bold">Lịch sử giao dịch</h5>
                 <div class="d-flex flex-wrap justify-content-end gap-2 mb-2">
-                    <select class="form-select w-auto">
-                        <option>Đặt vé</option>
-                        <option>Mua combo</option>
-                    </select>
-                    <input type="month" class="form-control w-auto">
+                    <form method="GET" class="d-flex gap-2">
+                        <select name="type" class="form-select w-auto" onchange="this.form.submit()">
+                            <option value="" {{ $typeFilter === null ? 'selected' : '' }}>Tất cả</option>
+                            <option value="booking" {{ $typeFilter === 'booking' ? 'selected' : '' }}>Đặt vé</option>
+                            <option value="combo" {{ $typeFilter === 'combo' ? 'selected' : '' }}>Mua combo</option>
+                        </select>
+
+                        <input type="month" name="month" value="{{ $monthFilter }}" class="form-control w-auto"
+                            onchange="this.form.submit()">
+                    </form>
                 </div>
+
 
                 <div class="table-responsive">
                     <table class="table table-bordered table-striped">
@@ -372,9 +404,9 @@
                                                             <p class="mt-2 mb-0">{{ $booking->booking_code }}</p>
                                                         </div>
 
-                                                    
+
                                                         <div class="col-md-9">
-                                                         
+
 
                                                             @php
                                                                 $discount = $booking->bookingPromotions->sum(
@@ -481,5 +513,36 @@
                 }
             }
         });
+    
+        document.getElementById('btn-change-password').addEventListener('click', function() {
+            document.getElementById('change-password-fields').style.display = 'block';
+            document.querySelector('[name="password"]').setAttribute('required', 'required');
+            document.querySelector('[name="password_confirmation"]').setAttribute('required', 'required');
+            this.style.display = 'none';
+        });
+   
+        const provinces = [
+            "Hà Nội", "TP. Hồ Chí Minh", "Hải Phòng", "Đà Nẵng", "Cần Thơ", "Huế",
+            "An Giang", "Bắc Ninh", "Cà Mau", "Cao Bằng", "Đắk Lắk", "Điện Biên",
+            "Đồng Nai", "Đồng Tháp", "Gia Lai", "Hà Tĩnh", "Hưng Yên", "Khánh Hòa",
+            "Lai Châu", "Lạng Sơn", "Lào Cai", "Lâm Đồng", "Nghệ An", "Ninh Bình",
+            "Phú Thọ", "Quảng Ngãi", "Quảng Ninh", "Quảng Trị", "Sơn La", "Tây Ninh",
+            "Thái Nguyên", "Thanh Hóa", "Tuyên Quang", "Vĩnh Long"
+        ];
+
+        const select = document.getElementById('province');
+        provinces.forEach(province => {
+            let option = document.createElement('option');
+            option.value = province;
+            option.text = province;
+            option.selected = "{{ old('address', Auth::user()->address) }}" === province;
+            select.appendChild(option);
+        });
+    
+        function limitNumber(el, max, min = 1) {
+            let value = parseInt(el.value);
+            if (value > max) el.value = max;
+            if (value < min && el.value !== "") el.value = min;
+        }
     </script>
 @endsection

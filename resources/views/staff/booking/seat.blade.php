@@ -295,7 +295,8 @@
             const type = img.dataset.type;
             const coupleId = img.dataset.coupleId;
 
-            if (img.dataset.status === 'booked') return;
+            if (img.dataset.status === 'booked' || img.dataset.status === 'pending') return;
+
 
             if (type === 'couple' && coupleId) {
                 const coupleImgs = document.querySelectorAll(`img[data-couple-id="${coupleId}"]`);

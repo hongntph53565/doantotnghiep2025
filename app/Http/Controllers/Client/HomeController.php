@@ -7,7 +7,7 @@ use App\Models\Movie;
 use App\Models\Showtime;
 use App\Models\Food;
 use App\Models\Cinema;
-use App\Models\BookingSeat;
+use App\Models\ShowtimeSeat;
 use App\Models\Booking;
 use App\Models\Promotion;
 
@@ -251,6 +251,14 @@ class HomeController extends Controller
             'selectedCity'
         ));
     }
+    public function fetchSeatStatuses($id)
+{
+    $statuses = ShowtimeSeat::where('showtime_id', $id)
+        ->pluck('status', 'seat_id');
+
+    return response()->json($statuses);
+}
+
 
 
 

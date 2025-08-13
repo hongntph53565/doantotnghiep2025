@@ -37,7 +37,7 @@ class VnpayController extends Controller
         }
     }
 
-    public function returnPage(Request $request, $description)
+  public function returnPage(Request $request, $description)
 {
     $allParams = $request->query();
     $booking = Booking::where('booking_code', $description)->first();
@@ -78,12 +78,24 @@ class VnpayController extends Controller
         $this->bookingService->cancelSeats($booking);
     }
 
+    // ✅ Redirect theo role giống PayOS
+    $user = $booking->user;
+    $isSuccess = $allParams['vnp_ResponseCode'] == '00';
+
+    if ($user && $user->role_id == 3) {
+        return redirect()->route('staff.search_ticket_online')
+            ->with('message', $isSuccess
+                ? 'Thanh toán thành công, booking đã xác nhận.'
+                : 'Thanh toán đã bị hủy, booking đã hủy.'
+            );
+    }
+
     return redirect()->to(route('profile') . '#transaction-history')
-        ->with('message', 
-            $allParams['vnp_ResponseCode'] == '00'
+        ->with('message', $isSuccess
             ? 'Thanh toán thành công, booking đã xác nhận.'
             : 'Thanh toán đã bị hủy, booking đã hủy.'
         );
 }
+
 
 }

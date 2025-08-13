@@ -111,12 +111,22 @@ class ShowtimeController extends Controller
                 foreach ($seats as $seat) {
                     ShowtimeSeat::create([
                         'showtime_id' => $showtime->showtime_id,
-                        'seat_id'     => $seat->seat_id,
-                        'status'      => 'available',
+                        'seat_id' => $seat->seat_id,
+                        'status' => 'available',
                     ]);
                 }
 
+                // Cộng 30 phút dọn dẹp
                 $start = $newEnd->copy()->addMinutes(30);
+
+                // --- Làm tròn lên giờ đẹp ---
+                $minute = $start->minute;
+                $roundedMinute = ceil($minute / 5) * 5; // làm tròn lên bội số 5 phút
+                if ($roundedMinute >= 60) {
+                    $start->addHour()->minute(0);
+                } else {
+                    $start->minute($roundedMinute);
+                }
             }
         } else {
             $startTime = Carbon::createFromFormat('Y-m-d H:i', "$date " . $data['start_time']);
@@ -135,8 +145,8 @@ class ShowtimeController extends Controller
             foreach ($seats as $seat) {
                 ShowtimeSeat::create([
                     'showtime_id' => $showtime->showtime_id,
-                    'seat_id'     => $seat->seat_id,
-                    'status'      => 'available',
+                    'seat_id' => $seat->seat_id,
+                    'status' => 'available',
                 ]);
             }
         }
@@ -207,8 +217,8 @@ class ShowtimeController extends Controller
             foreach ($seats as $seat) {
                 ShowtimeSeat::create([
                     'showtime_id' => $showtime->showtime_id,
-                    'seat_id'     => $seat->seat_id,
-                    'status'      => 'available',
+                    'seat_id' => $seat->seat_id,
+                    'status' => 'available',
                 ]);
             }
         }
@@ -219,16 +229,16 @@ class ShowtimeController extends Controller
 
 
     public function delete(string $id)
-{
-    try {
-        $showtime = Showtime::findOrFail($id);
-        $showtime->delete();
-        return redirect()->route('showtimes.index')->with('success', 'Xóa suất chiếu thành công');
-    } catch (Exception $e) {
-        Log::error('[Showtime Delete] ' . $e->getMessage());
-        return back()->withErrors(['error' => 'Lỗi khi xóa suất chiếu']);
+    {
+        try {
+            $showtime = Showtime::findOrFail($id);
+            $showtime->delete();
+            return redirect()->route('showtimes.index')->with('success', 'Xóa suất chiếu thành công');
+        } catch (Exception $e) {
+            Log::error('[Showtime Delete] ' . $e->getMessage());
+            return back()->withErrors(['error' => 'Lỗi khi xóa suất chiếu']);
+        }
     }
-}
 
 
     public function dele()

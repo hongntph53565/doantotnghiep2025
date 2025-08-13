@@ -97,119 +97,156 @@
                     <input type="password" name="password" id="loginPassword" class="form-control"
                         placeholder="Mật khẩu" required>
                 </div>
-                <a href="#" class="forgot-password">Quên mật khẩu?</a>
+                <a href="{{ route('forgotPassword') }}" class="forgot-password">Quên mật khẩu?</a>
                 <button type="submit" class="btn btn-green w-100">ĐĂNG NHẬP</button>
             </form>
         </div>
 
         <!-- Đăng ký -->
-        <div class="col-12 col-md-6 col-lg-7">
-            <h2>ĐĂNG KÝ TÀI KHOẢN</h2>
-            @if ($errors->register->any())
-                <div class="alert alert-danger">
-                    <ul>
-                        @foreach ($errors->register->all() as $error)
-                            <li>{{ $errors->first('login_error') }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            @endif
+       <!-- Đăng ký -->
+<div class="col-12 col-md-6 col-lg-7">
+    <h2>ĐĂNG KÝ TÀI KHOẢN</h2>
 
-            <form method="POST" action="{{ route('register') }}">
-                @csrf
-                <div class="row g-3 mb-3">
-                    <div class="col-md-6">
-                        <label class="form-label">Họ *</label>
-                        <input type="text" name="last_name" class="form-control" required />
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label">Tên đệm và tên *</label>
-                        <input type="text" name="first_name" class="form-control" required />
-                    </div>
-                </div>
-
-                <div class="row g-3 mb-3 align-items-center">
-                    <div class="col-md-6">
-                        <label class="form-label d-block">Giới tính *</label>
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="gender" value="nam" id="genderNam" />
-                            <label class="form-check-label" for="genderNam">Nam</label>
-                        </div>
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="gender" value="nu" id="genderNu" />
-                            <label class="form-check-label" for="genderNu">Nữ</label>
-                        </div>
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="gender" value="khac" id="genderKhac" />
-                            <label class="form-check-label" for="genderKhac">Khác</label>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label">Email *</label>
-                        <input type="email" name="email" class="form-control" required />
-                    </div>
-                </div>
-
-                <div class="row g-3 mb-3">
-                    <div class="col-md-6">
-                        <label class="form-label">Mật khẩu *</label>
-                        <input type="password" name="password" class="form-control" required />
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label">Nhập lại mật khẩu *</label>
-                        <input type="password" name="password_confirmation" class="form-control" required />
-                    </div>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">Số điện thoại *</label>
-                    <input type="text" name="phone" class="form-control" required />
-                </div>
-
-                <div class="row g-3 mb-3">
-                    <label class="form-label">Ngày sinh *</label>
-                    <div class="col-4">
-                        <select class="form-select" name="birth_day" required>
-                            <option disabled selected>Chọn ngày</option>
-                            @for ($i = 1; $i <= 31; $i++)
-                                <option value="{{ $i }}">{{ $i }}</option>
-                            @endfor
-                        </select>
-                    </div>
-                    <div class="col-4">
-                        <select class="form-select" name="birth_month" required>
-                            <option disabled selected>Chọn tháng</option>
-                            @for ($i = 1; $i <= 12; $i++)
-                                <option value="{{ $i }}">{{ $i }}</option>
-                            @endfor
-                        </select>
-                    </div>
-                    <div class="col-4">
-                        <select class="form-select" name="birth_year" required>
-                            <option disabled selected>Chọn năm</option>
-                            @for ($i = now()->year; $i >= 1950; $i--)
-                                <option value="{{ $i }}">{{ $i }}</option>
-                            @endfor
-                        </select>
-                    </div>
-                    <div class="mb-3">
-    <label class="form-label">Tỉnh/Thành phố *</label>
-    <select name="province" id="province" class="form-select" required>
-        <option disabled selected>Chọn Tỉnh/Thành phố</option>
-    </select>
-</div>
-                </div>
-
-                <div class="form-check mb-3">
-                    <input class="form-check-input" type="checkbox" id="agreeTerms" required />
-                    <label class="form-check-label" for="agreeTerms">
-                        Tôi đã đọc, hiểu và đồng ý với các điều khoản
-                    </label>
-                </div>
-
-                <button type="submit" class="btn btn-green w-100">ĐĂNG KÝ</button>
-            </form>
+    {{-- @if ($errors->register->any())
+        <div class="alert alert-danger">
+            <ul>
+                @foreach ($errors->register->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
         </div>
+    @endif --}}
+
+    <form method="POST" action="{{ route('register') }}">
+    @csrf
+
+    <div class="row g-3 mb-3">
+        <div class="col-md-6">
+            <label class="form-label">Họ *</label>
+            <input type="text" name="last_name" class="form-control" value="{{ old('last_name') }}">
+            @error('last_name', 'register')
+                <div class="text-danger mt-1">{{ $message }}</div>
+            @enderror
+        </div>
+        <div class="col-md-6">
+            <label class="form-label">Tên đệm và tên *</label>
+            <input type="text" name="first_name" class="form-control" value="{{ old('first_name') }}">
+            @error('first_name', 'register')
+                <div class="text-danger mt-1">{{ $message }}</div>
+            @enderror
+        </div>
+    </div>
+
+    <div class="row g-3 mb-3 align-items-center">
+        <div class="col-md-6">
+            <label class="form-label d-block">Giới tính *</label>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="gender" value="nam" id="genderNam" {{ old('gender') === 'nam' ? 'checked' : '' }}>
+                <label class="form-check-label" for="genderNam">Nam</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="gender" value="nu" id="genderNu" {{ old('gender') === 'nu' ? 'checked' : '' }}>
+                <label class="form-check-label" for="genderNu">Nữ</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="gender" value="khac" id="genderKhac" {{ old('gender') === 'khac' ? 'checked' : '' }}>
+                <label class="form-check-label" for="genderKhac">Khác</label>
+            </div>
+            @error('gender', 'register')
+                <div class="text-danger mt-1">{{ $message }}</div>
+            @enderror
+        </div>
+
+        <div class="col-md-6">
+            <label class="form-label">Email *</label>
+            <input type="email" name="email" class="form-control" value="{{ old('email') }}">
+            @error('email', 'register')
+                <div class="text-danger mt-1">{{ $message }}</div>
+            @enderror
+        </div>
+    </div>
+
+    <div class="row g-3 mb-3">
+        <div class="col-md-6">
+            <label class="form-label">Mật khẩu *</label>
+            <input type="password" name="password" class="form-control">
+            @error('password', 'register')
+                <div class="text-danger mt-1">{{ $message }}</div>
+            @enderror
+        </div>
+        <div class="col-md-6">
+            <label class="form-label">Nhập lại mật khẩu *</label>
+            <input type="password" name="password_confirmation" class="form-control">
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Số điện thoại *</label>
+        <input type="text" name="phone" class="form-control" value="{{ old('phone') }}">
+        @error('phone', 'register')
+            <div class="text-danger mt-1">{{ $message }}</div>
+        @enderror
+    </div>
+
+    <div class="row g-3 mb-3">
+        <label class="form-label">Ngày sinh *</label>
+        <div class="col-4">
+            <select class="form-select" name="birth_day">
+                <option disabled selected>Chọn ngày</option>
+                @for ($i = 1; $i <= 31; $i++)
+                    <option value="{{ $i }}" {{ old('birth_day') == $i ? 'selected' : '' }}>{{ $i }}</option>
+                @endfor
+            </select>
+            @error('birth_day', 'register')
+                <div class="text-danger mt-1">{{ $message }}</div>
+            @enderror
+        </div>
+        <div class="col-4">
+            <select class="form-select" name="birth_month">
+                <option disabled selected>Chọn tháng</option>
+                @for ($i = 1; $i <= 12; $i++)
+                    <option value="{{ $i }}" {{ old('birth_month') == $i ? 'selected' : '' }}>{{ $i }}</option>
+                @endfor
+            </select>
+            @error('birth_month', 'register')
+                <div class="text-danger mt-1">{{ $message }}</div>
+            @enderror
+        </div>
+        <div class="col-4">
+            <select class="form-select" name="birth_year">
+                <option disabled selected>Chọn năm</option>
+                @for ($i = now()->year; $i >= 1950; $i--)
+                    <option value="{{ $i }}" {{ old('birth_year') == $i ? 'selected' : '' }}>{{ $i }}</option>
+                @endfor
+            </select>
+            @error('birth_year', 'register')
+                <div class="text-danger mt-1">{{ $message }}</div>
+            @enderror
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Tỉnh/Thành phố *</label>
+            <select name="province" id="province" class="form-select">
+                <option disabled selected>Chọn Tỉnh/Thành phố</option>
+            </select>
+            @error('province', 'register')
+                <div class="text-danger mt-1">{{ $message }}</div>
+            @enderror
+        </div>
+    </div>
+
+    <div class="form-check mb-3">
+        <input class="form-check-input" type="checkbox" id="agreeTerms">
+        <label class="form-check-label" for="agreeTerms">
+            Tôi đã đọc, hiểu và đồng ý với các điều khoản
+        </label>
+    </div>
+
+    <button type="submit" class="btn btn-green w-100">ĐĂNG KÝ</button>
+</form>
+
+</div>
+
     </div>
 </div>
 @endsection

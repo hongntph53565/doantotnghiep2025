@@ -12,13 +12,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rubik+Mono+One&display=swap"rel="stylesheet">
-    <!-- Google Font: Inter (giống như ảnh) -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
-
-
-
-
-
 
     <style>
         body {
@@ -141,9 +135,21 @@
         }
 
         .topbar {
-            background-color: #f8f8f8;
-            padding: 1px 0;
-        }
+    background-color: #f8f8f8;
+    padding: 12px 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+.topbar {
+    transition: all 0.3s ease;
+    padding: 12px 0;
+}
+
+.topbar.shrink {
+    padding: 4px 0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+
 
         .topbar .nav-link {
             color: rgb(153, 152, 152);
@@ -365,6 +371,11 @@
         footer a.social-icon:hover {
             color: white !important;
         }
+        .nav-link.active-link {
+    color: #7bc043 !important;
+    font-weight: 700;
+}
+
     </style>
     @stack('styles')
 </head>
@@ -380,141 +391,124 @@
     <div class="header-banner">
         <img src="{{ asset('images/Z1-1748x155-1.jpg') }}" alt="Banner Summer" class="w-100">
     </div>
-    <div class="topbar">
-        <div class="container d-flex justify-content-between align-items-center">
-            <div class="d-flex align-items-center">
-                <a href="{{ url('/') }}">
-                    <img style="width: 150px; height: 70px;"
-                        src="{{ asset('images/z6776223534015_3ec1a499b9bb824d97c41f77d3a677be-removebg-preview.png') }}"
-                        alt="Logo">
+    <div class="topbar sticky-top">
+    <div class="container d-flex justify-content-between align-items-center">
+        <div class="d-flex align-items-center">
+            <a href="{{ url('/') }}">
+                <img style="width: 150px; height: 70px;"
+                    src="{{ asset('images/z6776223534015_3ec1a499b9bb824d97c41f77d3a677be-removebg-preview.png') }}"
+                    alt="Logo">
+            </a>
+            <nav class="navbar navbar-expand-lg align-items-center">
+                <div class="container">
+                    <div class="collapse navbar-collapse">
+                        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                            <li class="nav-item dropdown hover-dropdown">
+                                <a class="nav-link dropdown-toggle {{ request()->is('lich-chieu-rap') || request()->is('lich-chieu-phim') ? 'active-link' : '' }}"
+                                    href="#">
+                                    NOW SHOWING
+                                </a>
+                                <ul class="dropdown-menu custom-dropdown">
+                                    <li><a class="dropdown-item" href="{{ route('Client.cinemaShowtime') }}">LỊCH
+                                            CHIẾU RẠP</a></li>
+                                    <li><a class="dropdown-item" href="{{ url('/lich-chieu-phim') }}">LỊCH CHIẾU
+                                            PHIM</a></li>
+                                </ul>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link {{ request()->is('cua-hang*') ? 'active-link' : '' }}"
+                                    href="{{ url('/cua-hang') }}">THỨC ĂN & NƯỚC</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link {{ request()->is('khuyen-mai') ? 'active-link' : '' }}"
+                                    href="#">KHUYẾN MÃI</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link {{ request()->is('dich-vu') ? 'active-link' : '' }}"
+                                    href="#">DỊCH VỤ</a>
+                            </li>
+                            <li class="nav-item dropdown hover-dropdown">
+                                <a class="nav-link dropdown-toggle {{ request()->is('he-thong-rap') || request()->is('ve-chung-toi') || request()->is('tuyen-dung') ? 'active-link' : '' }}"
+                                    href="#">
+                                    GIỚI THIỆU
+                                </a>
+                                <ul class="dropdown-menu custom-dropdown">
+                                    <li><a class="dropdown-item" href="{{ url('/he-thong-rap') }}">HỆ THỐNG RẠP</a>
+                                    </li>
+                                    <li><a class="dropdown-item" href="#">VỀ CHÚNG TÔI</a></li>
+                                    <li><a class="dropdown-item" href="#">TUYỂN DỤNG</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+        </div>
+
+        <div class="d-flex align-items-center">
+            @php
+                $selectedCity = session('selected_city') ?? 'Chọn khu vực của bạn';
+            @endphp
+
+            <div class="dropdown hover-dropdown">
+                <button class="btn btn-outline-success dropdown-toggle" type="button">
+                    {{ $selectedCity }}
+                </button>
+                <ul class="dropdown-menu custom-dropdown">
+                    @foreach ($cities as $city)
+                        <li><a class="dropdown-item"
+                                href="{{ route('set.city', ['city' => $city]) }}">{{ $city }}</a></li>
+                    @endforeach
+                </ul>
+            </div>
+
+            @if (Auth::check())
+                <a href="{{ url('/profile') }}" class="text-decoration-none text-dark">
+                    <div class="d-flex align-items-center ms-3">
+                        <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" width="24" class="me-1">
+                        <span>{{ Auth::user()->full_name }} /
+                            <strong>
+                                <a href="#"
+                                    onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
+                                    class="text-dark text-decoration-none">Thoát</a>
+                            </strong>
+                        </span>
+                    </div>
                 </a>
-                <nav class="navbar navbar-expand-lg align-items-center">
-                    <div class="container">
-                        <div class="collapse navbar-collapse">
-                            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                                <li class="nav-item dropdown hover-dropdown">
-                                    <a class="nav-link dropdown-toggle active" href="#">
-                                        NOW SHOWING
-                                    </a>
-                                    <ul class="dropdown-menu custom-dropdown">
-                                        <li><a class="dropdown-item" href="{{ route('Client.cinemaShowtime') }}">LỊCH
-                                                CHIẾU RẠP</a></li>
-                                        <li><a class="dropdown-item" href="{{ url('/lich-chieu-phim') }}">LỊCH CHIẾU
-                                                PHIM</a></li>
-                                    </ul>
-                                </li>
-                                <li class="nav-item"><a class="nav-link" href="{{ url('/cua-hang') }}">ĐỒ ĂN/COMBO</a>
-                                </li>
-                                <li class="nav-item"><a class="nav-link" href="#">KHUYẾN MÃI</a></li>
-                                <li class="nav-item"><a class="nav-link" href="#">DỊCH VỤ</a></li>
-                                <li class="nav-item dropdown hover-dropdown">
-                                    <a class="nav-link dropdown-toggle active" href="#">
-                                        VỀ LUMI STAR
-                                    </a>
-                                    <ul class="dropdown-menu custom-dropdown">
-                                        <li><a class="dropdown-item" href="{{ url('/he-thong-rap') }}">HỆ THỐNG RẠP</a>
-                                        </li>
-                                        <li><a class="dropdown-item" href="#">VỀ CHÚNG TÔI</a></li>
-                                        <li><a class="dropdown-item" href="#">TUYỂN DỤNG</a></li>
-                                    </ul>
-                                </li>
-                            </ul>
-                        </div>
+                <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                    @csrf
+                </form>
+            @else
+                <div class="auth-hover-parent">
+                    <button class="btn btn-success">Đăng nhập/Đăng ký</button>
+                    <div class="auth-hover-box">
+                        <form action="{{ route('login') }}" method="POST">
+                            @csrf
+                            <div class="mb-2">
+                                <label>Email *</label>
+                                <input type="email" name="email" class="form-control" required>
+                            </div>
+                            <div class="mb-2">
+                                <label>Mật khẩu *</label>
+                                <input type="password" name="password" class="form-control" required>
+                            </div>
+                            <div class="mb-2 text-end">
+                                <a href="{{ route('forgotPassword') }}" class="forgot-password">Quên mật khẩu?</a>
+                            </div>
+                            <button type="submit" class="btn btn-success mb-2">Đăng nhập</button>
+                        </form>
 
+                        <button class="btn btn-primary w-100"
+                            onclick="window.location.href='{{ route('register.form') }}'">
+                            Đăng ký thành viên
+                        </button>
                     </div>
-                </nav>
-            </div>
-            <div class="d-flex align-items-center">
-                @php
-    $selectedCity = session('selected_city') ?? 'Chọn khu vực của bạn';
-@endphp
-
-<div class="dropdown hover-dropdown">
-    <button class="btn btn-outline-success dropdown-toggle" type="button">
-        {{ $selectedCity }}
-    </button>
-    <ul class="dropdown-menu custom-dropdown">
-        @foreach ($cities as $city)
-            <li><a class="dropdown-item" href="{{ route('set.city', ['city' => $city]) }}">{{ $city }}</a></li>
-        @endforeach
-    </ul>
-</div>
-
-
-                @if (Auth::check())
-                    <a href="{{ url('/profile') }}" class="text-decoration-none text-dark">
-                        <div class="d-flex align-items-center ms-3">
-                            <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" width="24"
-                                class="me-1">
-                            <span>{{ Auth::user()->full_name }} /
-                                <strong>
-                                    <a href="#"
-                                        onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
-                                        class="text-dark text-decoration-none">Thoát</a>
-                                </strong>
-                            </span>
-                        </div>
-                    </a>
-                    <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
-                        @csrf
-                    </form>
-                @else
-                    <div class="auth-hover-parent">
-                        <button class="btn btn-success">Đăng nhập/Đăng ký</button>
-
-                        <div class="auth-hover-box">
-                            <form action="{{ route('login') }}" method="POST">
-                                @csrf
-                                <div class="mb-2">
-                                    <label>Email *</label>
-                                    <input type="email" name="email" class="form-control" required>
-                                </div>
-                                <div class="mb-2">
-                                    <label>Mật khẩu *</label>
-                                    <input type="password" name="password" class="form-control" required>
-                                </div>
-                                <div class="mb-2 text-end">
-                                    <a href="#" class="small text-white">Quên mật khẩu?</a>
-                                </div>
-                                <button type="submit" class="btn btn-success mb-2">Đăng nhập</button>
-                            </form>
-
-                            <button class="btn btn-primary w-100"
-                                onclick="window.location.href='{{ route('register.form') }}'">
-                                Đăng ký thành viên
-                            </button>
-
-
-                        </div>
-                        <script>
-                            document.getElementById("registerForm").addEventListener("submit", function(e) {
-                                e.preventDefault();
-                                const formData = new FormData(this);
-
-                                fetch("{{ route('register') }}", {
-                                        method: "POST",
-                                        body: formData,
-                                        headers: {
-                                            'X-Requested-With': 'XMLHttpRequest',
-                                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                                        }
-                                    })
-                                    .then(res => res.json())
-                                    .then(data => {
-                                        if (data.message === "Đăng ký thành công") {
-                                            window.location.href = "{{ route('login.form') }}";
-                                        } else {
-                                            alert(data.message || "Có lỗi xảy ra!");
-                                        }
-                                    })
-                                    .catch(err => console.error(err));
-                            });
-                        </script>
-                    </div>
-                @endif
-            </div>
+                </div>
+            @endif
         </div>
     </div>
+</div>
+
 
     @yield('content')
 
@@ -591,6 +585,20 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const topbar = document.querySelector('.topbar');
+
+        window.addEventListener('scroll', function () {
+            if (window.scrollY > 50) {
+                topbar.classList.add('shrink');
+            } else {
+                topbar.classList.remove('shrink');
+            }
+        });
+    });
+</script>
+
     @stack('scripts')
     @if (session('success'))
         <div class="position-fixed top-0 end-0 p-3" style="z-index: 9999">
@@ -609,7 +617,7 @@
         <script>
             const toastEl = document.getElementById('toastSuccess');
             const toast = new bootstrap.Toast(toastEl, {
-                delay: 2000
+                delay: 4000
             });
             toast.show();
         </script>
@@ -630,7 +638,7 @@
         <script>
             const toastErrorEl = document.getElementById('toastError');
             const toastError = new bootstrap.Toast(toastErrorEl, {
-                delay: 3000
+                delay: 4000
             });
             toastError.show();
         </script>

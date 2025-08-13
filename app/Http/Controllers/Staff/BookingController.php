@@ -10,6 +10,11 @@ use App\Models\Showtime;
 use Carbon\Carbon;
 use App\Models\Booking;
 use Barryvdh\DomPDF\Facade\Pdf;
+// use Milon\Barcode\Facades\DNS1D;
+use Milon\Barcode\Facades\DNS1DFacade as DNS1D;
+use Milon\Barcode\DNS2D;
+
+
 
 
 
@@ -33,19 +38,28 @@ class BookingController extends Controller
     return view('staff.booking1', compact('movie', 'cinemas'));
 }
 
-public function print($id)
+
+
+public function printView($id)
 {
-        $booking = Booking::with([
-            'user',
-            'showtime.movie',
-            'showtime.room.cinema',
-            'foods',
-            'bookingSeats.showtimeSeat.seat' // cần để get seat_code
-        ])->findOrFail($id);
+    $booking = Booking::with([
+        'user',
+        'showtime.movie',
+        'showtime.room.cinema',
+        'foods',
+        'bookingSeats.showtimeSeat.seat'
+    ])->findOrFail($id);
 
+    // Tạo instance của DNS2D
+    $dns2d = new DNS2D();
+    $dns2d->setStorPath(public_path('cache/'));
 
-    $pdf = Pdf::loadView('pdf.ticket', compact('booking'));
-    return $pdf->download('ve-xem-phim-' . $booking->booking_code . '.pdf');
+    // Tạo mã QR (hoặc barcode 2D)
+    $barcode = base64_encode(
+        $dns2d->getBarcodePNG($booking->booking_code, 'QRCODE', 8, 8)
+    );
+
+    return view('pdf.ticket', compact('booking', 'barcode'));
 }
 
     public function step2(Request $request)

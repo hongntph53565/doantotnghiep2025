@@ -939,7 +939,8 @@
                                     <span style="font-size: 14px;">Thanh toán qua VNPAY</span>
                                 </label>
                                 <label><input type="radio" name="payment" value="payos" id="payos">
-                                    <img src="{{ asset('images/payos.png') }}" alt="PayOS" /> Thanh toán bằng PayOS
+                                    <img src="{{ asset('images/payos.png') }}" alt="PayOS" style="width: 45px; height: 45px; object-fit: contain;" />
+ Thanh toán bằng PayOS
                                 </label>
                                 <label><input type="radio" name="payment" value="zalopay" id="zalopay">
                                     <img src="{{ asset('images/zalopay.png') }}" alt="ZaloPay" /> Zalopay QR đa năng

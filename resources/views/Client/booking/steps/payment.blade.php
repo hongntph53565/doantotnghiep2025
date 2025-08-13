@@ -1,5 +1,30 @@
 <div class="container mb-5">
     <div class="container-combo">
+
+         <hr>
+              @if (session('success_cash'))
+    <!-- Modal -->
+    <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content text-center p-4">
+                <div class="modal-body">
+                    <i class="fa-solid fa-circle-check fa-3x text-success mb-3"></i>
+                    <h5 class="mb-3">Đặt vé thành công</h5>
+                    <a href="{{ route('staff.search_ticket_online') }}" class="btn btn-success fw-bold">Lấy vé</a>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Auto show modal -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const successModal = new bootstrap.Modal(document.getElementById('successModal'));
+            successModal.show();
+        });
+    </script>
+@endif
         <div class="left-box">
             <div class="payment-method-box">
                 <h3>Hình thức thanh toán</h3>
@@ -27,6 +52,18 @@
                         <span>Zalopay QR đa năng</span>
                     </label>
                 </div>
+                 @if(Auth::check() && Auth::user()->role_id == 3)
+<div class="payment-option">
+    <input type="radio" name="payment" value="cash" id="cash">
+    <label for="cash">
+        <i class="fa-solid fa-money-bill-wave" style="font-size: 20px; color: #75be43;"></i>
+        <span style="font-size: 14px;">Thanh toán tiền mặt</span>
+    </label>
+</div>
+@endif
+
+
+               
                 
 
 
@@ -182,6 +219,7 @@
                     <input type="hidden" name="seats_id" id="selected_seats">
                     <input type="hidden" name="selected_foods" id="selected_foods">
                     <input type="hidden" name="promo_code" id="promo_code_hidden">
+                    <input type="hidden" name="movie_id" value="{{ $movie->movie_id }}">
 
                     <a href="javascript:void(0);" class="btn-checkout" onclick="submitCheckout()">THANH TOÁN
                         (4/4)</a>

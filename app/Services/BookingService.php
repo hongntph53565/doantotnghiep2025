@@ -21,8 +21,8 @@ class BookingService
                 ->firstOrFail();
 
             if ($showtimeSeat->status === 'pending') {
-                throw new \Exception("Seat ID $seatId is already booked.");
-            }
+    throw new \Exception("Ghế đã được chọn, vui lòng chọn ghế khác.");
+}
 
             BookingSeat::create([
                 'booking_id'        => $booking->booking_id,

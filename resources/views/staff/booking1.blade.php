@@ -78,6 +78,55 @@
             // window.location.href = '{{ route('home') }}';
         }
     </script>
+     <script>
+    const showtimeId = "{{ $selectedShowtimeId }}";
+
+    function updateSeatImages(statuses) {
+    document.querySelectorAll('img[data-seat-id]').forEach(img => {
+        const seatId = img.getAttribute('data-seat-id');
+        const status = statuses[seatId] || 'available';
+        const type = img.dataset.type;
+
+        // Nếu ghế này đang nằm trong selectedSeats thì giữ ảnh ghế đã chọn
+        const isSelected = Array.from(selectedSeats.values()).some(seat => {
+            if (seat.type === 'couple') {
+                return seat.seat_ids?.includes(parseInt(seatId));
+            }
+            return seat.seat_id === parseInt(seatId);
+        });
+
+        let imgPath;
+        if (isSelected) {
+            imgPath = 'seat-selected.svg';
+        } else if (status === 'booked' || status === 'pending') {
+            imgPath = 'seat-booked.svg';
+        } else {
+            imgPath = {
+                'standard': 'seat-standard-available.svg',
+                'vip': 'seat-vip-available.svg',
+                'couple': 'seat-couple-available.svg'
+            }[type] || 'seat-standard-available.svg';
+        }
+
+        const newSrc = `/images/${imgPath}`;
+        if (img.src.indexOf(imgPath) === -1) {
+            img.src = newSrc;
+        }
+
+        img.dataset.status = status;
+    });
+}
+
+
+    function fetchSeatStatuses() {
+        fetch(`/ajax/showtime/${showtimeId}/seats-status`)
+            .then(res => res.json())
+            .then(updateSeatImages)
+            .catch(console.error);
+    }
+
+    setInterval(fetchSeatStatuses, 5000); 
+</script>
 @endpush
 @push('styles')
     {{-- <style>

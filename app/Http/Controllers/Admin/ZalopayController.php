@@ -41,45 +41,55 @@ class ZalopayController extends Controller
     }
 }
 
-    public function returnPage(Request $request, $description)
-    {
-        $allParams = $request->query();
-        $booking = Booking::where('booking_code', $description)->first();
-        $payment = Payment::where('booking_id', $booking->booking_id)->first();
-        if (!$booking) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Không tìm thấy booking.'
-            ], 404);
-        }
+  public function returnPage(Request $request, $description)
+{
+    $allParams = $request->query();
+    $booking = Booking::where('booking_code', $description)->first();
+    $payment = Payment::where('booking_id', $booking->booking_id)->first();
 
-        if ($booking['payment_method'] === "zalopay") {
-            $payment = Payment::create([
-                'booking_id'     => $booking['booking_id'],
-                'payment_method' => $booking['payment_method'],
-                'price_amount'   => $booking->total_price,
-                'status'         => ($allParams['cancel'] ?? 'false') === 'true' ? 'unpaid' : 'paid'
-            ]);
-            $payment['user_id'] = $booking['user_id'];
-            event(new PaymentEvents($payment));
-        }
-
-        if (($allParams['status'] ?? '1') !== '-49' && $booking['payment_method'] === "zalopay") {
-            $booking->update([
-                'booking_status' => 'confirmed'
-            ]);
-        } elseif (($allParams['status'] ?? '1') === '-49' && $booking['payment_method'] === "zalopay") {
-            $booking->update([
-                'booking_status' => 'cancelled'
-            ]);
-            $payment->update([
-                'status' => 'cancelled'
-            ]);
-            $this->bookingService->cancelSeats($booking);
-        }
-
-        return redirect()->route('home')->with('message', ($allParams['status'] ?? '1') === '-49'
-            ? 'Thanh toán đã bị hủy, booking đã hủy.'
-            : 'Thanh toán thành công, booking đã xác nhận.');
+    if (!$booking) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Không tìm thấy booking.'
+        ], 404);
     }
+
+    if ($booking['payment_method'] === "zalopay") {
+        $payment = Payment::create([
+            'booking_id'     => $booking['booking_id'],
+            'payment_method' => $booking['payment_method'],
+            'price_amount'   => $booking->total_price,
+            'status'         => ($allParams['cancel'] ?? 'false') === 'true' ? 'unpaid' : 'paid'
+        ]);
+        $payment['user_id'] = $booking['user_id'];
+        event(new PaymentEvents($payment));
+    }
+
+    if (($allParams['status'] ?? '1') !== '-49' && $booking['payment_method'] === "zalopay") {
+        $booking->update([
+            'booking_status' => 'confirmed'
+        ]);
+    } elseif (($allParams['status'] ?? '1') === '-49' && $booking['payment_method'] === "zalopay") {
+        $booking->update([
+            'booking_status' => 'cancelled'
+        ]);
+        $payment->update([
+            'status' => 'cancelled'
+        ]);
+        $this->bookingService->cancelSeats($booking);
+    }
+
+    // ✅ Redirect theo role giống PayOS
+    $user = $booking->user;
+    $isCancel = ($allParams['status'] ?? '1') === '-49';
+
+    if ($user && $user->role_id == 3) {
+        return redirect()->route('staff.search_ticket_online')
+            ->with('message', $isCancel ? 'Thanh toán đã bị hủy, booking đã hủy.' : 'Thanh toán thành công, booking đã xác nhận.');
+    }
+
+    return redirect()->to(route('profile') . '#transaction-history')
+        ->with('message', $isCancel ? 'Thanh toán đã bị hủy, booking đã hủy.' : 'Thanh toán thành công, booking đã xác nhận.');
+}
+
 }
