@@ -40,7 +40,7 @@ public function print($id)
             'showtime.movie',
             'showtime.room.cinema',
             'foods',
-            'bookingSeats.showtimeSeat.seat' // cần để get seat_code
+            'bookingSeats.showtimeSeat.seat'
         ])->findOrFail($id);
 
 

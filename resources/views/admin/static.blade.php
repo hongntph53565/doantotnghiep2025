@@ -113,10 +113,8 @@
         <div class="col-md-6">
             <div class="card">
                 <div class="card-header fw-bold">Doanh thu theo rạp</div>
-                <div class="card-body d-flex justify-content-center">
-                    <div style="max-width: 250px;">
-                        <canvas id="theoRapChart"></canvas>
-                    </div>
+                <div class="card-body">
+                    <canvas id="theoRapChart"></canvas>
                 </div>
             </div>
         </div>
@@ -132,10 +130,8 @@
         <div class="col-md-6">
             <div class="card">
                 <div class="card-header fw-bold">Phương thức thanh toán</div>
-                <div class="card-body d-flex justify-content-center">
-                    <div style="max-width: 250px;">
-                        <canvas id="ptttChart"></canvas>
-                    </div>
+                <div class="card-body">
+                    <canvas id="ptttChart"></canvas>
                 </div>
             </div>
         </div>
@@ -192,34 +188,31 @@
         const ptttLabels = {!! json_encode($plabels) !!};
         const ptttData = {!! json_encode($pdata) !!};
 
-        const hasData = ptttData.length > 0 && ptttData.some(val => val > 0);
-
-        const chartLabels = hasData ? ptttLabels : ['Không có dữ liệu'];
-        const chartData = hasData ? ptttData : [1]; // 1 phần tử giả để có hình bánh
-        const chartColors = hasData ? ["#0d6efd", "#20c997", "#ffc107", "#dc3545"] : ['#e0e0e0'];
-
         new Chart(document.getElementById("ptttChart"), {
-            type: "pie",
+            type: "bar",
             data: {
-                labels: chartLabels,
+                labels: ptttLabels,
                 datasets: [{
-                    data: chartData,
-                    backgroundColor: chartColors,
+                    label: "Số lượng",
+                    data: ptttData,
+                    backgroundColor: ["#0d6efd", "#20c997", "#ffc107", "#dc3545"],
                 }],
             },
             options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                },
                 plugins: {
                     legend: {
-                        position: "right",
-                    },
-                    tooltip: {
-                        enabled: hasData,
+                        display: false,
                     },
                 },
             },
         });
     </script>
-
 
     <script>
         const movieLabels = {!! json_encode($movieRevenue->pluck('title')) !!};
@@ -258,36 +251,38 @@
 
     <script>
         const cinemaRevenue = @json($cinemaRevenue);
-
-        let hasDataCinema = cinemaRevenue.length > 0 && cinemaRevenue.some(item => item.total_revenue > 0);
-        const labelsCinema = hasDataCinema ? cinemaRevenue.map(item => item.cinema_name) : ['Không có dữ liệu'];
-        const dataCinema = hasDataCinema ? cinemaRevenue.map(item => item.total_revenue) : [1];
-        const colorsCinema = hasDataCinema ?
-            ["#0d6efd", "#198754", "#ffc107", "#dc3545", "#6f42c1"] :
-            ['#e0e0e0'];
+        const cinemaLabels = cinemaRevenue.map(item => item.cinema_name);
+        const cinemaData = cinemaRevenue.map(item => item.total_revenue);
 
         new Chart(document.getElementById("theoRapChart"), {
-            type: "pie",
+            type: "bar",
             data: {
-                labels: labelsCinema,
+                labels: cinemaLabels,
                 datasets: [{
-                    data: dataCinema,
-                    backgroundColor: colorsCinema,
+                    label: "Doanh thu (₫)",
+                    data: cinemaData,
+                    backgroundColor: ["#0d6efd", "#198754", "#ffc107", "#dc3545", "#6f42c1"],
                 }],
             },
             options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        ticks: {
+                            callback: function(value) {
+                                return new Intl.NumberFormat('vi-VN').format(value) + " ₫";
+                            }
+                        }
+                    }
+                },
                 plugins: {
                     legend: {
-                        position: "right"
-                    },
-                    tooltip: {
-                        enabled: hasDataCinema
+                        display: false,
                     },
                 },
             },
         });
     </script>
-
 
     <script>
         const districtSelect = document.getElementById('district');

@@ -18,11 +18,14 @@ class AppServiceProvider extends ServiceProvider
         \App\Events\UserRegistered::class => [
             \App\Listeners\SendWelcomeEmail::class,
             \App\Listeners\CreateMemberShipCard::class,
+            \App\Listeners\Bookingsuccessful::class,
         ],
         \App\Events\PaymentEvents::class => [
             \App\Listeners\UpdateMemberCard::class,
         ],
-
+        \App\Events\BookingEvents::class => [
+            \App\Listeners\Bookingsuccessful::class,
+        ],
     ];
 
     public function register(): void

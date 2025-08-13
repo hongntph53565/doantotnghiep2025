@@ -17,9 +17,7 @@ use Illuminate\Support\Facades\Log;
 class BookingController extends Controller
 {
 
-    public function __construct()
-    {
-    }
+    public function __construct() {}
 
     public function index()
     {
@@ -28,108 +26,102 @@ class BookingController extends Controller
     }
 
     public function store(Request $request, BookingService $bookingService)
-{
-    $data = $request->validate([
-        'user_id' => 'required|exists:users,user_id',
-        'showtime_id' => 'required|exists:showtimes,showtime_id',
-        'booking_code' => 'unique:bookings,booking_code',
-        'payment_method' => 'required|in:cash,payos,zalopay,vnpay',
-        'total_price' => 'required|numeric|min:1',
-        'seats_id' => 'required|string',
-        'selected_foods' => 'nullable|string',
-        'promo_code' => 'nullable|string',
-        'movie_id' => 'required|exists:movies,movie_id', 
-    ]);
+    {
+        $data = $request->validate([
+            'user_id' => 'required|exists:users,user_id',
+            'showtime_id' => 'required|exists:showtimes,showtime_id',
+            'booking_code' => 'unique:bookings,booking_code',
+            'payment_method' => 'required|in:cash,payos,zalopay,vnpay',
+            'total_price' => 'required|numeric|min:1',
+            'seats_id' => 'required|string',
+            'selected_foods' => 'nullable|string',
+            'promo_code' => 'nullable|string',
+            'movie_id' => 'required|exists:movies,movie_id',
+        ]);
 
-    $selectedFoods = json_decode($data['selected_foods'], true) ?? [];
-    $seatIds = json_decode($data['seats_id'], true);
+        $selectedFoods = json_decode($data['selected_foods'], true) ?? [];
+        $seatIds = json_decode($data['seats_id'], true);
 
-    if (!is_array($seatIds)) {
-        return back()->withErrors(['seats_id' => 'Định dạng seats_id không hợp lệ.']);
-    }
+        if (!is_array($seatIds)) {
+            return back()->withErrors(['seats_id' => 'Định dạng seats_id không hợp lệ.']);
+        }
 
-    $data['booking_code'] = strtoupper(substr(md5(time()), 0, 9));
-    $originalTotal = $data['total_price'];
-    $discountAmount = 0;
-    $promotion = null;
+        $data['booking_code'] = strtoupper(substr(md5(time()), 0, 9));
+        $originalTotal = $data['total_price'];
+        $discountAmount = 0;
+        $promotion = null;
 
-  
-    if (!empty($data['promo_code'])) {
-        $promotion = Promotion::where('discount_code', $data['promo_code'])
-            ->where('status', 'active')
-            ->whereDate('start_date', '<=', now())
-            ->whereDate('end_date', '>=', now())
-            ->first();
 
-        if ($promotion && (!$promotion->min_order_value || $originalTotal >= $promotion->min_order_value)) {
-            $discountAmount = $promotion->type_discount === 'percent'
-                ? ($originalTotal * $promotion->discount_value) / 100
-                : $promotion->discount_value;
+        if (!empty($data['promo_code'])) {
+            $promotion = Promotion::where('discount_code', $data['promo_code'])
+                ->where('status', 'active')
+                ->whereDate('start_date', '<=', now())
+                ->whereDate('end_date', '>=', now())
+                ->first();
 
-            if ($promotion->max_discount) {
-                $discountAmount = min($discountAmount, $promotion->max_discount);
+            if ($promotion && (!$promotion->min_order_value || $originalTotal >= $promotion->min_order_value)) {
+                $discountAmount = $promotion->type_discount === 'percent'
+                    ? ($originalTotal * $promotion->discount_value) / 100
+                    : $promotion->discount_value;
+
+                if ($promotion->max_discount) {
+                    $discountAmount = min($discountAmount, $promotion->max_discount);
+                }
+
+                $discountAmount = round($discountAmount);
+                $data['total_price'] -= $discountAmount;
             }
+        }
 
-            $discountAmount = round($discountAmount);
-            $data['total_price'] -= $discountAmount;
+
+        $booking = Booking::create([
+            'user_id' => $data['user_id'],
+            'showtime_id' => $data['showtime_id'],
+            'booking_code' => $data['booking_code'],
+            'total_price' => $data['total_price'],
+            'payment_method' => $data['payment_method'],
+        ]);
+
+
+        try {
+            $bookingService->createSeats($booking, $seatIds);
+        } catch (\Exception $e) {
+            return redirect()
+                ->route('home')
+                ->with('success', 'Đặt vé thất bại');
+        }
+        $bookingService->attachFoodsToBooking($booking->booking_id, $selectedFoods);
+
+
+        if (!empty($promotion)) {
+            BookingPromotion::create([
+                'booking_id' => $booking->booking_id,
+                'promo_id' => $promotion->promo_id,
+                'discount_amount' => $discountAmount,
+            ]);
+        }
+
+
+        switch ($data['payment_method']) {
+            case 'payos':
+                return redirect()->route('payos.create', [
+                    'amount' => $data['total_price'],
+                    'description' => $data['booking_code'],
+                ]);
+            case 'zalopay':
+                return redirect()->route('zalopay.create', [
+                    'amount' => $data['total_price'],
+                    'description' => $data['booking_code'],
+                ]);
+            case 'vnpay':
+                return redirect()->route('vnpay.create', [
+                    'amount' => $data['total_price'],
+                    'description' => $data['booking_code'],
+                ]);
+            default:
+                return redirect()->route('bookings.index')->with('success', 'Đặt vé thành công.');
         }
     }
-
-   
-    $booking = Booking::create([
-        'user_id' => $data['user_id'],
-        'showtime_id' => $data['showtime_id'],
-        'booking_code' => $data['booking_code'],
-        'total_price' => $data['total_price'],
-        'payment_method' => $data['payment_method'],
-    ]);
-
-    
-    try {
-        $bookingService->createSeats($booking, $seatIds);
-    } catch (\Exception $e) {
-        $booking->delete(); 
-        return redirect()
-            ->route('Client.booking.home', [
-                'movie_id' => $data['movie_id'],
-                'showtime_id' => $data['showtime_id'],
-            ])
-            ->withInput()
-            ->with('error', $e->getMessage());
-    }
-
-    $bookingService->attachFoodsToBooking($booking->booking_id, $selectedFoods);
-
-   
-    if (!empty($promotion)) {
-        BookingPromotion::create([
-            'booking_id' => $booking->booking_id,
-            'promo_id' => $promotion->promo_id,
-            'discount_amount' => $discountAmount,
-        ]);
-    }
-
-    
-    switch ($data['payment_method']) {
-        case 'payos':
-            return redirect()->route('payos.create', [
-                'amount' => $data['total_price'],
-                'description' => $data['booking_code'],
-            ]);
-        case 'zalopay':
-            return redirect()->route('zalopay.create', [
-                'amount' => $data['total_price'],
-                'description' => $data['booking_code'],
-            ]);
-        case 'vnpay':
-            return redirect()->route('vnpay.create', [
-                'amount' => $data['total_price'],
-                'description' => $data['booking_code'],
-            ]);
-        default:
-            return redirect()->route('bookings.index')->with('success', 'Đặt vé thành công.');
-    }
-}
 
     public function storeFoodOnly(Request $request, BookingService $bookingService)
     {

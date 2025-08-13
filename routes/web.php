@@ -33,7 +33,20 @@ use App\Http\Controllers\Staff\StaffBookingController;
 use App\Http\Controllers\Staff\BookingSearchController;
 use App\Http\Controllers\Staff\BookingController as StaffBooking;
 
+Route::prefix('payos')->name('payos.')->group(function () {
+    Route::get('/create-link/{amount}/{description}', [PayosController::class, 'createLink'])->name('create');
+    Route::get('/return-link/{description}', [PayosController::class, 'returnPage'])->name('return');
+});
 
+Route::prefix('zalopay')->name('zalopay.')->group(function () {
+    Route::get('/create-link/{amount}/{description}', [ZalopayController::class, 'createLink'])->name('create');
+    Route::get('/return-link/{description}', [ZalopayController::class, 'returnPage'])->name('return');
+});
+
+Route::prefix('vnpay')->name('vnpay.')->group(function () {
+    Route::get('/create-link/{amount}/{description}', [VnpayController::class, 'createLink'])->name('create');
+    Route::get('/return-link/{description}', [VnpayController::class, 'returnPage'])->name('return');
+});
 
 Route::prefix('booking')->name('booking.')->group(function () {
     Route::get('/', [BookingController::class, 'index'])->name('index');
@@ -82,7 +95,6 @@ Route::prefix('admin')->middleware(['auth', 'role:admin,employee'])->group(funct
         Route::get('/edit/{id}', [GenreController::class, 'edit'])->name('edit');
         Route::post('/update/{id}', [GenreController::class, 'update'])->name('update');
         Route::delete('/delete/{id}', [GenreController::class, 'destroy'])->name('delete');
-
     });
 
 
@@ -181,21 +193,6 @@ Route::prefix('admin')->middleware(['auth', 'role:admin,employee'])->group(funct
         Route::post('rooms/{room}/seats/update', [SeatController::class, 'update'])->name('update');
     });
 
-    Route::prefix('payos')->name('payos.')->group(function () {
-        Route::get('/create-link/{amount}/{description}', [PayosController::class, 'createLink'])->name('create');
-        Route::get('/return-link/{description}', [PayosController::class, 'returnPage'])->name('return');
-    });
-
-    Route::prefix('zalopay')->name('zalopay.')->group(function () {
-        Route::get('/create-link/{amount}/{description}', [ZalopayController::class, 'createLink'])->name('create');
-        Route::get('/return-link/{description}', [ZalopayController::class, 'returnPage'])->name('return');
-    });
-
-    Route::prefix('vnpay')->name('vnpay.')->group(function () {
-        Route::get('/create-link/{amount}/{description}', [VnpayController::class, 'createLink'])->name('create');
-        Route::get('/return-link/{description}', [VnpayController::class, 'returnPage'])->name('return');
-    });
-
     Route::get('/seats/{showtime_id}', [BookingController::class, 'getSeatsByShowtime']);
 
     // Route::prefix('manager')->name('manager.')->group(callback: function () {
@@ -214,11 +211,9 @@ Route::prefix('staff')->name('staff.')->group(function () {
     Route::get('/cart', [StaffBookingController::class, 'showCart'])->name('cart');
     Route::post('/cart/add', [StaffBookingController::class, 'addToCart'])->name('cart.addCart');
     Route::get('/clear-cart-and-search', function () {
-        session()->forget('cart'); // Xoá giỏ hàng
+        session()->forget('cart');
         return redirect()->route('staff.search_ticket_online');
     })->name('cart.clearAndRedirect');
-
-
 });
 
 
@@ -331,8 +326,6 @@ Route::prefix('payos')->name('payos.')->group(function () {
     Route::get('/create-link/{amount}/{description}', [PayosController::class, 'createLink'])->name('create');
     Route::get('/return-link/{description}', [PayosController::class, 'returnPage'])->name('return');
 });
-
-
 
 Route::middleware('web')->group(function () {
     Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login.form');

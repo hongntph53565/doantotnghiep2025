@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Events\BookingEvents;
 use App\Events\PaymentEvents;
 use App\Http\Controllers\Controller;
 use App\Models\Booking;
@@ -60,7 +61,6 @@ class ZalopayController extends Controller
                 'price_amount'   => $booking->total_price,
                 'status'         => ($allParams['cancel'] ?? 'false') === 'true' ? 'unpaid' : 'paid'
             ]);
-            $payment['user_id'] = $booking['user_id'];
             event(new PaymentEvents($payment));
         }
 
@@ -68,6 +68,8 @@ class ZalopayController extends Controller
             $booking->update([
                 'booking_status' => 'confirmed'
             ]);
+        event(new BookingEvents($booking));
+
         } elseif (($allParams['status'] ?? '1') === '-49' && $booking['payment_method'] === "zalopay") {
             $booking->update([
                 'booking_status' => 'cancelled'
@@ -78,7 +80,7 @@ class ZalopayController extends Controller
             $this->bookingService->cancelSeats($booking);
         }
 
-        return redirect()->route('home')->with('message', ($allParams['status'] ?? '1') === '-49'
+        return redirect()->route('home')->with('success', ($allParams['status'] ?? '1') === '-49'
             ? 'Thanh toán đã bị hủy, booking đã hủy.'
             : 'Thanh toán thành công, booking đã xác nhận.');
     }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Events\BookingEvents;
 use App\Events\PaymentEvents;
 use App\Http\Controllers\Controller;
 use App\Models\Booking;
@@ -56,7 +57,6 @@ class VnpayController extends Controller
             'price_amount'   => $booking->total_price,
             'status'         => $allParams['vnp_ResponseCode'] == '00' ? 'paid' : 'unpaid'
         ]);
-        $payment['user_id'] = $booking['user_id'];
         event(new PaymentEvents($payment));
     }
 
@@ -71,6 +71,8 @@ class VnpayController extends Controller
 
         $foods = json_decode($booking->selected_foods, true) ?? [];
         $this->bookingService->attachFoodsToBooking($booking->booking_id, $foods);
+
+        event(new BookingEvents($booking));
     } elseif ($allParams['vnp_ResponseCode'] !== '00' && $booking['payment_method'] === "vnpay") {
         $booking->update([
             'booking_status' => 'cancelled'
@@ -79,7 +81,7 @@ class VnpayController extends Controller
     }
 
     return redirect()->to(route('profile') . '#transaction-history')
-        ->with('message', 
+        ->with('success', 
             $allParams['vnp_ResponseCode'] == '00'
             ? 'Thanh toán thành công, booking đã xác nhận.'
             : 'Thanh toán đã bị hủy, booking đã hủy.'

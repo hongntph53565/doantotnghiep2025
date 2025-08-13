@@ -145,7 +145,107 @@ DB::table('email_templates')->insert([
     ',
     'created_by' => 'system',
     'created_at' => now(),
-    'updated_at' => now(),]
+    'updated_at' => now(),],
+    [
+    'template_name' => 'booking_success',
+    'subject' => 'Xác nhận đặt vé thành công',
+    'content' => '
+        <!DOCTYPE html>
+        <html lang="vi">
+        <head>
+            <meta charset="UTF-8">
+            <title>Xác nhận đặt vé thành công</title>
+            <style>
+                body {
+                    font-family: Arial, sans-serif;
+                    background-color: #f4f4f4;
+                    margin: 0;
+                    padding: 0;
+                }
+                .email-container {
+                    max-width: 600px;
+                    margin: auto;
+                    background-color: #ffffff;
+                    padding: 30px;
+                    border-radius: 10px;
+                }
+                .header {
+                    text-align: center;
+                    margin-bottom: 20px;
+                }
+                .header h1 {
+                    color: #e50914;
+                    margin: 0;
+                }
+                .ticket-info {
+                    background-color: #f9f9f9;
+                    padding: 15px;
+                    border-radius: 5px;
+                    margin-bottom: 20px;
+                }
+                .ticket-info h3 {
+                    margin-top: 0;
+                    color: #2e3b55;
+                }
+                .button {
+                    display: inline-block;
+                    background-color: #e50914;
+                    color: #fff;
+                    text-decoration: none;
+                    padding: 10px 20px;
+                    border-radius: 5px;
+                    margin-top: 20px;
+                }
+                .footer {
+                    margin-top: 40px;
+                    font-size: 12px;
+                    text-align: center;
+                    color: #888;
+                }
+            </style>
+        </head>
+        <body>
+            <div class="email-container">
+                <div class="header">
+                    <h1>🎟 ĐẶT VÉ THÀNH CÔNG</h1>
+                </div>
+
+                <p>Xin chào <strong>{customer_name}</strong>,</p>
+                <p>Cảm ơn bạn đã đặt vé tại <strong>{cinema_name}</strong>. Dưới đây là thông tin đặt vé của bạn:</p>
+
+                <div class="ticket-info">
+                    <h3>THÔNG TIN VÉ</h3>
+                    <p><strong>Mã đặt vé:</strong> {booking_code}</p>
+                    <p><strong>Phim:</strong> {movie_name}</p>
+                    <p><strong>Rạp:</strong> {cinema_name}</p>
+                    <p><strong>Phòng chiếu:</strong> {room_name}</p>
+                    <p><strong>Suất chiếu:</strong> {showtime}</p>
+                    <p><strong>Ghế:</strong> {seats}</p>
+                    <p><strong>Tổng thanh toán:</strong> {total_price}₫</p>
+                </div>
+
+                <p>Vui lòng đến rạp trước 15 phút để làm thủ tục nhận vé.</p>
+
+                <p style="text-align: center;">
+                    <a href="{ticket_url}" class="button">XEM VÉ CỦA BẠN</a>
+                </p>
+
+                <p>Nếu có bất kỳ thắc mắc nào, vui lòng liên hệ với chúng tôi qua:</p>
+                <p>Email: support@rapchieuphim.com<br>
+                Hotline: 1900 9999</p>
+
+                <div class="footer">
+                    © {year} {cinema_name} – All rights reserved.<br>
+                    Đây là email tự động, vui lòng không trả lời.
+                </div>
+            </div>
+        </body>
+        </html>
+    ',
+    'created_by' => 'system',
+    'created_at' => now(),
+    'updated_at' => now(),
+],
 ]);
 
     }
