@@ -364,35 +364,52 @@ class HomeController extends Controller
 
         return view('Client.booking.steps.select_showtime', compact('movie', 'showtimes'))->render();
     }
-    public function ajaxShowtimes(Request $request)
-    {
-        $movieId = $request->input('movie_id');
-        $date = $request->input('date');
-        $nowVN = Carbon::now('Asia/Ho_Chi_Minh');
+   public function ajaxShowtimes(Request $request)
+{
+    $movieId = $request->input('movie_id');
+    $date = $request->input('date');
+    $nowVN = Carbon::now('Asia/Ho_Chi_Minh');
 
-        $selectedCity = strtolower(trim(Session::get('selected_city'))); // ✅ Lấy thành phố
+    $selectedCity = strtolower(trim(Session::get('selected_city')));
 
-        $query = Showtime::with(['room.cinema', 'movie'])
-            ->where('movie_id', $movieId)
-            ->whereDate('date', $date);
+    $query = Showtime::with(['room.cinema', 'movie'])
+        ->where('movie_id', $movieId)
+        ->where('status', 'active')
+        ->whereDate('date', Carbon::parse($date)->toDateString());
 
-        if ($date === $nowVN->toDateString()) {
-            $query->whereTime('start_time', '>=', $nowVN->toTimeString());
-        }
-
-        $showtimes = $query
-            ->orderBy('start_time')
-            ->get()
-            ->groupBy(function ($item) {
-                return $item->room->cinema_id;
-            });
-
-        return view('ajax.showtimes', [
-            'showtimes' => $showtimes,
-            'movie' => Movie::find($movieId),
-            'selectedCity' => $selectedCity, // ✅ Truyền vào view
-        ]);
+    // Ưu tiên lọc theo cinema_id nếu là role_id = 3
+    if (Auth::check() && Auth::user()->role_id == 3 && Auth::user()->cinema_id) {
+        $cinemaId = Auth::user()->cinema_id;
+        $query->whereHas('room.cinema', function ($q) use ($cinemaId) {
+            $q->where('cinema_id', $cinemaId);
+        });
     }
+    // Nếu không thì lọc theo selectedCity
+    elseif (!empty($selectedCity)) {
+        $query->whereHas('room.cinema', function ($q) use ($selectedCity) {
+            $q->whereRaw('LOWER(city) LIKE ?', ['%' . $selectedCity . '%']);
+        });
+    }
+
+    // Nếu là ngày hôm nay thì chỉ lấy suất chiếu còn thời gian
+    if ($date === $nowVN->toDateString()) {
+        $query->whereTime('start_time', '>=', $nowVN->toTimeString());
+    }
+
+    $showtimes = $query
+        ->orderBy('start_time')
+        ->get()
+        ->groupBy(function ($item) {
+            return $item->room->cinema_id;
+        });
+
+    return view('ajax.showtimes', [
+        'showtimes' => $showtimes,
+        'movie' => Movie::find($movieId),
+        'selectedCity' => $selectedCity,
+    ]);
+}
+
 
     public function ajaxShowtimesByCinema(Request $request)
     {

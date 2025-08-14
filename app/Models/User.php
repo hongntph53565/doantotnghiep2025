@@ -13,17 +13,18 @@ class User extends Authenticatable
     use HasFactory, Notifiable, HasApiTokens, SoftDeletes;
 
     protected $primaryKey = 'user_id';
-    protected $fillable = [
-        'username',
-        'full_name',
-        'email',
-        'password',
-        'phone',
-        'address',  
-        'birthday',
-        'role_id',
-        'status',
-    ];
+   protected $fillable = [
+    'username',
+    'full_name',
+    'email',
+    'password',
+    'phone',
+    'address',  
+    'birthday',
+    'role_id',
+    'cinema_id', // ✅ Thêm dòng này
+    'status',
+];
 
     protected $hidden = [
         'password',

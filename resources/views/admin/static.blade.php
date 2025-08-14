@@ -55,42 +55,44 @@
             <div class="card shadow-sm text-center">
                 <div class="card-body">
                     <h6>Tổng doanh thu tháng</h6>
-                    <h4 class="text-primary">{{ number_format($totalRevenue / 1_000_000, 2, '.', ',') }}tr
-                        <small>(₫)</small>
-                    </h4>
+                    <h4 class="text-primary">
+    {{ number_format($totalRevenue, 0, ',', '.') }} ₫
+</h4>
                     <p class="card-text small text-muted">{{ $startDate->format('d/m/Y') }} -
                         {{ $endDate->format('d/m/Y') }}</p>
                 </div>
             </div>
         </div>
         <div class="col-md-3">
-            <div class="card shadow-sm text-center">
-                <div class="card-body">
-                    @if ($highestCinemaRevenue)
-                        <h6>Rạp có doanh thu cao nhất</h6>
-                        <h5>{{ $highestCinemaRevenue->cinema_name }}</h5>
-                        <small>{{ number_format($highestCinemaRevenue->total_revenue / 1000000, 2, ',', '.') }}tr</small>
-                    @else
-                        <h6>Rạp có doanh thu cao nhất</h6>
-                        <h5>ko có doanh thu</h5>
-                    @endif
-                </div>
-            </div>
+    <div class="card shadow-sm text-center">
+        <div class="card-body">
+            @if ($highestCinemaRevenue)
+                <h6>Rạp có doanh thu cao nhất</h6>
+                <h5>{{ $highestCinemaRevenue->cinema_name }}</h5>
+                <small>{{ number_format($highestCinemaRevenue->total_revenue, 0, ',', '.') }} ₫</small>
+            @else
+                <h6>Rạp có doanh thu cao nhất</h6>
+                <h5>ko có doanh thu</h5>
+            @endif
         </div>
-        <div class="col-md-3">
-            <div class="card shadow-sm text-center">
-                <div class="card-body">
-                    @if ($topMovie)
-                        <h6>Phim doanh thu cao nhất</h6>
-                        <h5>{{ $topMovie->title }}</h5>
-                        <small>{{ number_format($topMovie->total_revenue / 1000000, 2, ',', '.') }}tr</small>
-                    @else
-                        <h6>Phim doanh thu cao nhất</h6>
-                        <h5>không có doanh thu</h5>
-                    @endif
-                </div>
-            </div>
+    </div>
+</div>
+
+<div class="col-md-3">
+    <div class="card shadow-sm text-center">
+        <div class="card-body">
+            @if ($topMovie)
+                <h6>Phim doanh thu cao nhất</h6>
+                <h5>{{ $topMovie->title }}</h5>
+                <small>{{ number_format($topMovie->total_revenue, 0, ',', '.') }} ₫</small>
+            @else
+                <h6>Phim doanh thu cao nhất</h6>
+                <h5>không có doanh thu</h5>
+            @endif
         </div>
+    </div>
+</div>
+
         <div class="col-md-3">
             <div class="card shadow-sm text-center">
                 <div class="card-body">
@@ -113,10 +115,8 @@
         <div class="col-md-6">
             <div class="card">
                 <div class="card-header fw-bold">Doanh thu theo rạp</div>
-                <div class="card-body d-flex justify-content-center">
-                    <div style="max-width: 250px;">
-                        <canvas id="theoRapChart"></canvas>
-                    </div>
+                <div class="card-body">
+                    <canvas id="theoRapChart"></canvas>
                 </div>
             </div>
         </div>
@@ -132,10 +132,8 @@
         <div class="col-md-6">
             <div class="card">
                 <div class="card-header fw-bold">Phương thức thanh toán</div>
-                <div class="card-body d-flex justify-content-center">
-                    <div style="max-width: 250px;">
-                        <canvas id="ptttChart"></canvas>
-                    </div>
+                <div class="card-body">
+                    <canvas id="ptttChart"></canvas>
                 </div>
             </div>
         </div>
@@ -192,34 +190,31 @@
         const ptttLabels = {!! json_encode($plabels) !!};
         const ptttData = {!! json_encode($pdata) !!};
 
-        const hasData = ptttData.length > 0 && ptttData.some(val => val > 0);
-
-        const chartLabels = hasData ? ptttLabels : ['Không có dữ liệu'];
-        const chartData = hasData ? ptttData : [1]; // 1 phần tử giả để có hình bánh
-        const chartColors = hasData ? ["#0d6efd", "#20c997", "#ffc107", "#dc3545"] : ['#e0e0e0'];
-
         new Chart(document.getElementById("ptttChart"), {
-            type: "pie",
+            type: "bar",
             data: {
-                labels: chartLabels,
+                labels: ptttLabels,
                 datasets: [{
-                    data: chartData,
-                    backgroundColor: chartColors,
+                    label: "Số lượng",
+                    data: ptttData,
+                    backgroundColor: ["#0d6efd", "#20c997", "#ffc107", "#dc3545"],
                 }],
             },
             options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                },
                 plugins: {
                     legend: {
-                        position: "right",
-                    },
-                    tooltip: {
-                        enabled: hasData,
+                        display: false,
                     },
                 },
             },
         });
     </script>
-
 
     <script>
         const movieLabels = {!! json_encode($movieRevenue->pluck('title')) !!};
@@ -258,36 +253,38 @@
 
     <script>
         const cinemaRevenue = @json($cinemaRevenue);
-
-        let hasDataCinema = cinemaRevenue.length > 0 && cinemaRevenue.some(item => item.total_revenue > 0);
-        const labelsCinema = hasDataCinema ? cinemaRevenue.map(item => item.cinema_name) : ['Không có dữ liệu'];
-        const dataCinema = hasDataCinema ? cinemaRevenue.map(item => item.total_revenue) : [1];
-        const colorsCinema = hasDataCinema ?
-            ["#0d6efd", "#198754", "#ffc107", "#dc3545", "#6f42c1"] :
-            ['#e0e0e0'];
+        const cinemaLabels = cinemaRevenue.map(item => item.cinema_name);
+        const cinemaData = cinemaRevenue.map(item => item.total_revenue);
 
         new Chart(document.getElementById("theoRapChart"), {
-            type: "pie",
+            type: "bar",
             data: {
-                labels: labelsCinema,
+                labels: cinemaLabels,
                 datasets: [{
-                    data: dataCinema,
-                    backgroundColor: colorsCinema,
+                    label: "Doanh thu (₫)",
+                    data: cinemaData,
+                    backgroundColor: ["#0d6efd", "#198754", "#ffc107", "#dc3545", "#6f42c1"],
                 }],
             },
             options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        ticks: {
+                            callback: function(value) {
+                                return new Intl.NumberFormat('vi-VN').format(value) + " ₫";
+                            }
+                        }
+                    }
+                },
                 plugins: {
                     legend: {
-                        position: "right"
-                    },
-                    tooltip: {
-                        enabled: hasDataCinema
+                        display: false,
                     },
                 },
             },
         });
     </script>
-
 
     <script>
         const districtSelect = document.getElementById('district');

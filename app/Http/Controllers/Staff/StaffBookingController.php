@@ -115,24 +115,30 @@ class StaffBookingController extends Controller
         ));
     }
 
-    public function booking(Request $request, $movie_id)
+public function booking(Request $request, $movie_id)
 {
     $movie = Movie::with('genre')->findOrFail($movie_id);
     $date = $request->input('date', now()->toDateString());
 
     $selectedCity = trim(strtolower(Session::get('selected_city')));
 
-    $query = Showtime::with(['room' => function ($q) {
-        $q->with('cinema');
-    }])
+    $query = Showtime::with(['room.cinema'])
         ->where('movie_id', $movie_id)
         ->where('status', 'active')
         ->whereDate('date', Carbon::parse($date)->toDateString());
 
-    if ($selectedCity) {
+    // Nếu là nhân viên -> chỉ lấy suất chiếu của cinema_id mà nhân viên thuộc về
+    if (Auth::check() && Auth::user()->role_id == 3 && Auth::user()->cinema_id) {
+        $cinemaId = Auth::user()->cinema_id;
+        $query->whereHas('room.cinema', function ($q) use ($cinemaId) {
+            $q->where('cinema_id', $cinemaId);
+        });
+    }
+    // Nếu không phải nhân viên, lọc theo city nếu có
+    elseif ($selectedCity) {
         $query->whereHas('room.cinema', function ($q) use ($selectedCity) {
-    $q->whereRaw('LOWER(city) LIKE ?', ['%' . strtolower($selectedCity) . '%']);
-});
+            $q->whereRaw('LOWER(city) LIKE ?', ['%' . strtolower($selectedCity) . '%']);
+        });
     }
 
     $showtimes = $query->orderBy('start_time')->get()
@@ -152,10 +158,12 @@ class StaffBookingController extends Controller
 
     if ($selectedShowtimeId) {
         if (!Auth::check()) {
-            return redirect()->route('register.form')->with('message', 'Vui lòng đăng ký hoặc đăng nhập để tiếp tục đặt vé.');
+            return redirect()->route('register.form')
+                ->with('message', 'Vui lòng đăng ký hoặc đăng nhập để tiếp tục đặt vé.');
         }
 
-        $selectedShowtime = Showtime::with(['room.cinema', 'room.seats.seatType', 'movie'])->find($selectedShowtimeId);
+        $selectedShowtime = Showtime::with(['room.cinema', 'room.seats.seatType', 'movie'])
+            ->find($selectedShowtimeId);
 
         if ($selectedShowtime && $selectedShowtime->room) {
             $seats = $selectedShowtime->room->seats;
@@ -186,6 +194,7 @@ class StaffBookingController extends Controller
         'selectedCity'
     ));
 }
+
 
 public function getCombos(Request $request)
 {

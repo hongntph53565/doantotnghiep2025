@@ -308,56 +308,77 @@
     const selectedSeats = new Map();
 
     document.querySelectorAll('.seat img[data-seat-code]').forEach(img => {
-        img.addEventListener('click', () => {
-            const code = img.dataset.seatCode;
-            const seatId = parseInt(img.dataset.seatId);
-            const price = parseInt(img.dataset.price);
-            const type = img.dataset.type;
-            const coupleId = img.dataset.coupleId;
+    img.addEventListener('click', () => {
+        const code = img.dataset.seatCode;
+        const seatId = parseInt(img.dataset.seatId);
+        const price = parseInt(img.dataset.price);
+        const type = img.dataset.type;
+        const coupleId = img.dataset.coupleId;
 
-            if (img.dataset.status === 'booked' || img.dataset.status === 'pending') return;
+        // Không chọn ghế đã bán hoặc pending
+        if (img.dataset.status === 'booked' || img.dataset.status === 'pending') return;
 
+        // Tính tổng số ghế đã chọn hiện tại
+        let selectedCount = 0;
+        selectedSeats.forEach(seat => {
+            if (seat.type === 'couple') selectedCount += 2;
+            else selectedCount += 1;
+        });
 
-            if (type === 'couple' && coupleId) {
-                const coupleImgs = document.querySelectorAll(`img[data-couple-id="${coupleId}"]`);
-                const coupleKey = `couple-${coupleId}`;
-                const isSelected = selectedSeats.has(coupleKey);
-                if (isSelected) {
-                    selectedSeats.delete(coupleKey);
-                    coupleImgs.forEach(el => el.src = '/images/seat-couple-available.svg');
-                } else {
-                    const codes = Array.from(coupleImgs).map(el => el.dataset.seatCode);
-                    const seatIds = Array.from(coupleImgs).map(el => parseInt(el.dataset.seatId));
+        const addingCount = type === 'couple' ? 2 : 1;
 
-                    selectedSeats.set(coupleKey, {
-                        codes,
-                        seat_ids: seatIds,
-                        price,
-                        type: 'couple'
-                    });
+        // Nếu chưa chọn nhưng vượt 9 ghế
+        if (!selectedSeats.has(type === 'couple' ? `couple-${coupleId}` : code) && (selectedCount + addingCount) > 9) {
+            showSeatError('Bạn chỉ được chọn tối đa 9 ghế!');
+            return;
+        }
 
-                    coupleImgs.forEach(el => el.src = '/images/seat-selected.svg');
-                }
+        // Xử lý chọn/deselect ghế (cặp hoặc đơn)
+        if (type === 'couple' && coupleId) {
+            const coupleImgs = document.querySelectorAll(`img[data-couple-id="${coupleId}"]`);
+            const coupleKey = `couple-${coupleId}`;
+            const isSelected = selectedSeats.has(coupleKey);
+            if (isSelected) {
+                selectedSeats.delete(coupleKey);
+                coupleImgs.forEach(el => el.src = '/images/seat-couple-available.svg');
             } else {
+                const codes = Array.from(coupleImgs).map(el => el.dataset.seatCode);
+                const seatIds = Array.from(coupleImgs).map(el => parseInt(el.dataset.seatId));
+                selectedSeats.set(coupleKey, { codes, seat_ids: seatIds, price, type: 'couple' });
+                coupleImgs.forEach(el => el.src = '/images/seat-selected.svg');
+            }
+        } else {
+            if (selectedSeats.has(code)) {
+                selectedSeats.delete(code);
+                img.src = `/images/seat-${type}-available.svg`;
+            } else {
+                selectedSeats.set(code, { code, seat_id: seatId, price, type });
+                img.src = `/images/seat-selected.svg`;
+            }
+        }
 
-                if (selectedSeats.has(code)) {
-                    selectedSeats.delete(code);
-                    img.src = `/images/seat-${type}-available.svg`;
+        updateSummary();
+        updateUIAfterSeatChange();
+
+        // Khi đã chọn 9 ghế, disable các ghế khác
+        const totalSelected = Array.from(selectedSeats.values()).reduce((sum, seat) => {
+            return sum + (seat.type === 'couple' ? 2 : 1);
+        }, 0);
+
+        document.querySelectorAll('.seat img[data-seat-code]').forEach(s => {
+            if (!selectedSeats.has(s.dataset.seatCode) && !(s.dataset.type === 'couple' && selectedSeats.has(`couple-${s.dataset.coupleId}`))) {
+                if (totalSelected >= 9 && s.dataset.status === 'available') {
+                    s.style.opacity = 0.5;
+                    s.style.pointerEvents = 'none';
                 } else {
-                    selectedSeats.set(code, {
-                        code,
-                        seat_id: seatId,
-                        price,
-                        type
-                    });
-                    img.src = `/images/seat-selected.svg`;
+                    s.style.opacity = 1;
+                    s.style.pointerEvents = 'auto';
                 }
             }
-
-            updateSummary();
-            updateUIAfterSeatChange();
         });
     });
+});
+
 
 
     function updateSummary() {

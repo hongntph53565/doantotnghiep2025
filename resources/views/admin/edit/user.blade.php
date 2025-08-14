@@ -90,22 +90,42 @@
                             </div>
 
                             <div class="form-group">
-                                <label>Vai trò</label>
-                                <select class="form-control @error('role_id') is-invalid @enderror" name="role_id">
-                                    <option value="">-- Chọn vai trò --</option>
-                                    @foreach ($roles as $role)
-                                        <option value="{{ $role->role_id }}"
-                                            {{ old('role_id', $user->role_id) == $role->role_id ? 'selected' : '' }}>
-                                            {{ $role->name }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                                @error('role_id')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                @enderror
-                            </div>
+    <label>Vai trò</label>
+    <select class="form-control @error('role_id') is-invalid @enderror" name="role_id" id="roleSelect">
+        <option value="">-- Chọn vai trò --</option>
+        @foreach ($roles as $role)
+            <option value="{{ $role->role_id }}"
+                {{ old('role_id', $user->role_id) == $role->role_id ? 'selected' : '' }}>
+                {{ $role->name }}
+            </option>
+        @endforeach
+    </select>
+    @error('role_id')
+        <span class="invalid-feedback" role="alert">
+            <strong>{{ $message }}</strong>
+        </span>
+    @enderror
+</div>
+
+{{-- Chỉ định rạp --}}
+<div class="form-group" id="cinemaSelectBox" style="display: none;">
+    <label>Chỉ định rạp</label>
+    <select class="form-control @error('cinema_id') is-invalid @enderror" name="cinema_id">
+        <option value="">-- Chọn rạp --</option>
+        @foreach ($cinemas as $cinema)
+            <option value="{{ $cinema->cinema_id }}"
+                {{ old('cinema_id', $user->cinema_id) == $cinema->cinema_id ? 'selected' : '' }}>
+                {{ $cinema->name }}
+            </option>
+        @endforeach
+    </select>
+    @error('cinema_id')
+        <span class="invalid-feedback" role="alert">
+            <strong>{{ $message }}</strong>
+        </span>
+    @enderror
+</div>
+
 
                             <div class="form-group">
                                 <div class="custom-control custom-switch">
@@ -146,4 +166,20 @@
             });
         });
     </script>
+    <script>
+    function toggleCinemaSelect() {
+        let roleValue = document.getElementById('roleSelect').value;
+        let cinemaBox = document.getElementById('cinemaSelectBox');
+        if (roleValue == 3) {
+            cinemaBox.style.display = 'block';
+        } else {
+            cinemaBox.style.display = 'none';
+        }
+    }
+
+    // Gọi khi load trang và khi thay đổi
+    document.getElementById('roleSelect').addEventListener('change', toggleCinemaSelect);
+    toggleCinemaSelect();
+</script>
+
 @endpush
