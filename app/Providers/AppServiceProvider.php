@@ -1,0 +1,47 @@
+<?php
+
+namespace App\Providers;
+
+use App\Services\MailService;
+use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\View;
+use App\Models\Cinema;
+
+class AppServiceProvider extends ServiceProvider
+{
+    /**
+     * Register any application services.
+     */
+    protected $listen = [
+        \App\Events\UserRegistered::class => [
+            \App\Listeners\SendWelcomeEmail::class,
+            \App\Listeners\CreateMemberShipCard::class,
+        ],
+        \App\Events\PaymentEvents::class => [
+            \App\Listeners\UpdateMemberCard::class,
+        ],
+
+    ];
+
+    public function register(): void
+    {
+        $this->app->singleton(MailService::class, function () {
+            return new MailService;
+        });
+    }
+
+    /**
+     * Bootstrap any application services.
+     */
+    public function boot(): void
+    {
+        Paginator::useBootstrap();
+        View::composer(['layouts.app', 'layouts.headerBooking'], function ($view) {
+        $cities = Cinema::select('city')->distinct()->pluck('city');
+        $view->with('cities', $cities);
+    });
+        
+    }
+}
