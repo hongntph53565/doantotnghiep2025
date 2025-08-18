@@ -1,0 +1,13 @@
+ .header {
+    position: fixed;
+    top: 0;
+    left: 5;
+    width: 80%;
+    z-index: 1030;
+    background-color: #fff; /* để tránh trong suốt */
+    padding: 1rem;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* đổ bóng nhẹ */
+}
+.sidebar.collapsed ~ #mainContent .header {
+    width: 92%;
+}

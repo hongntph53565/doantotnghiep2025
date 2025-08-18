@@ -1,0 +1,88 @@
+/* FONT CHUNG */
+body {
+    font-family: 'Roboto', sans-serif;
+    color: #333;
+}
+
+/* TIÊU ĐỀ & THÔNG TIN CHÍNH */
+.card h5 {
+    font-size: 32px;
+    color: #63c400;
+    text-transform: uppercase;
+    font-weight: 700;
+}
+
+.card h6 {
+    font-size: 22px;
+    font-weight: 600;
+}
+
+.card p,
+.card p strong,
+.card ul li {
+    font-size: 18px;
+    line-height: 1.6;
+    font-weight: 500;
+}
+
+/* DANH SÁCH "ĐỊA ĐIỂM KHÁC" */
+.card.other-cinemas h6 {
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.card.other-cinemas ul {
+    font-size: 18px; /* chữ to hơn */
+    line-height: 1.6;
+}
+
+.card.other-cinemas ul li {
+    margin-bottom: 8px;
+}
+
+.card.other-cinemas ul li a {
+    font-size: 16px;        /* chữ vừa phải */
+    font-weight: 500;
+    color: #63c400;
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+}
+
+.card.other-cinemas ul li a::before {
+    content: '';
+    display: inline-block;
+    background-image: url('/images/cinema-icon.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    width: 20px;
+    height: 20px;
+    margin-right: 8px;
+}
+
+/* NÚT CHI TIẾT (DÙNG CHO TRANG DANH SÁCH RẠP) */
+.btn-detail {
+    background-color: #7bc043;
+    color: white;
+    font-weight: 500;
+    border: none;
+}
+
+.btn-detail:hover {
+    background-color: #5fa334;
+}
+
+/* ẨN: KHÔNG DÙNG TRONG TRANG NÀY (Có thể xóa nếu không dùng nơi khác) */
+.cinema-title,
+.cinema-box,
+.cinema-box img,
+.cinema-name,
+.dropdown-menu.custom-dropdown,
+.social-icon {
+    display: none !important;
+}
+     hr {
+            border: none;
+            border-top: 2px solid rgba(0, 0, 0, 0.2);
+            margin: 20px 0;
+        }

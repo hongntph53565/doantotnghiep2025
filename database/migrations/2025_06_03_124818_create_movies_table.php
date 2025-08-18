@@ -1,0 +1,44 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('movies', function (Blueprint $table) {
+            $table->bigIncrements('movie_id'); // Khóa chính tự tăng
+            $table->unsignedBigInteger('genre_id'); // Khóa ngoại
+
+            $table->string('title', 255);
+            $table->integer('duration')->unsigned();
+            $table->string('director', 100)->nullable();
+            $table->text('cast')->nullable();
+            $table->date('release_date');
+            $table->date('end_date')->nullable();
+            $table->string('poster', 255)->nullable();
+            $table->string('trailer', 255)->nullable();
+            $table->enum('age_rating', ['P', 'T13', 'T18']);
+            $table->enum('language', ['Tiếng Việt', 'Tiếng Anh', 'Tiếng Hàn', 'Tiếng Nhật']);
+            $table->text('description')->nullable();
+            $table->enum('status', ['active', 'inactive'])->default('active');
+            $table->timestamps();
+            $table->softDeletes();
+            $table->foreign('genre_id')->references('genre_id')->on('genres')->onDelete('cascade');
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('movies');
+        Schema::dropSoftDeletes();
+    }
+};
