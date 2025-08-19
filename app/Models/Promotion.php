@@ -18,9 +18,11 @@ class Promotion extends Model
         'type_discount',
         'discount_value',
         'max_uses',
+        'used_count',
         'max_discount',
         'min_order_value',
         'status',
+        'card_type',
         'start_date',
         'end_date',
     ];

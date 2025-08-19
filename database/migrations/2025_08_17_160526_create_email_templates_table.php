@@ -146,7 +146,7 @@ DB::table('email_templates')->insert([
     'created_by' => 'system',
     'created_at' => now(),
     'updated_at' => now(),],
-    [
+   [
     'template_name' => 'booking_success',
     'subject' => 'Xác nhận đặt vé thành công',
     'content' => '
@@ -210,24 +210,25 @@ DB::table('email_templates')->insert([
                     <h1>🎟 ĐẶT VÉ THÀNH CÔNG</h1>
                 </div>
 
-                <p>Xin chào <strong>{customer_name}</strong>,</p>
-                <p>Cảm ơn bạn đã đặt vé tại <strong>{cinema_name}</strong>. Dưới đây là thông tin đặt vé của bạn:</p>
+                <p>Xin chào <strong>{{ $customer_name }}</strong>,</p>
+                <p>Cảm ơn bạn đã đặt vé tại <strong>{{ $cinema_name }}</strong>. Dưới đây là thông tin đặt vé của bạn:</p>
 
                 <div class="ticket-info">
                     <h3>THÔNG TIN VÉ</h3>
-                    <p><strong>Mã đặt vé:</strong> {booking_code}</p>
-                    <p><strong>Phim:</strong> {movie_name}</p>
-                    <p><strong>Rạp:</strong> {cinema_name}</p>
-                    <p><strong>Phòng chiếu:</strong> {room_name}</p>
-                    <p><strong>Suất chiếu:</strong> {showtime}</p>
-                    <p><strong>Ghế:</strong> {seats}</p>
-                    <p><strong>Tổng thanh toán:</strong> {total_price}₫</p>
+                    <p><strong>Mã đặt vé:</strong> {{ $booking_code }}</p>
+                    <p><strong>Phim:</strong> {{ $movie_name }}</p>
+                    <p><strong>Rạp:</strong> {{ $cinema_name }}</p>
+                    <p><strong>Phòng chiếu:</strong> {{ $room_name }}</p>
+                    <p><strong>Suất chiếu:</strong> {{ $showtime }}</p>
+                    <p><strong>Ghế:</strong> {{ $seats }}</p>
+                    <p><strong>Đồ ăn:</strong> {{ $foods }}</p>
+                    <p><strong>Tổng thanh toán:</strong> {{ $total_price }}₫</p>
                 </div>
 
                 <p>Vui lòng đến rạp trước 15 phút để làm thủ tục nhận vé.</p>
 
                 <p style="text-align: center;">
-                    <a href="{ticket_url}" class="button">XEM VÉ CỦA BẠN</a>
+                    <a href="{{ $ticket_url }}" class="button">XEM VÉ CỦA BẠN</a>
                 </p>
 
                 <p>Nếu có bất kỳ thắc mắc nào, vui lòng liên hệ với chúng tôi qua:</p>
@@ -235,7 +236,7 @@ DB::table('email_templates')->insert([
                 Hotline: 1900 9999</p>
 
                 <div class="footer">
-                    © {year} {cinema_name} – All rights reserved.<br>
+                    © {{ $year }} {{ $cinema_name }} – All rights reserved.<br>
                     Đây là email tự động, vui lòng không trả lời.
                 </div>
             </div>
@@ -246,6 +247,7 @@ DB::table('email_templates')->insert([
     'created_at' => now(),
     'updated_at' => now(),
 ],
+
 ]);
 
     }

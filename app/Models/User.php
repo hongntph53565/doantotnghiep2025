@@ -22,7 +22,7 @@ class User extends Authenticatable
     'address',  
     'birthday',
     'role_id',
-    'cinema_id', // ✅ Thêm dòng này
+    'cinema_id', 
     'status',
 ];
 

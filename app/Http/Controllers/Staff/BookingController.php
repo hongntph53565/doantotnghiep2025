@@ -50,17 +50,18 @@ public function printView($id)
         'bookingSeats.showtimeSeat.seat'
     ])->findOrFail($id);
 
-    // Tạo instance của DNS2D
+    $cinema = $booking->showtime->room->cinema ?? null;
+
     $dns2d = new DNS2D();
     $dns2d->setStorPath(public_path('cache/'));
 
-    // Tạo mã QR (hoặc barcode 2D)
     $barcode = base64_encode(
         $dns2d->getBarcodePNG($booking->booking_code, 'QRCODE', 8, 8)
     );
 
-    return view('pdf.ticket', compact('booking', 'barcode'));
+    return view('pdf.ticket', compact('booking', 'barcode', 'cinema'));
 }
+
 
     public function step2(Request $request)
     {

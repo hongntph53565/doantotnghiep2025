@@ -13,9 +13,9 @@
             <div class="stat-card">
                 <div class="d-flex justify-content-between">
                     <div>
-                        <h6 class="text-muted">Tổng doanh thu</h6>
-                        <p class="fs-4 fw-bold">{{ number_format($totalRevenue / 1000000, 2) }}tr</p>
-                    </div>
+    <h6 class="text-muted">Tổng doanh thu</h6>
+    <p class="fs-4 fw-bold">{{ number_format($totalRevenue, 0, ',', '.') }} đ</p>
+</div>
                     <div class="{{ $revenueChange < 0 ? 'text-danger' : 'text-success' }}">
                         <i class="fas {{ $revenueChange < 0 ? 'fa-arrow-down' : 'fa-arrow-up' }}"></i>
                         {{ number_format(abs($revenueChange), 2) }}%

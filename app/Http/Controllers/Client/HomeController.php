@@ -10,6 +10,8 @@ use App\Models\Cinema;
 use App\Models\ShowtimeSeat;
 use App\Models\Booking;
 use App\Models\Promotion;
+use App\Models\MembershipCard;
+
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -22,25 +24,34 @@ use Illuminate\Support\Facades\Session;
 class HomeController extends Controller
 {
     public function home()
-    {
-        $today = Carbon::now()->toDateString();
+{
+    $today = Carbon::now()->toDateString();
 
+    // Phim đang chiếu
+    $moviesNow = Movie::with('genre')
+        ->whereDate('release_date', '<=', $today)
+        ->orderBy('release_date', 'desc')
+        ->get();
 
-        $movies = Movie::with('genre')
-            ->whereDate('release_date', '<=', $today)
-            ->orderBy('release_date', 'desc')
-            ->get();
+    // Phim sắp chiếu
+    $moviesComing = Movie::with('genre')
+        ->whereDate('release_date', '>', $today)
+        ->orderBy('release_date', 'asc')
+        ->get();
 
-
-        foreach ($movies as $movie) {
+    // Xử lý trailer cho cả 2 danh sách
+    foreach ([$moviesNow, $moviesComing] as $movieList) {
+        foreach ($movieList as $movie) {
             if (!empty($movie->trailer) && Str::contains($movie->trailer, 'watch?v=')) {
                 $videoId = explode('watch?v=', $movie->trailer)[1];
                 $movie->trailer = 'https://www.youtube.com/embed/' . $videoId;
             }
         }
-
-        return view('Client.home', compact('movies'));
     }
+
+    return view('Client.home', compact('moviesNow', 'moviesComing'));
+}
+
 
 
     // {
@@ -203,10 +214,26 @@ class HomeController extends Controller
         $showtimes = $query->orderBy('start_time')->get()
             ->groupBy(fn($item) => $item->room->cinema->cinema_id);
 
-        $promotions = Promotion::where('status', 'active')
-            ->whereDate('start_date', '<=', now())
-            ->whereDate('end_date', '>=', now())
-            ->get();
+        $user = Auth::user();
+$userCardType = null;
+
+// Nếu user đã đăng nhập, lấy card_type từ bảng membership_cards
+if ($user) {
+    $card = MembershipCard::where('user_id', $user->user_id)->first();
+    $userCardType = $card ? $card->card_type : null;
+}
+
+// Lấy các voucher còn hiệu lực và áp dụng cho loại thẻ của user
+$promotions = Promotion::where('status', 'active')
+    ->whereDate('start_date', '<=', now())
+    ->whereDate('end_date', '>=', now())
+    ->where(function($query) use ($userCardType) {
+        $query->whereNull('card_type'); // voucher áp dụng cho tất cả thẻ
+        if ($userCardType) {
+            $query->orWhere('card_type', $userCardType); // voucher dành riêng cho loại thẻ
+        }
+    })
+    ->get();
 
         $selectedShowtimeId = $request->input('showtime_id');
         $selectedShowtime = null;

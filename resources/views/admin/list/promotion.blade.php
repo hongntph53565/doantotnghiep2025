@@ -160,6 +160,16 @@
                             </div>
 
                             <div class="col-md-6">
+    <label class="form-label fw-semibold">Loại thẻ áp dụng <span class="text-danger">*</span></label>
+    <select class="form-select" name="card_type" id="cardType" required>
+        <option value="normal">Normal</option>
+        <option value="silver">Silver</option>
+        <option value="gold">Gold</option>
+        <option value="platinum">Platinum</option>
+    </select>
+</div>
+
+                            <div class="col-md-6">
                                 <label class="form-label">Đơn hàng tối thiểu</label>
                                 <div class="input-group">
                                     <input type="number" class="form-control" id="minOrder" name="min_order_value"

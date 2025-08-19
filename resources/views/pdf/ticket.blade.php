@@ -4,47 +4,82 @@
     <meta charset="UTF-8">
     <title>Vé {{ $booking->booking_code }}</title>
     <style>
+    body {
+        font-family: Arial, sans-serif;
+        font-size: 14px;
+        line-height: 1.4;
+        padding: 20px;
+        /* nền hồng nhạt toàn trang */
+    }
+
+    .ticket {
+        position: relative;
+        width: 320px;
+        padding: 16px;
+        margin: 0 auto 20px auto;
+        border: none; /* bỏ viền dashed để giống vé CGV */
+        background-color: #ffb6c1; /* nền hồng giống vé CGV */
+        overflow: hidden; /* ẩn phần watermark tràn ra ngoài */
+    }
+
+    /* Watermark nghiêng */
+    .ticket::before {
+        content: "";
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background-image: url('{{ asset("images/z6776223534015_3ec1a499b9bb824d97c41f77d3a677be-removebg-preview.png") }}');
+          background-repeat: repeat;
+    background-size: 150px auto; /* ảnh to hơn => thưa hơn */
+    background-position: center;
+        opacity: 0.25; /* watermark mờ như vé thật */
+        transform: rotate(-30deg); /* xoay nghiêng 30 độ */
+        z-index: 0;
+    }
+
+    /* Nội dung vé nằm trên watermark */
+    .ticket > * {
+        position: relative;
+        z-index: 1;
+    }
+
+    .title {
+        text-align: center;
+        font-weight: bold;
+        font-size: 18px;
+        margin-bottom: 10px;
+    }
+
+    .movie-title {
+        font-weight: bold;
+        font-size: 20px;
+        margin-bottom: 6px;
+    }
+
+    .section {
+        margin-bottom: 12px;
+    }
+
+    .barcode {
+        text-align: center;
+        margin-top: 20px;
+    }
+
+    .footer {
+        text-align: center;
+        font-size: 12px;
+        margin-top: 16px;
+    }
+
+    @media print {
         body {
-            font-family: Arial, sans-serif;
-            font-size: 14px;
-            line-height: 1.4;
-            padding: 20px;
+            padding: 0;
         }
-        .ticket {
-            width: 320px;
-            padding: 16px;
-            border: 1px dashed #999;
-            margin: 0 auto;
-        }
-        .title {
-            text-align: center;
-            font-weight: bold;
-            font-size: 18px;
-            margin-bottom: 10px;
-        }
-        .movie-title {
-            font-weight: bold;
-            font-size: 20px;
-            margin-bottom: 6px;
-        }
-        .section {
-            margin-bottom: 12px;
-        }
-        .barcode {
-            text-align: center;
-            margin-top: 20px;
-        }
-        .footer {
-            text-align: center;
-            font-size: 12px;
-            margin-top: 16px;
-        }
-        @media print {
-            body {
-                padding: 0;
-            }
-        }
-    </style>
+    }
+</style>
+
 </head>
 <body >
     @php
@@ -85,7 +120,7 @@
 
         <div class="footer">
             Cảm ơn quý khách đã sử dụng dịch vụ LumiStar<br>
-            Nhân viên: {{ auth()->user()->name ?? 'N/A' }}
+            Nhân viên: {{ auth()->user()->full_name ?? 'N/A' }}<br>
         </div>
     </div>
 @endforeach
@@ -118,10 +153,6 @@
         <div class="footer">
             Cảm ơn quý khách đã sử dụng dịch vụ LumiStar<br>
             Nhân viên: {{ auth()->user()->full_name ?? 'N/A' }}<br>
-Tài khoản: {{ auth()->user()->username ?? 'N/A' }}
-
-          
-
         </div>
     </div>
 @endif

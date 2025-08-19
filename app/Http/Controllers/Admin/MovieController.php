@@ -192,6 +192,21 @@ public function show($id)
         'labels' => array_keys($revenueByMonth),
         'data' => array_values($revenueByMonth),
     ];
+     if (!empty($movie->trailer)) {
+        if (Str::contains($movie->trailer, 'watch?v=')) {
+            $videoId = explode('watch?v=', $movie->trailer)[1];
+            $videoId = explode('&', $videoId)[0];
+            $movie->trailer = 'https://www.youtube.com/embed/' . $videoId;
+        } elseif (Str::contains($movie->trailer, 'youtu.be/')) {
+            $videoId = explode('youtu.be/', $movie->trailer)[1];
+            $videoId = explode('?', $videoId)[0];
+            $movie->trailer = 'https://www.youtube.com/embed/' . $videoId;
+        } elseif (Str::contains($movie->trailer, '/shorts/')) {
+            $videoId = explode('/shorts/', $movie->trailer)[1];
+            $videoId = explode('?', $videoId)[0];
+            $movie->trailer = 'https://www.youtube.com/embed/' . $videoId;
+        }
+    }
 
     return view('admin.show.movie', compact(
         'movie',

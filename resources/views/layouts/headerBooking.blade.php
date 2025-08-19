@@ -7,7 +7,7 @@
     <title>@yield('title', 'Trang Phim')</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
     <style>
         body {
@@ -230,7 +230,7 @@
             width: 100%;
             max-width: 1140px;
         }
-        
+
         .auth-hover-parent {
             position: relative;
             margin-left: 20px;
@@ -321,10 +321,9 @@
         footer a.social-icon:hover {
             color: white !important;
         }
-        
     </style>
     @stack('styles')
-    
+
 </head>
 
 <body>
@@ -337,10 +336,10 @@
 
         <div class="header-bar container d-flex justify-content-between align-items-center flex-wrap">
             <div class="d-flex align-items-center flex-wrap">
-               <a id="logo-link" href="{{ url('/home') }}">
-    <img src="{{ asset('images/z6776223534015_3ec1a499b9bb824d97c41f77d3a677be-removebg-preview.png') }}"
-        alt="Logo" class="me-3" style="width: 180px; height: auto;">
-</a>
+                <a id="logo-link" href="{{ url('/home') }}">
+                    <img src="{{ asset('images/z6776223534015_3ec1a499b9bb824d97c41f77d3a677be-removebg-preview.png') }}"
+                        alt="Logo" class="me-3" style="width: 180px; height: auto;">
+                </a>
                 <div class="steps d-flex gap-4">
                     @for ($i = 1; $i <= 4; $i++)
                         <div class="step {{ $i == 1 ? 'active' : '' }}">
@@ -355,90 +354,92 @@
                 <a href="#" class="text-decoration-none text-dark fw-semibold">FAQ</a>
 
                 <div class="d-flex align-items-center">
-                @php
-    $selectedCity = session('selected_city') ?? 'Chọn khu vực của bạn';
-@endphp
+                    @php
+                        $selectedCity = session('selected_city') ?? 'Chọn khu vực của bạn';
+                    @endphp
 
-<div class="dropdown hover-dropdown">
-    <button class="btn btn-outline-success dropdown-toggle" type="button">
-        {{ $selectedCity }}
-    </button>
-    <ul class="dropdown-menu custom-dropdown">
-        @foreach ($cities as $city)
-            <li><a class="dropdown-item" href="{{ route('set.city', ['city' => $city]) }}">{{ $city }}</a></li>
-        @endforeach
-    </ul>
-</div>
-
-                @if (Auth::check())
-                 <a href="{{ url('/profile') }}" class="text-decoration-none text-dark">
-                    <div class="d-flex align-items-center ms-3">
-                        <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" width="24" class="me-1">
-                        <span>{{ Auth::user()->full_name }} /
-                            <strong>
-                                <a href="#"
-                                    onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
-                                    class="text-dark text-decoration-none">Thoát</a>
-                            </strong>
-                        </span>
+                    <div class="dropdown hover-dropdown">
+                        <button class="btn btn-outline-success dropdown-toggle" type="button">
+                            {{ $selectedCity }}
+                        </button>
+                        <ul class="dropdown-menu custom-dropdown">
+                            @foreach ($cities as $city)
+                                <li><a class="dropdown-item"
+                                        href="{{ route('set.city', ['city' => $city]) }}">{{ $city }}</a></li>
+                            @endforeach
+                        </ul>
                     </div>
- </a>
-                    <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
-                        @csrf
-                    </form>
-                @else
-                    <div class="auth-hover-parent">
-                        <button class="btn btn-success">Đăng nhập/Đăng ký</button>
 
-                        <div class="auth-hover-box">
-                            <form action="{{ route('login') }}" method="POST">
-                                @csrf
-                                <div class="mb-2">
-                                    <label>Email *</label>
-                                    <input type="email" name="email" class="form-control" required>
-                                </div>
-                                <div class="mb-2">
-                                    <label>Mật khẩu *</label>
-                                    <input type="password" name="password" class="form-control" required>
-                                </div>
-                                <div class="mb-2 text-end">
-                                    <a href="#" class="small text-white">Quên mật khẩu?</a>
-                                </div>
-                                <button type="submit" class="btn btn-success mb-2">Đăng nhập</button>
-                            </form>
+                    @if (Auth::check())
+                        <a href="{{ url('/profile') }}" class="text-decoration-none text-dark">
+                            <div class="d-flex align-items-center ms-3">
+                                <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" width="24"
+                                    class="me-1">
+                                <span>{{ Auth::user()->full_name }} /
+                                    <strong>
+                                        <a href="#"
+                                            onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
+                                            class="text-dark text-decoration-none">Thoát</a>
+                                    </strong>
+                                </span>
+                            </div>
+                        </a>
+                        <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                            @csrf
+                        </form>
+                    @else
+                        <div class="auth-hover-parent">
+                            <button class="btn btn-success">Đăng nhập/Đăng ký</button>
 
-                            <a href="{{ route('register.form') }}" class="btn btn-primary w-100">Đăng ký thành
-                                viên</a>
+                            <div class="auth-hover-box">
+                                <form action="{{ route('login') }}" method="POST">
+                                    @csrf
+                                    <div class="mb-2">
+                                        <label>Email *</label>
+                                        <input type="email" name="email" class="form-control" required>
+                                    </div>
+                                    <div class="mb-2">
+                                        <label>Mật khẩu *</label>
+                                        <input type="password" name="password" class="form-control" required>
+                                    </div>
+                                    <div class="mb-2 text-end">
+                                        <a href="#" class="small text-white">Quên mật khẩu?</a>
+                                    </div>
+                                    <button type="submit" class="btn btn-success mb-2">Đăng nhập</button>
+                                </form>
 
+                                <a href="{{ route('register.form') }}" class="btn btn-primary w-100">Đăng ký thành
+                                    viên</a>
+
+                            </div>
+                            <script>
+                                document.getElementById("registerForm").addEventListener("submit", function(e) {
+                                    e.preventDefault();
+                                    const formData = new FormData(this);
+
+                                    fetch("{{ route('register') }}", {
+                                            method: "POST",
+                                            body: formData,
+                                            headers: {
+                                                'X-Requested-With': 'XMLHttpRequest',
+                                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                                            }
+                                        })
+                                        .then(res => res.json())
+                                        .then(data => {
+                                            if (data.message === "Đăng ký thành công") {
+                                                window.location.href = "{{ route('login.form') }}";
+                                            } else {
+                                                alert(data.message || "Có lỗi xảy ra!");
+                                            }
+                                        })
+                                        .catch(err => console.error(err));
+                                });
+                            </script>
                         </div>
-                        <script>
-                            document.getElementById("registerForm").addEventListener("submit", function(e) {
-                                e.preventDefault();
-                                const formData = new FormData(this);
-
-                                fetch("{{ route('register') }}", {
-                                        method: "POST",
-                                        body: formData,
-                                        headers: {
-                                            'X-Requested-With': 'XMLHttpRequest',
-                                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                                        }
-                                    })
-                                    .then(res => res.json())
-                                    .then(data => {
-                                        if (data.message === "Đăng ký thành công") {
-                                            window.location.href = "{{ route('login.form') }}";
-                                        } else {
-                                            alert(data.message || "Có lỗi xảy ra!");
-                                        }
-                                    })
-                                    .catch(err => console.error(err));
-                            });
-                        </script>
-                    </div>
-                @endif
+                    @endif
+                </div>
             </div>
-        </div>
     </header>
 
     <hr class="header-divider my-0">
@@ -525,22 +526,11 @@
 </body>
 
 </html>
-
-
-
-
-
-
-
-
-
-
-
- <script>
-    document.addEventListener("DOMContentLoaded", function () {
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
         const logoLink = document.getElementById("logo-link");
         if (logoLink) {
-            logoLink.addEventListener("click", function (e) {
+            logoLink.addEventListener("click", function(e) {
                 e.preventDefault();
                 sessionStorage.clear();
                 window.location.href = this.href;

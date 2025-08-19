@@ -18,62 +18,70 @@ class PromotionController extends Controller
     }
 
     // Lưu khuyến mãi mới
-    public function store(Request $request)
-    {
-        $request->merge([
-            'discount_value' => $request->type_discount === 'percent'
-                ? $request->discount_percent
-                : $request->discount_amount,
-            'status' => $request->boolean('status') ? 'active' : 'inactive',
-        ]);
-        $data = $request->validate([
-            'discount_code' => 'required|string|unique:promotions',
-            'type_discount' => 'required|in:percent,amount',
-            'discount_value' => 'required|numeric|min:0',
-            'max_uses' => 'nullable|integer|min:1',
-            'max_discount' => 'nullable|numeric|min:0',
-            'min_order_value' => 'nullable|numeric|min:0',
-            'start_date' => 'required|date',
-            'end_date' => 'required|date|after_or_equal:start_date',
-            'status' => 'in:active,inactive',
-        ]);
-        $data['status'] = $request->boolean('status') ? 'active' : 'inactive';
-        Promotion::create($data);
-        return redirect()->route('promotions.index')->with('success', 'Thêm mã giảm giá thành công!');
-    }
+public function store(Request $request)
+{
+    $request->merge([
+        'discount_value' => $request->type_discount === 'percent'
+            ? $request->discount_percent
+            : $request->discount_amount,
+        'status' => $request->boolean('status') ? 'active' : 'inactive',
+        'used_count' => 0, // ✅ set mặc định
+    ]);
 
-    public function update(Request $request, $id)
-    {
-        $promotion = Promotion::findOrFail($id);
+    $data = $request->validate([
+        'discount_code' => 'required|string|unique:promotions',
+        'type_discount' => 'required|in:percent,amount',
+        'discount_value' => 'required|numeric|min:0',
+        'max_uses' => 'nullable|integer|min:1',
+        'used_count' => 'nullable|integer|min:0', // ✅ validate
+        'max_discount' => 'nullable|numeric|min:0',
+        'min_order_value' => 'nullable|numeric|min:0',
+        'start_date' => 'required|date',
+        'end_date' => 'required|date|after_or_equal:start_date',
+        'status' => 'in:active,inactive',
+        'card_type' => 'required|in:normal,silver,gold,platinum',
+    ]);
 
-        $request->merge([
-            'discount_value' => $request->type_discount === 'percent'
-                ? $request->discount_percent
-                : $request->discount_amount,
-            'status' => $request->boolean('status') ? 'active' : 'inactive',
-        ]);
+    Promotion::create($data);
 
-        $data = $request->validate([
-            'discount_code' => [
-                'required',
-                'string',
-                Rule::unique('promotions')->ignore($id, 'promo_id'),
-            ],
+    return redirect()->route('promotions.index')->with('success', 'Thêm mã giảm giá thành công!');
+}
 
-            'type_discount' => 'required|in:percent,amount',
-            'discount_value' => 'required|numeric|min:0',
-            'max_uses' => 'nullable|integer|min:1',
-            'max_discount' => 'nullable|numeric|min:0',
-            'min_order_value' => 'nullable|numeric|min:0',
-            'start_date' => 'required|date',
-            'end_date' => 'required|date|after_or_equal:start_date',
-            'status' => 'in:active,inactive',
-        ]);
 
-        $promotion->update($data);
+public function update(Request $request, $id)
+{
+    $promotion = Promotion::findOrFail($id);
 
-        return redirect()->route('promotions.index')->with('success', 'Cập nhật mã giảm giá thành công!');
-    }
+    $request->merge([
+        'discount_value' => $request->type_discount === 'percent'
+            ? $request->discount_percent
+            : $request->discount_amount,
+        'status' => $request->boolean('status') ? 'active' : 'inactive',
+    ]);
+
+    $data = $request->validate([
+        'discount_code' => [
+            'required',
+            'string',
+            Rule::unique('promotions')->ignore($id, 'promo_id'),
+        ],
+        'type_discount' => 'required|in:percent,amount',
+        'discount_value' => 'required|numeric|min:0',
+        'max_uses' => 'nullable|integer|min:1',
+        'used_count' => 'nullable|integer|min:0',
+        'max_discount' => 'nullable|numeric|min:0',
+        'min_order_value' => 'nullable|numeric|min:0',
+        'start_date' => 'required|date',
+        'end_date' => 'required|date|after_or_equal:start_date',
+        'status' => 'in:active,inactive',
+        'card_type' => 'required|in:normal,silver,gold,platinum', // thêm validate
+    ]);
+
+    $promotion->update($data);
+
+    return redirect()->route('promotions.index')->with('success', 'Cập nhật mã giảm giá thành công!');
+}
+
 
     public function destroy($id)
     {

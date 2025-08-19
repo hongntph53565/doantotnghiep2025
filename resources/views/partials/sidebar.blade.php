@@ -42,7 +42,7 @@
         $isMovieMenu = request()->routeIs('genres.*') || request()->routeIs('movies.*') || request()->routeIs('showtimes.*');
     @endphp
     <a data-bs-toggle="collapse" href="#phimXuatChieu" role="button" aria-expanded="{{ $isMovieMenu ? 'true' : 'false' }}">
-        <i class="bi bi-film"></i><span class="menu-text">Phim và Xuất Chiếu</span>
+        <i class="bi bi-film"></i><span class="menu-text">Phim và Suất Chiếu</span>
     </a>
     <div class="collapse submenu {{ $isMovieMenu ? 'show' : '' }}" id="phimXuatChieu">
         <a href="{{ route('genres.index') }}" class="{{ request()->routeIs('genres.*') ? 'active' : '' }}">
@@ -52,7 +52,7 @@
             <span class="menu-text">Quản lý phim</span>
         </a>
         <a href="{{ route('showtimes.index') }}" class="{{ request()->routeIs('showtimes.*') ? 'active' : '' }}">
-            <span class="menu-text">Quản lý xuất chiếu</span>
+            <span class="menu-text">Quản lý Suất chiếu</span>
         </a>
     </div>
 

@@ -22,18 +22,17 @@
                                 <h5>{{ Auth::user()->full_name }}</h5>
                                 <div
                                     class="d-flex flex-wrap text-muted mb-1 small gap-2 justify-content-center justify-content-md-start">
-                                    <span>Điểm RP: {{ $totalRP }}</span>
+                                    <span>Điểm RP: {{ $points }}</span>
 
 
                                 </div>
 
                                 <p class="mb-1 small">
-                                    Tổng chi tiêu trong tháng
-                                    (
-                                    {{ $monthFilter ? \Carbon\Carbon::createFromFormat('Y-m', $monthFilter)->format('m/Y') : now()->format('m/Y') }}
-                                    ):
-                                    {{ number_format($totalSpending, 0, ',', '.') }} VNĐ
-                                </p>
+    Tổng chi tiêu trong tháng
+    ({{ $monthFilter ? \Carbon\Carbon::createFromFormat('Y-m', $monthFilter)->format('m/Y') : now()->format('m/Y') }}):
+    {{ number_format($monthlySpendingForSelectedMonth, 0, ',', '.') }} VNĐ
+</p>
+
 
 
                             </div>
@@ -138,23 +137,33 @@
                 <!-- Cột phải -->
                 <div class="col-lg-4 col-md-12">
                     <div class="account-box border border-success rounded-3 p-3">
-                        <div class="d-flex align-items-start flex-wrap justify-content-center justify-content-md-start">
-                            <img src="https://api.qrserver.com/v1/create-qr-code/?data=123456&size=100x100" alt="QR"
-                                class="me-md-3 mb-3 p-2 bg-white rounded shadow-sm" style="width: 100px; height: 100px;">
-                            <div class="text-start small">
-                                <p class="mb-1"><strong>Tên đăng nhập:</strong><br>{{ $user->email }}</p>
-                                {{-- <p class="mb-1"><strong>Số thẻ:</strong> ONLA1187860</p> --}}
-                                <p class="mb-1"><strong>Hạng thẻ:</strong> {{ $cardLevel }}</p>
-                                <p class="mb-0"><strong>Ngày đăng ký:</strong> {{ $user->created_at->format('d/m/Y') }}
-                                </p>
+    <div class="d-flex align-items-start flex-wrap justify-content-center justify-content-md-start">
+        {{-- ✅ QR từ số thẻ --}}
+        <img src="https://api.qrserver.com/v1/create-qr-code/?data={{ $cardNumber }}&size=100x100" 
+             alt="QR"
+             class="me-md-3 mb-3 p-2 bg-white rounded shadow-sm"
+             style="width: 100px; height: 100px;">
 
-                            </div>
-                        </div>
-                    </div>
+        <div class="text-start small">
+            <p class="mb-1"><strong>Tên đăng nhập:</strong><br>{{ $user->email }}</p>
+            <p class="mb-1"><strong>Số thẻ:</strong> {{ $cardNumber }}</p>
+            <p class="mb-1"><strong>Hạng thẻ:</strong> {{ ucfirst($cardType) }}</p>
+            <p class="mb-0"><strong>Ngày đăng ký:</strong> {{ $user->created_at->format('d/m/Y') }}</p>
+
+            {{-- ✅ Thêm dòng in nghiêng còn bao nhiêu điểm lên hạng --}}
+            @if($nextRank && $pointsNeeded > 0)
+                <p class="mt-1 text-muted fst-italic">
+                    Cần thêm {{ $pointsNeeded }} điểm nữa để lên hạng <strong>{{ ucfirst($nextRank) }}</strong>.
+                </p>
+            @endif
+        </div>
+    </div>
+</div>
 
 
 
-                    <div class="text-center mt-3">
+
+                    {{-- <div class="text-center mt-3">
                         @switch($user->role_id)
                             @case(1)
                                 <a href="{{ route('admin.dashboard') }}" class="btn btn-green w-100 py-2 rounded-3 fw-bold">Tới
@@ -173,7 +182,36 @@
 
                             @default
                         @endswitch
-                    </div>
+                    </div> --}}
+                    <div class="text-center mt-3">
+    @auth
+        @switch(Auth::user()->role_id)
+            @case(1)
+                <a href="{{ route('admin.dashboard') }}" class="btn btn-green w-100 py-2 rounded-3 fw-bold">
+                    Tới Quản trị
+                </a>
+            @break
+
+            @case(2)
+                <a href="{{ route('manager.static') }}" class="btn btn-green w-100 py-2 rounded-3 fw-bold">
+                    Tới Quản trị
+                </a>
+            @break
+
+            @case(3)
+                <a href="{{ route('staff.list') }}" class="btn btn-green w-100 py-2 rounded-3 fw-bold">
+                    Nhân Viên
+                </a>
+            @break
+        @endswitch
+    @else
+        {{-- Nếu chưa đăng nhập thì cho về trang home --}}
+        <script>
+            window.location.href = "{{ route('home') }}";
+        </script>
+    @endauth
+</div>
+
                 </div>
             </div>
 

@@ -345,6 +345,15 @@ Route::prefix('payos')->name('payos.')->group(function () {
     Route::get('/create-link/{amount}/{description}', [PayosController::class, 'createLink'])->name('create');
     Route::get('/return-link/{description}', [PayosController::class, 'returnPage'])->name('return');
 });
+ Route::prefix('zalopay')->name('zalopay.')->group(function () {
+        Route::get('/create-link/{amount}/{description}', [ZalopayController::class, 'createLink'])->name('create');
+        Route::get('/return-link/{description}', [ZalopayController::class, 'returnPage'])->name('return');
+    });
+
+    Route::prefix('vnpay')->name('vnpay.')->group(function () {
+        Route::get('/create-link/{amount}/{description}', [VnpayController::class, 'createLink'])->name('create');
+        Route::get('/return-link/{description}', [VnpayController::class, 'returnPage'])->name('return');
+    });
 
 
 

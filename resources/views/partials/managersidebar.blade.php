@@ -16,12 +16,12 @@
         </div>
 
         <a data-bs-toggle="collapse" href="#phimXuatChieu" role="button">
-            <i class="bi bi-film"></i><span class="menu-text">Phim và Xuất Chiếu</span>
+            <i class="bi bi-film"></i><span class="menu-text">Phim và Suất Chiếu</span>
         </a>
         <div class="collapse submenu" id="phimXuatChieu">
             <a href="{{ route('manager.genres.index') }}"><span class="menu-text">Thể Loại</span></a>
             <a href="{{ route('manager.movies.index') }}"><span class="menu-text">Quản lý phim</span></a>
-            <a href="{{ route('manager.showtimes.index') }}"><span class="menu-text">Quản lý xuất chiếu</span></a>
+            <a href="{{ route('manager.showtimes.index') }}"><span class="menu-text">Quản lý suất chiếu</span></a>
         </div>
 
         <a data-bs-toggle="collapse" href="#sidebarfood" role="button">

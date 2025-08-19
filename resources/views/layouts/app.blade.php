@@ -419,14 +419,6 @@
                                 <a class="nav-link {{ request()->is('cua-hang*') ? 'active-link' : '' }}"
                                     href="{{ url('/cua-hang') }}">THỨC ĂN & NƯỚC</a>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link {{ request()->is('khuyen-mai') ? 'active-link' : '' }}"
-                                    href="#">KHUYẾN MÃI</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link {{ request()->is('dich-vu') ? 'active-link' : '' }}"
-                                    href="#">DỊCH VỤ</a>
-                            </li>
                             <li class="nav-item dropdown hover-dropdown">
                                 <a class="nav-link dropdown-toggle {{ request()->is('he-thong-rap') || request()->is('ve-chung-toi') || request()->is('tuyen-dung') ? 'active-link' : '' }}"
                                     href="#">

@@ -70,7 +70,7 @@
                 <div>
                     <button class="btn btn-sm btn-success"
                         onclick="window.location.href='{{ route('showtimes.create') }}'">
-                        <i class="bi bi-plus-circle me-1"></i> Thêm xuất chiếu
+                        <i class="bi bi-plus-circle me-1"></i> Thêm suất chiếu
                     </button>
                 </div>
             </div>
@@ -170,7 +170,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body py-4">
-                    Bạn có chắc chắn muốn xóa xuất chiếu này? Thao tác này không thể hoàn tác.
+                    Bạn có chắc chắn muốn xóa suất chiếu này? Thao tác này không thể hoàn tác.
                 </div>
                 <div class="modal-footer border-0">
     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Hủy bỏ</button>
