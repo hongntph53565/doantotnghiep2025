@@ -129,7 +129,7 @@ Route::prefix('admin')->middleware(['auth', 'role:admin,employee'])->group(funct
         Route::get('/create', [ShowtimeController::class, 'create'])->name('create');
         Route::post('/store', [ShowtimeController::class, 'store'])->name('store');
         Route::get('/edit/{id}', [ShowtimeController::class, 'edit'])->name('edit');
-        Route::post('/update/{id}', [ShowtimeController::class, 'update'])->name('update');
+        Route::put('/update/{id}', [ShowtimeController::class, 'update'])->name('update');
         Route::post('/search', [ShowtimeController::class, 'search'])->name('search');
         Route::delete('/delete/{id}', [ShowtimeController::class, 'delete'])->name('delete');
     });

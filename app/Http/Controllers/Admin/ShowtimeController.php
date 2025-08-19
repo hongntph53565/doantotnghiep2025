@@ -204,6 +204,7 @@ class ShowtimeController extends Controller
         $showtime->update([
             'movie_id' => $request->movie_id,
             'room_id' => $request->room_id,
+            'date'       => $request->date,
             'start_time' => $startDateTime,
             'end_time' => $endDateTime,
             'status' => $request->status ?? false
