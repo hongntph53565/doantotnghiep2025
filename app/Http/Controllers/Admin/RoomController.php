@@ -54,7 +54,20 @@ class RoomController extends Controller
 
     $data = $request->validate([
         'cinema_id'   => 'required|exists:cinemas,cinema_id',
-        'room_name'   => 'required|string|max:255|min:3',
+           'room_name' => [
+            'required',
+            'string',
+            'max:255',
+            'min:3',
+            function ($attribute, $value, $fail) use ($request) {
+                $exists = Room::where('cinema_id', $request->cinema_id)
+                              ->where('room_name', $value)
+                              ->exists();
+                if ($exists) {
+                    $fail('Tên phòng đã tồn tại trong rạp này.');
+                }
+            },
+        ],
         'total_seats' => 'required|integer|min:1',
     ], $messages);
 
@@ -68,7 +81,7 @@ class RoomController extends Controller
         $this->generateSeats($room_id, $request->input('total_seats'));
 
 
-        return redirect()->route('rooms.index')->with('success', 'Đã cập nhật template');
+        return redirect()->route('rooms.index')->with('success', 'Đã thêm mới phòng chiếu thành công');
     }
 
     public function update(Request $request, $id)
@@ -116,7 +129,7 @@ class RoomController extends Controller
         $room = Room::findOrFail($id);
         $room->delete();
 
-        return redirect()->route('rooms.index')->with('success', 'Xoá mẫu email thành công!');
+        return redirect()->route('rooms.index')->with('success', 'Xoá phòng chiếu thành công!');
     }
 
     public function show($id)

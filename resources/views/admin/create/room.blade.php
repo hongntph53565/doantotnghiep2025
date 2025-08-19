@@ -14,13 +14,10 @@
                 <div class="row g-3">
                     <!-- Room Name -->
                     <div class="col-md-6">
-                        <label for="tenChiNhanh" class="form-label fw-semibold">Tên phòng <span class="text-danger">*</span></label>
-                        <input type="text"
-                               class="form-control @error('room_name') is-invalid @enderror"
-                               id="tenChiNhanh"
-                               name="room_name"
-                               value="{{ old('room_name') }}"
-                               placeholder="VD: phòng A1" >
+                        <label for="tenChiNhanh" class="form-label fw-semibold">Tên phòng <span
+                                class="text-danger">*</span></label>
+                        <input type="text" class="form-control @error('room_name') is-invalid @enderror" id="tenChiNhanh"
+                            name="room_name" value="{{ old('room_name') }}" placeholder="VD: phòng A1">
                         @error('room_name')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -28,9 +25,9 @@
 
                     <!-- District -->
                     <div class="col-md-6">
-                        <label for="district" class="form-label fw-semibold">Khu vực <span class="text-danger">*</span></label>
-                        <select class="form-select @error('district') is-invalid @enderror"
-                                id="district" name="district" >
+                        <label for="district" class="form-label fw-semibold">Khu vực <span
+                                class="text-danger">*</span></label>
+                        <select class="form-select @error('district') is-invalid @enderror" id="district" name="district">
                             <option value="" selected disabled>--- Chọn khu vực ---</option>
                             @foreach ($districts as $district)
                                 <option value="{{ $district->city }}"
@@ -46,14 +43,14 @@
 
                     <!-- Cinema -->
                     <div class="col-md-6">
-                        <label for="rapChieu" class="form-label fw-semibold">Rạp chiếu <span class="text-danger">*</span></label>
-                        <select class="form-select @error('cinema_id') is-invalid @enderror"
-                                id="rapChieu" name="cinema_id" >
+                        <label for="rapChieu" class="form-label fw-semibold">Rạp chiếu <span
+                                class="text-danger">*</span></label>
+                        <select class="form-select @error('cinema_id') is-invalid @enderror" id="rapChieu"
+                            name="cinema_id">
                             <option value="" selected disabled>--- Chọn rạp ---</option>
                             @foreach ($cinemas as $cinema)
-                                <option value="{{ $cinema->cinema_id }}"
-                                        district-data="{{ $cinema->city }}"
-                                        {{ old('cinema_id') == $cinema->cinema_id ? 'selected' : '' }}>
+                                <option value="{{ $cinema->cinema_id }}" district-data="{{ $cinema->city }}"
+                                    {{ old('cinema_id') == $cinema->cinema_id ? 'selected' : '' }}>
                                     {{ $cinema->name }}
                                 </option>
                             @endforeach
@@ -65,9 +62,9 @@
 
                     <!-- Room type -->
                     <div class="col-md-6">
-                        <label for="loaiPhong" class="form-label fw-semibold">Loại phòng <span class="text-danger">*</span></label>
-                        <select class="form-select @error('format') is-invalid @enderror"
-                                id="loaiPhong" name="format" >
+                        <label for="loaiPhong" class="form-label fw-semibold">Loại phòng <span
+                                class="text-danger">*</span></label>
+                        <select class="form-select @error('format') is-invalid @enderror" id="loaiPhong" name="format">
                             <option value="" selected disabled>--- Chọn loại phòng ---</option>
                             <option value="2D" {{ old('format') == '2D' ? 'selected' : '' }}>2D Tiêu chuẩn</option>
                             <option value="3D" {{ old('format') == '3D' ? 'selected' : '' }}>3D</option>
@@ -83,12 +80,15 @@
                     <div class="col-md-6">
                         <label for="soDoGhe" class="form-label fw-semibold">Sơ đồ ghế</label>
                         <div class="input-group">
-                            <select class="form-select @error('seat_template') is-invalid @enderror"
-                                    id="soDoGhe" name="seat_template" onchange="updateSeatCount()">
+                            <select class="form-select @error('seat_template') is-invalid @enderror" id="soDoGhe"
+                                name="seat_template" onchange="updateSeatCount()">
                                 <option value="" selected disabled>--- Chọn sơ đồ ---</option>
-                                <option value="a" data-count="120" {{ old('seat_template') == 'a' ? 'selected' : '' }}>Sơ đồ A (120 ghế)</option>
-                                <option value="b" data-count="80" {{ old('seat_template') == 'b' ? 'selected' : '' }}>Sơ đồ B (80 ghế)</option>
-                                <option value="vip" data-count="50" {{ old('seat_template') == 'vip' ? 'selected' : '' }}>Sơ đồ VIP (50 ghế)</option>
+                                <option value="a" data-count="120"
+                                    {{ old('seat_template') == 'a' ? 'selected' : '' }}>Sơ đồ A (120 ghế)</option>
+                                <option value="b" data-count="80" {{ old('seat_template') == 'b' ? 'selected' : '' }}>
+                                    Sơ đồ B (80 ghế)</option>
+                                <option value="vip" data-count="50"
+                                    {{ old('seat_template') == 'vip' ? 'selected' : '' }}>Sơ đồ VIP (50 ghế)</option>
                             </select>
                             <button class="btn btn-outline-secondary" type="button" data-bs-toggle="modal"
                                 data-bs-target="#seatMapModal">
@@ -103,11 +103,8 @@
                     <!-- Total Seats -->
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">Số lượng ghế</label>
-                        <input type="text"
-                               class="form-control @error('total_seats') is-invalid @enderror"
-                               id="seatCount"
-                               name="total_seats"
-                               value="{{ old('total_seats') }}">
+                        <input type="text" class="form-control @error('total_seats') is-invalid @enderror" id="seatCount"
+                            name="total_seats" value="{{ old('total_seats') }}">
                         @error('total_seats')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -117,7 +114,7 @@
                     <div class="col-12">
                         <div class="form-check form-switch">
                             <input class="form-check-input" type="checkbox" name="active" id="activeStatus"
-                                   {{ old('active') ? 'checked' : '' }}>
+                                {{ old('active') ? 'checked' : '' }}>
                             <label class="form-check-label fw-semibold" for="activeStatus">
                                 Kích hoạt phòng chiếu
                             </label>
@@ -131,7 +128,7 @@
                         <i class="bi bi-arrow-left me-2"></i>Quay lại
                     </a>
                     <div class="d-flex gap-2">
-                        <button type="reset" class="btn btn-outline-danger px-4">
+                        <button type="button" class="btn btn-outline-danger px-4" id="btnReset">
                             <i class="bi bi-x-circle me-2"></i>Đặt lại
                         </button>
                         <button type="submit" class="btn btn-primary px-4">
@@ -202,6 +199,26 @@
                 });
                 cinemaSelect.selectedIndex = 0;
             });
+
+
+            //reset 
+               document.getElementById('btnReset').addEventListener('click', function() {
+        const form = this.closest('form');
+
+        // Reset tất cả input, textarea
+        form.querySelectorAll('input').forEach(input => {
+            if (input.type === 'checkbox' || input.type === 'radio') {
+                input.checked = false;
+            } else {
+                input.value = '';
+            }
+        });
+
+        // Reset tất cả select
+        form.querySelectorAll('select').forEach(select => {
+            select.selectedIndex = 0;
+        });
+    });
         </script>
     @endpush
 @endsection

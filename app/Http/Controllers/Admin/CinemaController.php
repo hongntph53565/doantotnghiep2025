@@ -35,7 +35,22 @@ class CinemaController extends Controller
     {
         // Validate đầu vào
         $validated = $request->validate([
-            'name'           => 'required|string|max:255|min:3',
+            'name' => [
+            'required',
+            'string',
+            'max:255',
+            'min:3',
+            function ($attribute, $value, $fail) use ($request) {
+                $exists = \App\Models\Cinema::where('name', $value)
+                    ->where('city', $request->city)
+                    ->whereNull('deleted_at') // bỏ qua soft deleted
+                    ->exists();
+
+                if ($exists) {
+                    $fail('Tên rạp đã tồn tại trong cùng thành phố.');
+                }
+            }
+        ],
             'address_detail' => 'required|string',
             'ward'           => 'required|string|max:100',
             'district'       => 'required|string|max:100',
@@ -92,7 +107,22 @@ class CinemaController extends Controller
     public function update(Request $request, $id)
     {
         $validated = $request->validate([
-            'name'           => 'required|string|max:255|min:3',
+            'name' => [
+            'required',
+            'string',
+            'max:255',
+            'min:3',
+            function ($attribute, $value, $fail) use ($request) {
+                $exists = \App\Models\Cinema::where('name', $value)
+                    ->where('city', $request->city)
+                    ->whereNull('deleted_at') // bỏ qua soft deleted
+                    ->exists();
+
+                if ($exists) {
+                    $fail('Tên rạp đã tồn tại trong cùng thành phố.');
+                }
+            }
+        ],
             'address_detail' => 'required|string',
             'ward'           => 'required|string|max:100',
             'district'       => 'required|string|max:100',
