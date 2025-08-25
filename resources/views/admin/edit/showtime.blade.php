@@ -1,8 +1,40 @@
 @extends('layouts.admin')
 
+@section('title2')
+    Chỉnh sửa suất chiếu
+@endsection
+
+@section('title1')
+    Phim & suất chiếu
+@endsection
+
+@section('title')
+    Quản lý suất chiếu
+@endsection
+
+
+  @push('styles')
+        <style>
+.badge-lg {
+    font-size: 1.1rem;   /* chữ to hơn */
+    padding: 0.6em 1em;  /* padding rộng hơn */
+    border-radius: 0.5rem; /* bo tròn đẹp hơn */
+}
+        </style>
+    @endpush
 @section('content')
     <div class="container-fluid">
         <div class="row">
+             @if ($errors->any())
+            <div class="alert alert-danger">
+                <ul class="mb-0">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
             <div class="col-lg-8">
                 <div class="card shadow-sm mb-4">
                     <div class="card-header bg-light py-3">
@@ -88,8 +120,8 @@
                                     <label class="form-label fw-semibold">Ngày chiếu <span
                                             class="text-danger">*</span></label>
                                     <input type="date" class="form-control" name="date"
-                                        value="{{ \Carbon\Carbon::parse($showtime->start_time)->format('Y-m-d') }}"
-                                        required>
+    value="{{ $showtime->date }}"
+    required>
                                 </div>
 
                                 <div class="col-12">
@@ -135,28 +167,41 @@
                     </div>
                     <div class="card-body">
                         <div class="mb-3">
-                            <h6 class="fw-bold">Phim:</h6>
-                            <p>{{ $showtime->movie->title }}</p>
-                        </div>
-                        <div class="mb-3">
-                            <h6 class="fw-bold">Rạp:</h6>
-                            <p>{{ $showtime->room->cinema->name }}</p>
-                        </div>
-                        <div class="mb-3">
-                            <h6 class="fw-bold">Phòng:</h6>
-                            <p>{{ $showtime->room->room_name }}</p>
-                        </div>
-                        <div class="mb-3">
-                            <h6 class="fw-bold">Thời gian:</h6>
-                            <p>{{ \Carbon\Carbon::parse($showtime->start_time)->format('H:i') }} -
-                                {{ \Carbon\Carbon::parse($showtime->end_time)->format('H:i') }}</p>
-                        </div>
-                        <div class="mb-3">
-                            <h6 class="fw-bold">Trạng thái:</h6>
-                            <span class="badge {{ $showtime->status ? 'bg-success' : 'bg-secondary' }}">
-                                {{ $showtime->status == "active" ? 'Kích hoạt' : 'Tắt' }}
-                            </span>
-                        </div>
+    <h6 class="mb-2 fw-semibold">Phim : {{ $showtime->movie->title }}</h6>
+    
+    <img src="{{ asset('storage/' . $showtime->movie->poster) }}"
+         class="rounded" alt="Poster" width="100" height="150">
+</div>
+
+                       <div class="mb-3">
+    <h6 class="fw-bold">Rạp:</h6>
+    <span class="badge bg-info text-dark badge-lg">
+        {{ $showtime->room->cinema->name }}
+    </span>
+</div>
+
+<div class="mb-3">
+    <h6 class="fw-bold">Phòng:</h6>
+    <span class="badge bg-primary badge-lg">
+        {{ $showtime->room->room_name }}
+    </span>
+</div>
+
+<div class="mb-3">
+    <h6 class="fw-bold">Thời gian:</h6>
+    <span class="badge bg-warning text-dark badge-lg">
+        {{ \Carbon\Carbon::parse($showtime->start_time)->format('H:i') }} -
+        {{ \Carbon\Carbon::parse($showtime->end_time)->format('H:i') }}
+    </span>
+</div>
+
+<div class="mb-3">
+    <h6 class="fw-bold">Trạng thái:</h6>
+    <span class="badge {{ $showtime->status ? 'bg-success' : 'bg-secondary' }} badge-lg">
+        {{ $showtime->status == "active" ? 'Kích hoạt' : 'Tắt' }}
+    </span>
+</div>
+
                     </div>
                 </div>
             </div>

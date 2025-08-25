@@ -3,9 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class CinemaSeatTypePrice extends Model
 {
+        use SoftDeletes; 
     protected $table = 'cinema_seat_type_prices';
 
     protected $fillable = [
@@ -15,12 +17,13 @@ class CinemaSeatTypePrice extends Model
     ];
 
     public function cinema()
-    {
-        return $this->belongsTo(Cinema::class, 'cinema_id');
-    }
+{
+    return $this->belongsTo(Cinema::class, 'cinema_id', 'cinema_id');
+}
 
-    public function seatType()
-    {
-        return $this->belongsTo(SeatType::class, 'seat_type_id');
-    }
+public function seatType()
+{
+    return $this->belongsTo(SeatType::class, 'seat_type_id', 'seat_type_id');
+}
+
 }

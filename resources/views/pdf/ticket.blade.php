@@ -4,80 +4,64 @@
     <meta charset="UTF-8">
     <title>Vé {{ $booking->booking_code }}</title>
     <style>
-    body {
-        font-family: Arial, sans-serif;
-        font-size: 14px;
-        line-height: 1.4;
-        padding: 20px;
-        /* nền hồng nhạt toàn trang */
-    }
+  body {
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.4;
+    padding: 20px;
+  }
 
-    .ticket {
-        position: relative;
-        width: 320px;
-        padding: 16px;
-        margin: 0 auto 20px auto;
-        border: none; /* bỏ viền dashed để giống vé CGV */
-        background-color: #ffb6c1; /* nền hồng giống vé CGV */
-        overflow: hidden; /* ẩn phần watermark tràn ra ngoài */
-    }
+  .ticket {
+    width: 320px;
+    padding: 16px;
+    border: 1px dashed #999;
+    margin: 0 auto 16px;
+    position: relative; /* quan trọng cho watermark */
+    overflow: hidden;   /* tránh watermark tràn viền */
+  }
 
-    /* Watermark nghiêng */
-    .ticket::before {
-        content: "";
-        position: absolute;
-        top: -50%;
-        left: -50%;
-        width: 200%;
-        height: 200%;
-        background-image: url('{{ asset("images/z6776223534015_3ec1a499b9bb824d97c41f77d3a677be-removebg-preview.png") }}');
-          background-repeat: repeat;
-    background-size: 150px auto; /* ảnh to hơn => thưa hơn */
-    background-position: center;
-        opacity: 0.25; /* watermark mờ như vé thật */
-        transform: rotate(-30deg); /* xoay nghiêng 30 độ */
-        z-index: 0;
-    }
+ .ticket .wm {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
 
-    /* Nội dung vé nằm trên watermark */
-    .ticket > * {
-        position: relative;
-        z-index: 1;
-    }
+  /* Scale ảnh vượt khung để chắc chắn phủ hết */
+  min-width: 100%;
+  min-height: 100%;
 
-    .title {
-        text-align: center;
-        font-weight: bold;
-        font-size: 18px;
-        margin-bottom: 10px;
-    }
+  object-fit: cover;        /* Giữ tỉ lệ, có thể crop */
+  object-position: center;  /* Căn giữa ảnh */
 
-    .movie-title {
-        font-weight: bold;
-        font-size: 20px;
-        margin-bottom: 6px;
-    }
+  opacity: 0.2;            /* Độ mờ khi xem */
+  pointer-events: none;
+  z-index: 0;
+  /* filter: #5DC930; */
+}
 
-    .section {
-        margin-bottom: 12px;
-    }
 
-    .barcode {
-        text-align: center;
-        margin-top: 20px;
-    }
+/* Nội dung nằm trên watermark */
+.ticket > *:not(.wm) {
+  position: relative;
+  z-index: 1;
+}
 
-    .footer {
-        text-align: center;
-        font-size: 12px;
-        margin-top: 16px;
-    }
+  .title { text-align:center; font-weight:bold; font-size:18px; margin-bottom:10px; }
+  .movie-title { font-weight:bold; font-size:20px; margin-bottom:6px; }
+  .section { margin-bottom:12px; }
+  .barcode { text-align:center; margin-top:20px; }
+  .footer { text-align:center; font-size:12px; margin-top:16px; }
 
-    @media print {
-        body {
-            padding: 0;
-        }
+  /* Khi in: cố gắng giữ màu/độ mờ (không phải browser nào cũng tôn trọng 100%) */
+  @media print {
+    body { padding: 0; }
+    .ticket .wm {
+      opacity: 0.2;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
     }
+  }
 </style>
 
 </head>
@@ -90,8 +74,10 @@
 {{-- Vé cho từng ghế --}}
 @foreach ($booking->seats as $seat)
     <div class="ticket">
+        <img class="wm" src="{{ asset('images/bgticket1.png') }}" alt="Watermark">
+        <div style="height: 30px"></div>
         <div class="title">VÉ VÀO PHÒNG CHIẾU PHIM</div>
-
+        <div style="height: 20px"></div>
         <div class="section">
             <p><strong>{{ $booking->showtime->room->cinema->name }}</strong></p>
             {{ $booking->showtime->room->cinema->address_detail }},
@@ -110,7 +96,7 @@
 
         <div class="section">
             <strong>Phòng:</strong> {{ $booking->showtime->room->room_name }}<br>
-            <strong>Ghế:</strong> {{ $seat->seat_code }}
+<strong>Ghế:</strong> {{ $seat->seat_code }}
         </div>
 
         <div class="barcode">
@@ -120,7 +106,7 @@
 
         <div class="footer">
             Cảm ơn quý khách đã sử dụng dịch vụ LumiStar<br>
-            Nhân viên: {{ auth()->user()->full_name ?? 'N/A' }}<br>
+            Nhân viên: {{ auth()->user()->name ?? 'N/A' }}
         </div>
     </div>
 @endforeach
@@ -128,6 +114,7 @@
 {{-- Vé đồ ăn --}}
 @if($booking->foods->count())
     <div class="ticket">
+        <img class="wm" src="{{ asset('images/bgticket1.png') }}" alt="Watermark">
         <div class="title">VÉ ĐỒ ĂN</div>
 
         @if($cinema)
@@ -153,6 +140,10 @@
         <div class="footer">
             Cảm ơn quý khách đã sử dụng dịch vụ LumiStar<br>
             Nhân viên: {{ auth()->user()->full_name ?? 'N/A' }}<br>
+Tài khoản: {{ auth()->user()->username ?? 'N/A' }}
+
+
+
         </div>
     </div>
 @endif
@@ -163,12 +154,59 @@
 </body>
 </html>
 <script>
-    window.addEventListener('load', function () {
-        const barcodeImg = document.querySelector('.barcode img');
-        if (barcodeImg && !barcodeImg.complete) {
-            barcodeImg.onload = () => window.print();
-        } else {
-            window.print();
-        }
+(function () {
+  function whenAllLoaded(selectors, timeoutMs) {
+    const nodes = selectors.flatMap(s => Array.from(document.querySelectorAll(s)));
+    return new Promise(resolve => {
+      if (nodes.length === 0) return resolve();
+      let loaded = 0;
+      const done = () => { if (++loaded === nodes.length) resolve(); };
+      nodes.forEach(n => {
+        if (n.complete) return done();
+        n.addEventListener('load', done, { once: true });
+        n.addEventListener('error', done, { once: true });
+      });
+      setTimeout(resolve, timeoutMs || 2500);
     });
+  }
+  window.addEventListener('load', async () => {
+    await whenAllLoaded(['.barcode img', '.ticket .wm'], 2500);
+    window.print();
+  });
+})();
+</script>
+<script>
+(function () {
+  const markUrl = @json($markPrintedUrl);
+  const csrf = @json(csrf_token());
+  let marked = false;
+
+  async function markPrinted() {
+    if (marked) return;
+    marked = true;
+    try {
+      await fetch(markUrl, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrf},
+        body: JSON.stringify({ done: true })
+      });
+    } catch (e) { console.error(e); }
+  }
+
+  window.addEventListener('load', async () => {
+const imgs = Array.from(document.images);
+    await Promise.race([
+      Promise.all(imgs.map(img => img.complete ? Promise.resolve() :
+        new Promise(res => { img.onload = img.onerror = res; }))),
+      new Promise(res => setTimeout(res, 2500))
+    ]);
+    window.print();
+  });
+
+  if ('onafterprint' in window) {
+    window.addEventListener('afterprint', markPrinted);
+  } else {
+    window.addEventListener('blur', () => setTimeout(markPrinted, 1000));
+  }
+})();
 </script>

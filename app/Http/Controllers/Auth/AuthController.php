@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Booking;
 use Illuminate\Support\Facades\Hash;
+
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
@@ -66,9 +67,10 @@ class AuthController extends Controller
         }
 
         $username = strtolower(trim($request->last_name));
-        if (User::where('username', $username)->exists()) {
+        if (User::whereRaw('LOWER(TRIM(username)) = ?', [$username])->exists()) {
             return redirect()->back()->withErrors(['register' => ['username' => 'Tên tài khoản đã tồn tại!']])->withInput();
         }
+
 
         $birthday = sprintf('%04d-%02d-%02d', $request->birth_year, $request->birth_month, $request->birth_day);
 
@@ -86,13 +88,10 @@ class AuthController extends Controller
 
         event(new UserRegistered($user));
 
-        // Đăng nhập ngay sau khi đăng ký
+       
         Auth::login($user);
 
-        // Nếu dùng API thì tạo token
-        // $token = $user->createToken('api_token')->plainTextToken;
-
-        // Chuyển hướng về trang chủ
+        
         return redirect()->route('home')->with('success', 'Đăng ký và đăng nhập thành công');
     }
 
@@ -144,19 +143,25 @@ class AuthController extends Controller
     public function profile(Request $request)
     {
         $user = Auth::user();
+                
+if (!$user) {
+     return redirect()->route('register.form')->with('error', 'Vui lòng đăng ký để xem thông tin.');
+}
 
         $typeFilter = $request->query('type'); // booking | combo | null
         $monthFilter = $request->query('month'); // YYYY-MM | null
 
         // Query chính để hiển thị danh sách booking
         $bookingsQuery = Booking::with([
-            'showtime.room.cinema',
+            'showtime' => fn($q) => $q->withTrashed()->with(['room.cinema']),
             'bookingSeats.showtimeSeat.seat',
             'bookingFoods.food.cinema',
             'bookingPromotions',
         ])
             ->where('user_id', $user->user_id)
             ->where('payment_status', 'paid');
+
+
 
         // Lọc theo loại giao dịch
         if ($typeFilter === 'booking') {
@@ -185,21 +190,21 @@ class AuthController extends Controller
         $totalRP = $allFilteredBookings->sum(fn($b) => floor($b->total_price / 1000));
 
         // ✅ Tính tổng chi tiêu trong tháng được chọn
-$monthlySpendingForSelectedMonth = 0;
-if ($monthFilter) {
-    [$year, $month] = explode('-', $monthFilter);
-    $monthlySpendingForSelectedMonth = Booking::where('user_id', $user->user_id)
-        ->where('payment_status', 'paid')
-        ->whereYear('created_at', $year)
-        ->whereMonth('created_at', $month)
-        ->sum('total_price');
-} else {
-    $monthlySpendingForSelectedMonth = Booking::where('user_id', $user->user_id)
-        ->where('payment_status', 'paid')
-        ->whereYear('created_at', now()->year)
-        ->whereMonth('created_at', now()->month)
-        ->sum('total_price');
-}
+        $monthlySpendingForSelectedMonth = 0;
+        if ($monthFilter) {
+            [$year, $month] = explode('-', $monthFilter);
+            $monthlySpendingForSelectedMonth = Booking::where('user_id', $user->user_id)
+                ->where('payment_status', 'paid')
+                ->whereYear('created_at', $year)
+                ->whereMonth('created_at', $month)
+                ->sum('total_price');
+        } else {
+            $monthlySpendingForSelectedMonth = Booking::where('user_id', $user->user_id)
+                ->where('payment_status', 'paid')
+                ->whereYear('created_at', now()->year)
+                ->whereMonth('created_at', now()->month)
+                ->sum('total_price');
+        }
 
         // ✅ Lấy thẻ thành viên
         $membershipCard = \App\Models\MemberShipCard::where('user_id', $user->user_id)->first();
@@ -228,7 +233,7 @@ if ($monthFilter) {
             ->where('booking_status', 'confirmed')
             ->sum('total_price');
 
-     
+
 
         // ✅ Tổng chi tiêu theo từng tháng (tất cả đơn đã thanh toán)
         $allPaidBookings = Booking::where('user_id', $user->user_id)
@@ -336,47 +341,66 @@ if ($monthFilter) {
         return back()->with('success', 'Cập nhật thông tin thành công!');
     }
 
+
     public function updateInside(Request $request)
     {
-        //  dd($request->all());
-        $user = Auth::user();
-
-        
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             'last_name' => 'required|string|max:50',
             'first_name' => 'required|string|max:100',
-            'phone' => 'nullable|string|max:20',
+            'phone' => ['required', 'regex:/^0\d{9,10}$/'],
             'birth_day' => 'nullable|integer|min:1|max:31',
             'birth_month' => 'nullable|integer|min:1|max:12',
             'birth_year' => 'nullable|integer|min:1900|max:' . now()->year,
             'address' => 'nullable|string|max:255',
-            'password' => 'nullable|string|min:6|confirmed',
+            'password' => 'nullable|min:6|confirmed',
+        ], [
+            'last_name.required' => 'Họ không thể để trống.',
+            'first_name.required' => 'Tên đệm và tên không thể để trống.',
+            'phone.required' => 'Số điện thoại không thể để trống.',
+            'phone.regex' => 'Số điện thoại không hợp lệ.',
+            'password.min' => 'Mật khẩu phải có ít nhất 6 ký tự.',
+            'password.confirmed' => 'Mật khẩu nhập lại không khớp.',
         ]);
 
-        
-        $user->full_name = trim($request->last_name . ' ' . $request->first_name);
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'errors' => $validator->errors()
+            ], 422);
+        }
 
-        
-        if ($request->birth_day && $request->birth_month && $request->birth_year) {
+        $user = Auth::user();
+
+        if ($request->filled(['birth_day', 'birth_month', 'birth_year'])) {
             try {
-                $user->birthday = Carbon::createFromDate(
+                $birthday = Carbon::createFromDate(
                     $request->birth_year,
                     $request->birth_month,
                     $request->birth_day
-                )->format('Y-m-d');
+                );
+                if ($birthday->greaterThan(Carbon::today())) {
+                    return response()->json([
+                        'success' => false,
+                        'errors' => ['birth_day' => ['Ngày sinh không thể lớn hơn ngày hiện tại.']]
+                    ], 422);
+                }
+                $user->birthday = $birthday->format('Y-m-d');
             } catch (\Exception $e) {
-                return back()->withErrors(['birthday' => 'Ngày sinh không hợp lệ']);
+                return response()->json([
+                    'success' => false,
+                    'errors' => ['birth_day' => ['Ngày sinh không hợp lệ.']]
+                ], 422);
             }
+        } else {
+            $user->birthday = null;
         }
 
-        
+        $user->full_name = trim($request->last_name . ' ' . $request->first_name);
         $user->phone = $request->phone;
         $user->address = $request->address;
-        
 
-        
         if ($request->filled('password')) {
-            $user->password = Hash::make($request->password);
+            $user->password = bcrypt($request->password);
         }
 
         $user = Auth::user();
@@ -384,8 +408,13 @@ if ($monthFilter) {
             $user->save();
         }
 
-        return back()->with('success', 'Cập nhật thông tin thành công!');
+        return response()->json([
+            'success' => true,
+            'message' => 'Cập nhật thông tin thành công!'
+        ]);
     }
+
+
 
 
 

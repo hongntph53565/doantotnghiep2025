@@ -12,7 +12,6 @@
             <div class="row g-0">
                 <div class="col-md-2">
                     <img src="{{ asset('storage/' . $movie->poster) }}" class="img" alt="{{ $movie->title }}">
-                    {{-- Giả sử poster lưu trong storage --}}
                 </div>
                 <div class="col-md-10">
                     <div class="card-body">
@@ -97,9 +96,7 @@
             margin-top: 30px;
             display: inline-block;
             color: #67B72F;
-            /* Màu xanh lá */
             border: 1px solid #67B72F;
-            /* Viền xanh */
             padding: 8px 20px;
             border-radius: 6px;
             font-weight: 600;

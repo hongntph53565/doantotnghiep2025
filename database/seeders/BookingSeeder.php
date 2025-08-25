@@ -6,20 +6,33 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
+use App\Models\Booking;
+use App\Models\Showtime;
+use App\Models\User;
 
 class BookingSeeder extends Seeder
 {
-    public function run(): void
+      public function run()
     {
-        for ($i = 1; $i <= 10; $i++) {
-            DB::table('bookings')->insert([
-                'user_id' => 1,
-                'showtime_id' => 1,
-                'booking_status' => 'pending',
-                'payment_status' => 'unpaid',
-                'booking_code' => strtoupper(Str::random(8)),
-                'created_at' => Carbon::now()->subDays(rand(1, 30)),
-                'updated_at' => Carbon::now(),
+        $user = User::first(); 
+        $showtime = Showtime::withTrashed()->inRandomOrder()->first();
+
+        $paymentMethods = ['cash', 'vnpay', 'zalopay', 'payos'];
+
+        foreach (range(1, 6) as $month) {
+            // Lấy random ngày trong tháng trước
+            $date = Carbon::now()->subMonths($month)->startOfMonth()->addDays(rand(0, 25));
+
+            Booking::create([
+                'user_id' => $user->user_id,
+                'showtime_id' => $showtime->showtime_id,
+                'booking_status' => 'confirmed',
+                'payment_status' => 'paid',
+                'payment_method' => $paymentMethods[array_rand($paymentMethods)],
+                'booking_code' => strtoupper(uniqid("BK")),
+                'total_price' => rand(80000, 300000),
+                'created_at' => $date,
+                'updated_at' => $date,
             ]);
         }
     }

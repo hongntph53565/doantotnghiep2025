@@ -17,7 +17,8 @@
                 <p class="mb-1 cinema-info">{{ $cinema->full_address }}</p>
                 <p class="mb-1 cinema-info">Điện thoại: {{ $cinema->phone ?? 'Chưa cập nhật' }}</p>
                 <p class="mb-1 cinema-info">Email: {{ $cinema->email ?? 'Chưa cập nhật' }}</p>
-                <p class="mb-1 cinema-info">Trạng thái: {{ $cinema->status === 'active' ? 'Hoạt động' : 'Ngừng hoạt động' }}</p>
+                 <p class="mb-1 cinema-info">Địa chỉ: {{ $cinema->address_detail ?? 'Chưa cập nhật' }}</p>
+                {{-- <p class="mb-1 cinema-info">Trạng thái: {{ $cinema->status === 'active' ? 'Hoạt động' : 'Ngừng hoạt động' }}</p> --}}
                 <a href="{{ route('Client.cinemaShowtime') }}" class="btn btn-outline-success btn-sm mt-2">← Quay lại danh sách</a>
             </div>
         </div>

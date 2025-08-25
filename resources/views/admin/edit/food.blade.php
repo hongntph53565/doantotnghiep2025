@@ -1,5 +1,18 @@
 @extends('layouts.admin')
 
+@section('title2')
+    Chỉnh sửa 
+@endsection
+
+@section('title1')
+    Đồ ăn thức uống
+@endsection
+
+@section('title')
+    Thể loại
+@endsection
+
+
 @push('styles')
 <style>
     /* Thêm vào file CSS của bạn hoặc trong section styles */
@@ -137,6 +150,15 @@ form {
         </div>
 
         <div class="modal-body">
+            @if ($errors->any())
+    <div class="alert alert-danger">
+        <ul class="mb-0">
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
             <div class="mb-3">
                 <label class="form-label">Khu vực</label>
                 <select class="form-select" id="district" disabled>
@@ -199,10 +221,10 @@ form {
             </div>
         </div>
 
-        <div class="modal-footer">
-            <a href="{{ route('foods.index') }}" class="btn btn-secondary">Quay lại</a>
-            <button type="submit" class="btn btn-primary">Cập nhật</button>
-        </div>
+        <div class="modal-footer d-flex gap-2">
+    <a href="{{ route('foods.index') }}" class="btn btn-secondary">Quay lại</a>
+    <button type="submit" class="btn btn-primary">Cập nhật</button>
+</div>
     </form>
 @endsection
 

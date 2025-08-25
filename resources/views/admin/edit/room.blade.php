@@ -54,7 +54,7 @@
                     <select class="form-select" id="loaiPhong" name="format" required>
                         <option value="" disabled>--- Chọn loại phòng ---</option>
                         <option value="2D" {{ $room->format === '2D' ? 'selected' : '' }}>2D Tiêu chuẩn</option>
-                        <option value="3D" {{ $room->format === '3D' ? 'selected' : '' }}>3D</option>
+<option value="3D" {{ $room->format === '3D' ? 'selected' : '' }}>3D</option>
                         <option value="IMAX" {{ $room->format === 'IMAX' ? 'selected' : '' }}>IMAX</option>
                         <option value="VIP" {{ $room->format === 'VIP' ? 'selected' : '' }}>VIP</option>
                     </select>
@@ -101,7 +101,7 @@
                         <i class="bi bi-x-circle me-2"></i>Đặt lại
                     </button>
                     <button type="submit" class="btn btn-primary px-4">
-                        <i class="bi bi-check-circle me-2"></i>Cập nhật
+<i class="bi bi-check-circle me-2"></i>Cập nhật
                     </button>
                 </div>
             </div>

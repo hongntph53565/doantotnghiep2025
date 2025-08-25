@@ -86,7 +86,7 @@
                                         strtolower($sorted[$i + 1]->seatType->name) === 'double'
                                     ) {
                                         $slots += 2;
-                                        $i++; // Skip next seat
+                                        $i++; 
                                     } else {
                                         $slots++;
                                     }
@@ -100,6 +100,7 @@
 @endphp --}}
                     @foreach ($groupedSeats as $rowLabel => $rowSeats)
                         <tr>
+                            
                             <td class="lable">{{ $rowLabel }}</td>
 
                             @php
@@ -144,7 +145,6 @@
                                         $status1 = $showtimeSeatStatuses[$seat->seat_id] ?? 'available';
                                         $status2 = $showtimeSeatStatuses[$nextSeat->seat_id] ?? 'available';
 
-                                        // Ưu tiên booked > pending > available
                                         $finalStatus =
                                             $status1 === 'booked' || $status2 === 'booked'
                                                 ? 'booked'
@@ -216,7 +216,7 @@
                                             $seat->seat_code .
                                             '" data-seat-id="' .
                                             $seat->seat_id .
-                                            '" ' . // Thêm ở đây
+                                            '" ' . 
                                             'data-status="' .
                                             $status .
                                             '" data-price="' .
@@ -299,6 +299,7 @@
             <div class="btn-back-wrapper">
                 <a href="javascript:void(0);" class="btn-back" onclick="goBackStep()">← Trở lại</a>
             </div>
+            <br>
 
         </div>
 
@@ -315,10 +316,10 @@
         const type = img.dataset.type;
         const coupleId = img.dataset.coupleId;
 
-        // Không chọn ghế đã bán hoặc pending
+        
         if (img.dataset.status === 'booked' || img.dataset.status === 'pending') return;
 
-        // Tính tổng số ghế đã chọn hiện tại
+        
         let selectedCount = 0;
         selectedSeats.forEach(seat => {
             if (seat.type === 'couple') selectedCount += 2;
@@ -327,13 +328,13 @@
 
         const addingCount = type === 'couple' ? 2 : 1;
 
-        // Nếu chưa chọn nhưng vượt 9 ghế
+        
         if (!selectedSeats.has(type === 'couple' ? `couple-${coupleId}` : code) && (selectedCount + addingCount) > 9) {
             showSeatError('Bạn chỉ được chọn tối đa 9 ghế!');
             return;
         }
 
-        // Xử lý chọn/deselect ghế (cặp hoặc đơn)
+        
         if (type === 'couple' && coupleId) {
             const coupleImgs = document.querySelectorAll(`img[data-couple-id="${coupleId}"]`);
             const coupleKey = `couple-${coupleId}`;
@@ -360,7 +361,7 @@
         updateSummary();
         updateUIAfterSeatChange();
 
-        // Khi đã chọn 9 ghế, disable các ghế khác
+        
         const totalSelected = Array.from(selectedSeats.values()).reduce((sum, seat) => {
             return sum + (seat.type === 'couple' ? 2 : 1);
         }, 0);

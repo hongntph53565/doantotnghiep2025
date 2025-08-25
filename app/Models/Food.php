@@ -3,13 +3,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Food extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $table = 'foods';
-
     protected $primaryKey = 'food_id';
 
     protected $fillable = [
@@ -19,9 +19,11 @@ class Food extends Model
         'description',
         'price',
         'image',
+        'status'
     ];
 
-    // Quan hệ nhiều-many với bookings thông qua bảng trung gian booking_food
+    protected $dates = ['deleted_at']; // để Eloquent hiểu deleted_at là kiểu ngày
+
     public function bookings()
     {
         return $this->belongsToMany(Booking::class, 'booking_food', 'food_id', 'booking_id')
@@ -29,8 +31,8 @@ class Food extends Model
                     ->withTimestamps();
     }
 
-public function cinema()
-{
-    return $this->belongsTo(Cinema::class, 'cinema_id', 'cinema_id');
-}
+    public function cinema()
+    {
+        return $this->belongsTo(Cinema::class, 'cinema_id', 'cinema_id');
+    }
 }

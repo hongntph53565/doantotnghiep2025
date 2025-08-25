@@ -9,10 +9,44 @@ use App\Models\Cinema;
 
 class ComboController extends Controller
 {
+// public function getCombos(Request $request)
+// {
+//     $cinemaId = $request->input('cinema_id');
+//     $sessionCinemaId = session('selected_cinema_id');
+
+//     // Nếu chọn rạp khác → reset giỏ hàng và lưu lại rạp mới
+//     if ($cinemaId && $cinemaId != $sessionCinemaId) {
+//         session()->forget('cart'); // Xoá giỏ hàng cũ
+//         session(['selected_cinema_id' => $cinemaId]); // Lưu rạp mới
+//     }
+
+//     // Lấy tất cả rạp để hiển thị dropdown
+//     $cinemas = Cinema::all();
+
+//     // Nếu có rạp → lọc combo theo rạp đó
+//     if ($cinemaId) {
+//         $combos = Food::where('type', 'combo')
+//             ->where('status', 'active')
+//             ->where('cinema_id', $cinemaId)
+//             ->get();
+//     } else {
+//         $combos = Food::where('type', 'combo')
+//             ->where('status', 'active')
+//             ->get();
+//     }
+
+//     // Tính tổng số lượng sản phẩm trong giỏ
+//     $cart = session('cart', []);
+//     $totalQuantity = array_sum(array_column($cart, 'quantity'));
+
+//     return view('Client.cart.combo', compact('combos', 'totalQuantity', 'cinemas', 'cinemaId'));
+// }
+
 public function getCombos(Request $request)
 {
     $cinemaId = $request->input('cinema_id');
     $sessionCinemaId = session('selected_cinema_id');
+    $selectedCity = session('selected_city'); // lấy city từ session
 
     // Nếu chọn rạp khác → reset giỏ hàng và lưu lại rạp mới
     if ($cinemaId && $cinemaId != $sessionCinemaId) {
@@ -20,27 +54,34 @@ public function getCombos(Request $request)
         session(['selected_cinema_id' => $cinemaId]); // Lưu rạp mới
     }
 
-    // Lấy tất cả rạp để hiển thị dropdown
-    $cinemas = Cinema::all();
+    // 🔹 Lọc rạp theo city nếu có
+    $cinemas = Cinema::when($selectedCity && $selectedCity !== 'Chọn khu vực của bạn', function ($query) use ($selectedCity) {
+        $query->where('city', $selectedCity);
+    })->get();
 
-    // Nếu có rạp → lọc combo theo rạp đó
+    // 🔹 Lấy combo theo rạp
     if ($cinemaId) {
         $combos = Food::where('type', 'combo')
             ->where('status', 'active')
             ->where('cinema_id', $cinemaId)
             ->get();
     } else {
+        // Nếu chưa chọn rạp → chỉ load combo trong city (nếu có city)
         $combos = Food::where('type', 'combo')
             ->where('status', 'active')
+            ->when($selectedCity && $selectedCity !== 'Chọn khu vực của bạn', function ($query) use ($cinemas) {
+                $query->whereIn('cinema_id', $cinemas->pluck('cinema_id'));
+            })
             ->get();
     }
 
-    // Tính tổng số lượng sản phẩm trong giỏ
+    // 🔹 Tính tổng số lượng sản phẩm trong giỏ
     $cart = session('cart', []);
     $totalQuantity = array_sum(array_column($cart, 'quantity'));
 
     return view('Client.cart.combo', compact('combos', 'totalQuantity', 'cinemas', 'cinemaId'));
 }
+
 
    public function show(Request $request, $id)
 {

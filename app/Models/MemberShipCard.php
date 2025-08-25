@@ -20,16 +20,22 @@ class MemberShipCard extends Model
         'updated_at',
     ];
 
+    // ✅ Giá trị mặc định
+    protected $attributes = [
+        'card_type' => 'normal',
+        'points' => 0,
+    ];
+
     /**
      * Cập nhật loại thẻ dựa vào điểm hiện tại
      */
     public function updateCardType()
     {
-        if ($this->points >= 200) {
+        if ($this->points >= 5000) {
             $this->card_type = 'platinum';
-        } elseif ($this->points >= 100) {
+        } elseif ($this->points >= 2000) {
             $this->card_type = 'gold';
-        } elseif ($this->points >= 50) {
+        } elseif ($this->points >= 1000) {
             $this->card_type = 'silver';
         } else {
             $this->card_type = 'normal';

@@ -35,17 +35,23 @@ class BookingService
     }
 
     public function attachFoodsToBooking($bookingId, array $foods)
-    {
-        foreach ($foods as $food) {
-            if (!empty($food['food_id']) && !empty($food['qty'])) {
+{
+    foreach ($foods as $food) {
+        if (!empty($food['food_id']) && !empty($food['qty'])) {
+            $foodModel = \App\Models\Food::find($food['food_id']);
+
+            if ($foodModel) {
                 BookingFood::create([
                     'booking_id' => $bookingId,
                     'food_id'    => $food['food_id'],
                     'quantity'   => $food['qty'],
+                    'price'      => $foodModel->price, 
                 ]);
             }
         }
     }
+}
+
 
     public function handleAfterBooking(Booking $booking, array $seatIds, array $foods = [])
     {

@@ -2,6 +2,15 @@
 
 @section('content')
     <div class="card border-0 shadow-sm rounded-3 mt-3">
+        @if ($errors->any())
+    <div class="alert alert-danger">
+        <ul class="mb-0">
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
         <div class="card-header bg-light py-3">
             <h5 class="mb-0 fw-bold text-primary">
                 <i class="bi bi-film me-2"></i>Cập nhật phim
@@ -22,7 +31,8 @@
                         <label class="form-label fw-semibold">Thể loại <span class="text-danger">*</span></label>
                         <select name="genre_id" class="form-select" required>
                             @foreach ($genres as $genre)
-                                <option value="{{ $genre->genre_id }}" {{ $movie->genre_id == $genre->genre_id ? 'selected' : '' }}>
+                                <option value="{{ $genre->genre_id }}"
+                                    {{ $movie->genre_id == $genre->genre_id ? 'selected' : '' }}>
                                     {{ $genre->genre_name }}
                                 </option>
                             @endforeach
@@ -52,7 +62,7 @@
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">Poster (nếu thay)</label>
                         <input type="file" name="poster" class="form-control">
-                        @if($movie->poster)
+                        @if ($movie->poster)
                             <img src="{{ asset('storage/' . $movie->poster) }}" class="mt-2" style="height: 100px;">
                         @endif
                     </div>
@@ -70,19 +80,22 @@
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">Độ tuổi</label>
                         <select name="age_rating" class="form-select">
-                            <option value="P" {{ $movie->age_rating == 'P' ? 'selected' : '' }}>P - Mọi lứa tuổi</option>
-                            <option value="T13" {{ $movie->age_rating == 'T13' ? 'selected' : '' }}>T13 - Trên 13</option>
-                            <option value="T18" {{ $movie->age_rating == 'T18' ? 'selected' : '' }}>T18 - Trên 18</option>
+                            <option value="P" {{ $movie->age_rating == 'P' ? 'selected' : '' }}>P - Mọi lứa tuổi
+                            </option>
+                            <option value="T13" {{ $movie->age_rating == 'T13' ? 'selected' : '' }}>T13 - Trên 13
+                            </option>
+                            <option value="T18" {{ $movie->age_rating == 'T18' ? 'selected' : '' }}>T18 - Trên 18
+                            </option>
                         </select>
                     </div>
 
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">Ngôn ngữ</label>
                         <select name="language" class="form-select">
-                            <option value="Tiếng Việt" {{ $movie->language == 'Tiếng Việt' ? 'selected' : '' }}>Tiếng Việt</option>
-                            <option value="Tiếng Anh" {{ $movie->language == 'Tiếng Anh' ? 'selected' : '' }}>Tiếng Anh</option>
-                            <option value="Tiếng Hàn" {{ $movie->language == 'Tiếng Hàn' ? 'selected' : '' }}>Tiếng Hàn</option>
-                            <option value="Tiếng Nhật" {{ $movie->language == 'Tiếng Nhật' ? 'selected' : '' }}>Tiếng Nhật</option>
+                            <option value="Phụ đề" {{ $movie->language == 'Phụ đề' ? 'selected' : '' }}>Phụ đề</option>
+                            <option value="Lồng tiếng" {{ $movie->language == 'Lồng tiếng' ? 'selected' : '' }}>Lồng tiếng
+                            </option>
+
                         </select>
                     </div>
 
@@ -93,10 +106,11 @@
 
                     <div class="col-12">
                         <div class="form-check form-switch">
-                            <input type="checkbox" name="status" class="form-check-input" id="activeStatus" value="1" {{ $movie->status == 'active' ? 'checked' : '' }}>
+                            <input type="checkbox" name="status" class="form-check-input" id="activeStatus" value="1"
+                                {{ $movie->status == 'active' ? 'checked' : '' }}>
                             <label for="activeStatus" class="form-check-label fw-semibold">Kích hoạt phim</label>
                         </div>
-                    </div>  
+                    </div>
                 </div>
 
                 <div class="d-flex justify-content-between mt-4 pt-3 border-top">

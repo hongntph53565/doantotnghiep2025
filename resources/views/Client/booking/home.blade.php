@@ -98,7 +98,7 @@
 
 
 function updateSeatImages(statuses) {
-    const removedSeats = []; // Danh sách ghế bị mất
+    const removedSeats = []; 
 
     document.querySelectorAll('img[data-seat-id]').forEach(img => {
         const seatId = parseInt(img.getAttribute('data-seat-id'));
@@ -115,7 +115,7 @@ function updateSeatImages(statuses) {
                     selectedSeats.delete(coupleKey);
                     wasSelected = true;
 
-                    // Ghép dạng G5-G6
+                   
                     if (coupleSeat?.codes?.length) {
                         removedSeats.push(coupleSeat.codes.join('-'));
                     }
@@ -129,7 +129,7 @@ function updateSeatImages(statuses) {
             }
         }
 
-        // Kiểm tra nếu còn đang selected
+        
         const isSelected = Array.from(selectedSeats.values()).some(seat => {
             if (seat.type === 'couple') {
                 return seat.seat_ids?.includes(seatId);

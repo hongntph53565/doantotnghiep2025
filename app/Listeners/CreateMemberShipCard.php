@@ -25,10 +25,9 @@ class CreateMemberShipCard
         $user = $event->user;
 
         MemberShipCard::create([
-            'user_id' => $user->user_id,
-            'card_number' => 'CARD' . time(),
-            'card_type' => 'silver',
-            'points' => 0,
-        ]);
+    'user_id'    => $user->user_id,
+    'card_number'=> 'CARD' . time(),
+    'points'     => 0,
+]);
     }
 }

@@ -40,6 +40,13 @@
   cursor: pointer;
 }
 
+.cinema-info {
+        font-size: 16px;        /* chữ to hơn (có thể chỉnh 18px nếu muốn) */
+        font-weight: 500;       /* đậm vừa phải, không quá nặng */
+        color: #333;            /* màu chữ dễ đọc hơn */
+        line-height: 1.5;       /* giãn cách cho thoáng */
+    }
+
 
 .showtime-btn:hover {
   background-color: #6fc441;

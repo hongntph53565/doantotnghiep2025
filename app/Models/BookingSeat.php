@@ -27,8 +27,11 @@ class BookingSeat extends Model
 
     // Quan hệ: BookingSeat thuộc về ShowtimeSeat
     public function showtimeSeat()
-    {
-        return $this->belongsTo(ShowtimeSeat::class, 'showtime_seat_id', 'id');
-    }
+{
+    return $this->belongsTo(ShowtimeSeat::class, 'showtime_seat_id', 'id')
+        ->with(['showtime' => function ($q) {
+            $q->withTrashed(); // giữ lại suất chiếu đã xóa mềm
+        }]);
+}
     
 }

@@ -1,76 +1,130 @@
 @extends('layouts.admin')
 
 @section('content')
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="d-flex justify-content-between align-items-center mb-4 ms-2">
         <div>
-            <h4>Xin chào, <strong>{{ session('my_name') ?? 'Guest' }}!</strong></h4>
-            <p class="text-muted">Đây là bảng tổng quan các số liệu thống kê</p>
+            <h4>Thống kế trên toàn hệ thống</strong></h4>
+            <p class="text-muted">Thống kê tổng quan trên toàn hệ thống Lumistar</p>
         </div>
     </div>
 
     <div class="row g-3 mb-4">
-        <div class="col-md-4">
+        <div class="col-md-3">
             <div class="stat-card">
                 <div class="d-flex justify-content-between">
                     <div>
-    <h6 class="text-muted">Tổng doanh thu</h6>
-    <p class="fs-4 fw-bold">{{ number_format($totalRevenue, 0, ',', '.') }} đ</p>
+                        <h6 class="text-muted">Doanh thu</h6>
+                        <p class="fs-3 fw-bold">{{ number_format($currentMonthRevenue, 0, ',', '.') }} ₫</p>
+                    </div>
+                    <div class="overview br1">
+                        <img src="{{ asset('admin/pictures/money.svg') }}" alt="money">
+                    </div>
+                </div>
+
+                <div class="br {{ $revenueChange < 0 ? 'text-danger' : 'text-success' }}">
+                    <i class="fas {{ $revenueChange < 0 ? 'fa-arrow-down' : 'fa-arrow-up' }}"></i>
+                    {{ number_format(abs($revenueChange), 2) }}%
+                </div>
+                <p class="text-muted">so với tháng trước</p>
+            </div>
+        </div>
+
+
+
+        <div class="col-md-3">
+            <div class="stat-card">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h6 class="text-muted">Số vé tháng này</h6>
+                        <p class="fs-3 fw-bold">{{ number_format($currentMonthTickets) }} vé</p>
+                    </div>
+                    <div class="overview br2">
+                        <img src="{{ asset('admin/pictures/ticket.svg') }}" alt="ticket">
+                    </div>
+                </div>
+
+                <div class="br {{ $ticketChange < 0 ? 'text-danger' : 'text-success' }}">
+                    <i class="fas {{ $ticketChange < 0 ? 'fa-arrow-down' : 'fa-arrow-up' }}"></i>
+                    {{ number_format(abs($ticketChange), 2) }}%
+                </div>
+                <p class="text-muted">so với tháng trước</p>
+            </div>
+        </div>
+
+
+
+        <div class="col-md-3">
+            <div class="stat-card">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h6 class="text-muted">Khách hàng mới</h6>
+                        <p class="fs-3 fw-bold">{{ number_format($currentMonthCustomers) }}</p>
+                    </div>
+                    <div class="overview br3">
+                        <img src="{{ asset('admin/pictures/person.svg') }}" alt="person">
+                    </div>
+                </div>
+
+                <div class="br {{ $customerChange < 0 ? 'text-danger' : 'text-success' }}">
+                    <i class="fas {{ $customerChange < 0 ? 'fa-arrow-down' : 'fa-arrow-up' }}"></i>
+                    {{ number_format(abs($customerChange), 2) }}%
 </div>
-                    <div class="{{ $revenueChange < 0 ? 'text-danger' : 'text-success' }}">
-                        <i class="fas {{ $revenueChange < 0 ? 'fa-arrow-down' : 'fa-arrow-up' }}"></i>
-                        {{ number_format(abs($revenueChange), 2) }}%
-                    </div>
-                </div>
+                <p class="text-muted">so với tháng trước</p>
             </div>
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-3">
             <div class="stat-card">
                 <div class="d-flex justify-content-between">
                     <div>
-                        <h6 class="text-muted">Hóa đơn</h6>
-                        <p class="fs-4 fw-bold">{{ $currentMonthInvoices }}</p>
+                        <h6 class="text-muted">Suất chiếu tháng này</h6>
+                        <p class="fs-4 fw-bold">{{ $currentMonthShowtimes }} suất</p>
                     </div>
-                    <div class="{{ $invoiceChange < 0 ? 'text-danger' : 'text-success' }}">
-                        <i class="fas {{ $invoiceChange < 0 ? 'fa-arrow-down' : 'fa-arrow-up' }}"></i>
-                        {{ number_format(abs($invoiceChange), 2) }}%
+                    <div class="overview br4">
+                        <img src="{{ asset('admin/pictures/tv.svg') }}" alt="showtime">
                     </div>
                 </div>
+                <div class="br {{ $showtimeChange >= 0 ? 'text-success' : 'text-danger' }}">
+                    <i class="fas {{ $showtimeChange >= 0 ? 'fa-arrow-up' : 'fa-arrow-down' }}"></i>
+                    {{ number_format(abs($showtimeChange), 2) }}%
+                </div>
+                <p class="text-muted">so với tháng trước</p>
             </div>
         </div>
 
-
-        <div class="col-md-4">
-            <div class="stat-card">
-                <div class="d-flex justify-content-between">
-                    <div>
-                        <h6 class="text-muted">Rạp hoạt động</h6>
-                        <p class="fs-4 fw-bold">{{ $activeCinemas }}/{{ $totalCinemas }}</p>
-                    </div>
-                    <div class="text-success">
-                        <i class="fas fa-check-circle"></i> {{ $activePercent }}%
-                    </div>
-                </div>
-            </div>
-        </div>
     </div>
     <div class="row mb-4">
         <div class="col-md-8">
             <div class="card h-100">
                 <div class="card-body">
-                    <h5 class="card-title">Doanh thu 7 ngày gần đây</h5>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="card-title mb-0">Doanh thu</h5>
+                        <select id="yearSelect" class="form-select w-auto">
+                            @for ($i = now()->year; $i >= 2020; $i--)
+                                <option value="{{ $i }}">{{ $i }}</option>
+                            @endfor
+                        </select>
+                    </div>
+
+                    <div class="text-center my-2 bg-light p-3">
+                        <h6 class="text-muted">Tổng doanh thu</h6>
+                        <h5 class="fw-bold text-primary" id="totalRevenue"></h5>
+                    </div>
+
+                    <br>
                     <div class="chart-container">
                         <canvas id="revenueChart"></canvas>
                     </div>
+
                 </div>
             </div>
         </div>
         <div class="col-md-4">
             <div class="card h-100">
                 <div class="card-body">
-                    <h5 class="card-title">Phân bổ thể loại</h5>
+                    <h5 class="card-title">Tỷ lệ đặt ghế</h5>
                     <div class="chart-container">
-                        <canvas id="genreChart"></canvas>
+                        <canvas id="seatTypeChart" height="250"></canvas>
                     </div>
                 </div>
             </div>
@@ -90,7 +144,7 @@
         <div class="card-body">
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <h5 class="card-title mb-0">Danh sách phim</h5>
-                <div>
+<div>
                     <button class="btn btn-sm btn-outline-primary"
                         onclick="window.location.href='{{ route('movies.create') }}'"><i class="fas fa-plus"></i> Thêm
                         phim</button>
@@ -109,7 +163,7 @@
             <div class="genre-content active" id="all">
                 @foreach ($movie as $value)
                     <div class="col-md-3 col-sm-6">
-                        <div class="movie-card bg-primary">
+                        <div class="movie-card bg-light text-dark">
                             <span class="badge badge-genre">{{ $value->genre->genre_name }}</span>
                             <h6>{{ $value->title }}</h6>
                             <p class="small">{{ $value->duration }} phút | {{ $value->age_rating }}</p>
@@ -127,7 +181,7 @@
             @foreach ($moviesByGenre as $genreName => $movies)
                 <div class="genre-content" id="{{ $genreName }}">
                     <div class="col-md-3 col-sm-6">
-                        <div class="movie-card bg-primary">
+                        <div class="movie-card bg-light text-dark">
                             <span class="badge badge-genre">{{ $genreName }}</span>
                             @foreach ($movies as $value)
                                 <h6>{{ $value->title }}</h6>
@@ -138,7 +192,7 @@
                                             <small>({{ number_format($averageRatings[$value->movie_id], 1) }}/5★)</small>
                                         @endif
                                         </small>
-                                    </span>
+</span>
                                 </div>
                             @endforeach
                         </div>
@@ -154,103 +208,193 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
     <link rel="stylesheet" href="{{ asset('admin/css/dashboard.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+
+    <style>
+        .overview {
+            border-radius: 8px;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .br {
+            background-color: #F3F6F9;
+            width: 80px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 3px;
+        }
+
+        .br1 {
+            background-color: #DAF4F0;
+        }
+
+        .br2 {
+            background-color: #DFF0FA;
+        }
+
+
+        .br3 {
+            background-color: #FEF4E4;
+        }
+
+        .br4 {
+            background-color: #E2E5ED;
+        }
+
+        .overview img {
+            width: 28px;
+            height: 28px;
+        }
+    </style>
 @endpush
 
 @push('scripts')
     <script>
-        const colorPalette = [
-            '#4e73df', '#1cc88a', '#e74a3b', '#f6c23e', '#36b9cc',
-            '#8e44ad', '#ff9f40', '#2ecc71', '#3498db', '#fd7e14'
-        ];
+        const colorPalette = ['#018bf3', '#f7ba00', '#00db91']; // xanh, xanh lá, vàng
 
-        function getRandomColor() {
-            const letters = '0123456789ABCDEF';
-            let color = '#';
-            for (let i = 0; i < 6; i++) {
-                color += letters[Math.floor(Math.random() * 16)];
-            }
-            return color;
-        }
+        fetch("{{ route('seatType.stats') }}")
+            .then(res => res.json())
+            .then(data => {
+                // Tạo map từ loại ghế -> số lượng
+                const seatMap = {
+                    'standard': 0,
+                    'vip': 0,
+                    'double': 0,
+                    'couple': 0,
+                };
 
-        function generateColors(numColors) {
-            const colors = [...colorPalette];
-            while (colors.length < numColors) {
-                colors.push(getRandomColor());
-            }
-            return colors.slice(0, numColors);
-        }
+                data.forEach(s => {
+                    if (s.seat_type === 'standard') seatMap['standard'] = s.total;
+                    if (s.seat_type === 'vip') seatMap['vip'] = s.total;
+                    if (s.seat_type === 'double' || s.seat_type === 'couple') seatMap['double'] = s.total;
+                });
 
-        const genres = @json($genresstart);
+                // Đặt lại đúng thứ tự bạn muốn
+                const labels = ['Ghế Thường', 'Ghế VIP', 'Ghế Đôi'];
+                const counts = [
+                    seatMap['standard'],
+                    seatMap['vip'],
+                    seatMap['double']
+                ];
 
-        const labels = genres.map(g => g.genre_name);
-        const data = genres.map(g => g.movie_count);
-        const backgroundColors = generateColors(labels.length);
-        const hoverBackgroundColors = backgroundColors;
+                const total = counts.reduce((a, b) => a + b, 0);
 
-        const genreCtx = document.getElementById('genreChart').getContext('2d');
-        const genreChart = new Chart(genreCtx, {
-            type: 'doughnut',
-            data: {
-                labels: labels,
-                datasets: [{
-                    data: data,
-                    backgroundColor: backgroundColors,
-                    hoverBackgroundColor: hoverBackgroundColors,
-                    hoverBorderColor: "rgba(234, 236, 244, 1)",
-                }],
-            },
-            options: {
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'right'
-                    }
-                },
-                cutout: '70%',
-            }
-        });
+                const ctx = document.getElementById('seatTypeChart').getContext('2d');
+                new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            data: counts,
+backgroundColor: colorPalette,
+                            hoverBorderColor: "rgba(234, 236, 244, 1)",
+                        }],
+                    },
+                    options: {
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    padding: 20
+                                }
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        const value = context.raw;
+                                        const percent = ((value / total) * 100).toFixed(1);
+                                        return context.label + ": " + value + " (" + percent + "%)";
+                                    }
+                                }
+                            },
+                            datalabels: {
+                                color: '#fff',
+                                formatter: (value, ctx) => {
+                                    let percentage = (value / total * 100).toFixed(1) + "%";
+                                    return percentage;
+                                },
+                            }
+                        },
+                        cutout: '70%',
+                    },
+                    plugins: [ChartDataLabels],
+                });
+            });
     </script>
 
+
+
     <script>
-        const revenues = @json($revenues);
+        let revenueChart;
 
-        const date = revenues.map(r => r.date);
-        const revenuedata = revenues.map(r => r.total);
+        function loadRevenue(year) {
+            fetch("{{ route('revenue.data') }}?year=" + year)
+                .then(res => res.json())
+                .then(res => {
+                    const data = res.monthly;
+                    const labels = data.map(r => "Tháng " + r.month);
+                    const revenues = data.map(r => r.total);
+
+                    // tổng doanh thu từ DB
+                    document.getElementById("totalRevenue").innerText =
+                        Number(res.total).toLocaleString("vi-VN") + " VND";
 
 
-        const revenueCtx = document.getElementById('revenueChart').getContext('2d');
-        const revenueChart = new Chart(revenueCtx, {
-            type: 'line',
-            data: {
-                labels: date,
-                datasets: [{
-                    label: 'Doanh thu (VND)',
-                    data: revenuedata,
-                    fill: true,
-                    borderColor: '#4e73df',
-                    backgroundColor: 'rgba(78, 115, 223, 0.05)',
-                    tension: 0.4
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        display: false
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            callback: function(value) {
-                                return (value / 1000000).toFixed(1) + 'tr';
+                    if (revenueChart) {
+                        revenueChart.data.labels = labels;
+                        revenueChart.data.datasets[0].data = revenues;
+                        revenueChart.update();
+                    } else {
+                        const ctx = document.getElementById("revenueChart").getContext("2d");
+                        revenueChart = new Chart(ctx, {
+                            type: "bar",
+                            data: {
+                                labels: labels,
+                                datasets: [{
+                                    label: "Doanh thu (VND)",
+                                    data: revenues,
+                                    backgroundColor: "rgba(78, 115, 223, 0.7)",
+borderRadius: 6
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                plugins: {
+                                    legend: {
+                                        display: false
+                                    }
+                                },
+                                scales: {
+                                    y: {
+                                        beginAtZero: true,
+                                        ticks: {
+                                            callback: function(value) {
+                                                return value.toLocaleString("vi-VN") + " VND";
+                                            }
+                                        }
+                                    }
+                                }
                             }
-                        }
+                        });
                     }
-                }
-            }
+                });
+        }
+
+
+        // load mặc định năm hiện tại
+        loadRevenue(new Date().getFullYear());
+
+        // đổi năm thì gọi lại API
+        document.getElementById("yearSelect").addEventListener("change", function() {
+            loadRevenue(this.value);
         });
     </script>
 
@@ -301,7 +445,7 @@
                 document.querySelectorAll('.genre-btn').forEach(b => {
                     b.classList.remove('active');
                     b.classList.remove('btn-primary');
-                    b.classList.add('btn-outline-primary');
+b.classList.add('btn-outline-primary');
                 });
 
                 // Thêm active cho nút được click

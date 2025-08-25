@@ -18,7 +18,12 @@
                         <button class="btn btn-warning" onclick="window.location.href='{{ route('movies.edit',['id' => $movie->movie_id]) }}'">Chỉnh sửa</button>
                         <button class="btn btn-danger" >Xóa phim</button>
                     </div>
+                    <br>
+                     <a href="{{ route('movies.index') }}" class="btn btn-outline-secondary px-4">
+                        <i class="bi bi-arrow-left me-2"></i>Quay lại
+                    </a>
                 </div>
+                
                 <div class="col-md-9">
                     <div class="row mb-3">
                         <div class="col-md-6">
@@ -54,12 +59,11 @@
                     </div>
 
                     <div class="mb-3">
-                        <h6>Trailer:</h6>
-                        <div class="ratio ratio-16x9">
-                            <iframe src="{{ $movie->trailer ?? 'https://www.youtube.com/embed/abc123XYZ' }}"
-                                allowfullscreen></iframe>
-                        </div>
-                    </div>
+    <h6>Trailer:</h6>
+    <div class="ratio ratio-16x9">
+        <iframe src="{{ $movie->trailer ?? 'https://www.youtube.com/embed/abc123XYZ' }}" allowfullscreen></iframe>
+    </div>
+</div>
                 </div>
             </div>
         </div>

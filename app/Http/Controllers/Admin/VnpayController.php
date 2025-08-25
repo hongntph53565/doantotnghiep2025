@@ -163,8 +163,8 @@ class VnpayController extends Controller
 public function returnPage(Request $request, $description)
 {
     $allParams = $request->query();
-    $booking = Booking::where('booking_code', $description)->first();
 
+    $booking = Booking::with('user')->where('booking_code', $description)->first();
     if (!$booking) {
         return response()->json([
             'success' => false,
@@ -172,59 +172,89 @@ public function returnPage(Request $request, $description)
         ], 404);
     }
 
-    if ($booking['payment_method'] === "vnpay") {
+    $isCancel = false;
+    $isSuccess = false;
+
+    
+    if ($booking['payment_method'] === 'payos') {
         $payment = Payment::create([
-            'booking_id'     => $booking['booking_id'],
-            'payment_method' => $booking['payment_method'],
-            'price_amount'   => $booking->total_price,
-            'status'         => $allParams['vnp_ResponseCode'] == '00' ? 'paid' : 'unpaid'
+            'booking_id' => $booking->booking_id,
+            'payment_method' => 'payos',
+            'price_amount' => $booking->total_price,
+            'status' => ($allParams['cancel'] ?? 'false') === 'true' ? 'unpaid' : 'paid',
         ]);
-        $payment['user_id'] = $booking['user_id'];
+        $payment['user_id'] = $booking->user_id;
         event(new PaymentEvents($payment));
+
+        if (($allParams['cancel'] ?? 'false') !== 'true' && $booking->payment_status !== 'paid') {
+            $booking->update([
+                'payment_status' => 'paid',
+                'booking_status' => 'confirmed',
+            ]);
+            $isSuccess = true;
+        } else {
+            $booking->update(['booking_status' => 'cancelled']);
+            $isCancel = true;
+        }
     }
 
-    if ($allParams['vnp_ResponseCode'] == '00' && $booking['payment_method'] === "vnpay") {
-        $booking->update([
-            'payment_status' => 'paid',
-            'booking_status' => 'confirmed'
+   
+    if ($booking['payment_method'] === 'vnpay') {
+        $status = ($allParams['vnp_ResponseCode'] ?? '') == '00' ? 'paid' : 'unpaid';
+        $payment = Payment::create([
+            'booking_id' => $booking->booking_id,
+            'payment_method' => 'vnpay',
+            'price_amount' => $booking->total_price,
+            'status' => $status
         ]);
+        $payment['user_id'] = $booking->user_id;
+        event(new PaymentEvents($payment));
 
+        if ($status === 'paid') {
+            $booking->update([
+                'payment_status' => 'paid',
+                'booking_status' => 'confirmed',
+            ]);
+            $isSuccess = true;
+        } else {
+            $booking->update(['booking_status' => 'cancelled']);
+            $isCancel = true;
+        }
+    }
+
+   
+    if ($isSuccess) {
         Log::info('Calling confirmSeats() for booking ID: ' . $booking->booking_id);
         $this->bookingService->confirmSeats($booking);
 
-        // 🚀 Quy đổi điểm từ total_price (giống PayOS)
-        $points = floor($booking->total_price / 1000);
+        
+        // $points = floor($booking->total_price / 1000);
+        // $card = \App\Models\MemberShipCard::firstOrCreate(
+        //     ['user_id' => $booking->user_id],
+        //     [
+        //         'card_number' => 'CARD' . time(),
+        //         'card_type' => 'normal',
+        //         'points' => 0,
+        //     ]
+        // );
+        // $card->points += $points;
+        // $card->save();
+        // $card->updateCardType();
 
-        $card = \App\Models\MemberShipCard::firstOrCreate(
-            ['user_id' => $booking->user_id],
-            [
-                'card_number' => 'CARD' . time(),
-                'card_type' => 'normal',
-                'points' => 0,
-            ]
-        );
+        // Log::info('MembershipCard updated', [
+        //     'booking_id' => $booking->booking_id,
+        //     'user_id' => $booking->user_id,
+        //     'total_price' => $booking->total_price,
+        //     'points_earned' => $points,
+        //     'new_points' => $card->points,
+        //     'card_type' => $card->card_type,
+        // ]);
 
-        $card->points += $points;
-        $card->save();
-
-        // Cập nhật loại thẻ dựa trên điểm hiện tại
-        $card->updateCardType();
-
-        // 📝 Log lại
-        Log::info('MembershipCard updated (VNPAY)', [
-            'booking_id'   => $booking->booking_id,
-            'user_id'      => $booking->user_id,
-            'total_price'  => $booking->total_price,
-            'points_earned'=> $points,
-            'new_points'   => $card->points,
-            'card_type'    => $card->card_type,
-        ]);
-
-        // Gắn lại đồ ăn cho booking
+     
         $foods = json_decode($booking->selected_foods, true) ?? [];
         $this->bookingService->attachFoodsToBooking($booking->booking_id, $foods);
 
-        // Cập nhật used_count cho promotion (nếu có)
+     
         $bookingPromotion = \App\Models\BookingPromotion::where('booking_id', $booking->booking_id)->first();
         if ($bookingPromotion) {
             $promotion = \App\Models\Promotion::find($bookingPromotion->promo_id);
@@ -233,20 +263,14 @@ public function returnPage(Request $request, $description)
             }
         }
 
-        // 🚀 Gửi mail xác nhận booking
         event(new \App\Events\BookingEvents($booking));
-
-    } elseif ($allParams['vnp_ResponseCode'] !== '00' && $booking['payment_method'] === "vnpay") {
-        $booking->update([
-            'booking_status' => 'cancelled'
-        ]);
+    } elseif ($isCancel) {
+        Log::info('Calling cancelSeats() for booking ID: ' . $booking->booking_id);
         $this->bookingService->cancelSeats($booking);
     }
 
-    // ✅ Redirect theo role giống PayOS
+    
     $user = $booking->user;
-    $isSuccess = $allParams['vnp_ResponseCode'] == '00';
-
     if ($user && $user->role_id == 3) {
         return redirect()->route('staff.search_ticket_online')
             ->with('message', $isSuccess
@@ -257,10 +281,11 @@ public function returnPage(Request $request, $description)
 
     return redirect()->to(route('profile') . '#transaction-history')
         ->with('message', $isSuccess
-            ? 'Thanh toán thành công, booking đã xác nhận.'
-            : 'Thanh toán đã bị hủy, booking đã hủy.'
+            ? 'Thanh toán thành công'
+            : 'Thanh toán đã bị hủy'
         );
 }
+
 
 
 

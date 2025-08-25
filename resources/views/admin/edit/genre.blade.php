@@ -1,5 +1,18 @@
 @extends('layouts.admin')
 
+@section('title2')
+    Chỉnh sửa thể loại phim
+@endsection
+
+@section('title1')
+    Phim & suất chiếu
+@endsection
+
+@section('title')
+    Thể loại
+@endsection
+
+
 @section('content')
     <div class="card border-0 shadow-sm rounded-3 mt-3">
         <div class="card-header bg-light py-3">
@@ -11,33 +24,56 @@
         <div class="card-body p-4">
             <form action="{{ route('genres.update', $genre->genre_id) }}" method="POST">
                 @csrf
+                @method('PUT')
+
                 <div class="row g-3">
                     <!-- Tên thể loại -->
                     <div class="col-md-6">
-                        <label for="genreName" class="form-label fw-semibold">Tên thể loại <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" id="genreName" name="genre_name"
+                        <label for="genreName" class="form-label fw-semibold">
+                            Tên thể loại <span class="text-danger">*</span>
+                        </label>
+                        <input type="text"
+                               class="form-control @error('genre_name') is-invalid @enderror"
+                               id="genreName"
+                               name="genre_name"
                                value="{{ old('genre_name', $genre->genre_name) }}"
-                               placeholder="VD: Hành động, Hài, Kinh dị" required>
+                               placeholder="VD: Hành động, Hài, Kinh dị"
+                               >
+                        @error('genre_name')
+                            <div class="invalid-feedback">
+                                {{ $message }}
+                            </div>
+                        @enderror
                     </div>
 
                     <!-- Mô tả -->
                     <div class="col-md-6">
                         <label for="description" class="form-label fw-semibold">Mô tả</label>
-                        <input type="text" class="form-control" id="description" name="description"
+                        <input type="text"
+                               class="form-control @error('description') is-invalid @enderror"
+                               id="description"
+                               name="description"
                                value="{{ old('description', $genre->description) }}"
                                placeholder="Thông tin thêm về thể loại (tuỳ chọn)">
+                        @error('description')
+                            <div class="invalid-feedback">
+                                {{ $message }}
+                            </div>
+                        @enderror
                     </div>
 
                     <!-- Trạng thái -->
                     <div class="col-12">
                         <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" name="status" id="activeStatus"
-                                   value="active" {{ old('status', $genre->status) === 'active' ? 'checked' : '' }}>
+                            <input class="form-check-input" type="checkbox"
+                                   name="status" id="activeStatus"
+                                   value="active"
+                                   {{ old('status', $genre->status) === 'active' ? 'checked' : '' }}>
                             <label class="form-check-label fw-semibold" for="activeStatus">
                                 Kích hoạt thể loại
                             </label>
                         </div>
-                    </div>
+</div>
                 </div>
 
                 <!-- Actions -->

@@ -1,7 +1,26 @@
 @extends('layouts.admin')
 
+@section('title2')
+    Phòng chiếu
+@endsection
+
+@section('title1')
+    Hệ thống rạp
+@endsection
+
+@section('title')
+    Phòng chiếu
+@endsection
+
+
 @section('content')
 <div class="card border-0 shadow-sm mt-3">
+    @if (session('success'))
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        {{ session('success') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+@endif
     <div class="card-body">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h6 class="fw-bold">Danh sách phòng chiếu</h6>
@@ -36,7 +55,7 @@
                         <tr>
                             <td>{{ $index++ }}</td>
                             <td>{{ $room->room_name }}</td>
-                            <td>{{ $room->cinema->name ?? 'Không xác định' }}</td>
+                            <td>{{ $room->cinema ? $room->cinema->name : 'Rạp đã xóa' }}</td>
                             
                             <td>{{ $room->total_seats }}</td>
                             <td>{{ $room->created_at->format('d/m/Y') }}</td>
@@ -44,20 +63,35 @@
                                 {{-- <a href="{{ route('rooms.edit', ['id' => $room->room_id]) }}"
                                    class="btn btn-outline-primary btn-sm">
                                     <i class="bi bi-pencil-fill"></i>
-                                </a> --}}
-                                {{-- <a href="{{ route('rooms.show', ['id' => $room->room_id]) }}"
+                                </a>
+                                <a href="{{ route('rooms.show', ['id' => $room->room_id]) }}"
                                    class="btn btn-outline-primary btn-sm">
                                     <i class="bi bi-eye-fill"></i>
                                 </a> --}}
-                                <form action="{{ route('rooms.delete', ['id' => $room->room_id]) }}"
-                                      method="POST" style="display:inline-block;"
-                                      onsubmit="return confirm('Bạn có chắc chắn muốn xoá phòng này?')">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-outline-danger btn-sm">
-                                        <i class="bi bi-trash-fill"></i>
-                                    </button>
-                                </form>
+                                
+    @if($room->trashed())
+        {{-- Nếu phòng đã xóa mềm thì hiện nút khôi phục --}}
+        <form action="{{ route('rooms.restore', ['id' => $room->room_id]) }}"
+              method="POST" style="display:inline-block;"
+              onsubmit="return confirm('Bạn có chắc chắn muốn khôi phục phòng này?')">
+            @csrf
+            @method('PATCH')
+            <button type="submit" class="btn btn-outline-success btn-sm">
+                <i class="bi bi-arrow-counterclockwise"></i>
+            </button>
+        </form>
+    @else
+        {{-- Nếu chưa bị xóa thì hiện nút xoá --}}
+        <form action="{{ route('rooms.delete', ['id' => $room->room_id]) }}"
+              method="POST" style="display:inline-block;"
+              onsubmit="return confirm('Bạn có chắc chắn muốn xoá phòng này?')">
+            @csrf
+            @method('DELETE')
+            <button type="submit" class="btn btn-outline-danger btn-sm">
+                <i class="bi bi-trash-fill"></i>
+            </button>
+        </form>
+    @endif
                             </td>
                         </tr>
                     @endforeach

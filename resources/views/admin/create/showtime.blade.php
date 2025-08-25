@@ -1,57 +1,31 @@
 @extends('layouts.admin')
 
-@push('styles')
-<style>
-    /* Giữ phân trang nằm trong khung, không tràn ra */
-    .card-body .pagination {
-        flex-wrap: wrap; /* Cho xuống dòng nếu quá dài */
-        justify-content: center; /* Căn giữa */
-        overflow-x: auto; /* Cho phép scroll ngang nếu quá dài */
-        gap: 4px;
-    }
+@section('title2')
+    Thêm suất chiếu
+@endsection
 
-    .pagination li {
-        display: inline-block;
-    }
+@section('title1')
+    Phim & suất chiếu
+@endsection
 
-    .pagination .page-link {
-        color: #007bff;
-        background-color: #fff;
-        border: 1px solid #dee2e6;
-        padding: 6px 12px;
-        font-weight: 500;
-        border-radius: 50%;
-        min-width: 38px;
-        height: 38px;
-        text-align: center;
-        line-height: 25px;
-    }
-
-    .pagination .page-item.active .page-link {
-        background-color: #0d6efd;
-        color: #fff;
-        border-color: #0d6efd;
-    }
-
-    .pagination .page-item.disabled .page-link {
-        color: #6c757d;
-        pointer-events: none;
-        background-color: #f8f9fa;
-    }
-
-    @media (max-width: 768px) {
-        .pagination {
-            flex-wrap: wrap;
-        }
-    }
-</style>
-@endpush
-
+@section('title')
+    Quản lý xuất chiếu
+@endsection
 
 @section('content')
     <div class="container-fluid">
+        @if ($errors->any())
+            <div class="alert alert-danger">
+                <ul class="mb-0">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
         <div class="row">
-            <div class="col-lg-8">
+            <div class="col-lg-6">
                 <div class="card shadow-sm mb-4">
                     <div class="card-header bg-light py-3">
                         <h5 class="mb-0 fw-bold text-primary">
@@ -67,14 +41,20 @@
                                 <div class="col-md-6">
                                     <label class="form-label fw-semibold">Tên phim <span
                                             class="text-danger">*</span></label>
-                                    <select class="form-select" name="movie_id" id="movie_id" required>
-                                        <option value="" disabled selected>--- Chọn phim ---</option>
+                                    <select class="form-select @error('movie_id') is-invalid @enderror" name="movie_id"
+                                        id="movie_id">
+                                        <option value="" disabled {{ old('movie_id') ? '' : 'selected' }}>--- Chọn
+                                            phim ---</option>
                                         @foreach ($movies as $movie)
-                                            <option value="{{ $movie->movie_id }}" data-duration="{{ $movie->duration }}">
+                                            <option value="{{ $movie->movie_id }}" data-duration="{{ $movie->duration }}"
+                                                {{ old('movie_id') == $movie->movie_id ? 'selected' : '' }}>
                                                 {{ $movie->title }}
                                             </option>
                                         @endforeach
                                     </select>
+                                    @error('movie_id')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
                                 </div>
 
                                 <!-- Phiên bản -->
@@ -86,10 +66,14 @@
                                 <!-- Khu vực -->
                                 <div class="col-md-6">
                                     <label class="form-label fw-semibold">Khu vực <span class="text-danger">*</span></label>
-                                    <select class="form-select" id="district" required>
-                                        <option value="" selected disabled>--- Chọn khu vực ---</option>
+                                    <select class="form-select" id="district" name="district">
+                                        <option value="" disabled {{ old('district') ? '' : 'selected' }}>--- Chọn khu
+                                            vực ---</option>
                                         @foreach ($districts as $district)
-                                            <option value="{{ $district->city }}">{{ $district->city }}</option>
+                                            <option value="{{ $district->city }}"
+                                                {{ old('district') == $district->city ? 'selected' : '' }}>
+                                                {{ $district->city }}
+                                            </option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -98,35 +82,50 @@
                                 <div class="col-md-6">
                                     <label class="form-label fw-semibold">Rạp chiếu <span
                                             class="text-danger">*</span></label>
-                                    <select class="form-select" id="rapChieu" required>
-                                        <option value="" selected disabled>--- Chọn rạp ---</option>
+                                    <select class="form-select" id="rapChieu" name="cinema_id">
+                                        <option value="" disabled {{ old('cinema_id') ? '' : 'selected' }}>--- Chọn
+                                            rạp ---</option>
                                         @foreach ($cinemas as $cinema)
-                                            <option value="{{ $cinema->cinema_id }}" district-data="{{ $cinema->city }}">
-                                                {{ $cinema->name }}</option>
+                                            <option value="{{ $cinema->cinema_id }}" district-data="{{ $cinema->city }}"
+                                                {{ old('cinema_id') == $cinema->cinema_id ? 'selected' : '' }}>
+                                                {{ $cinema->name }}
+                                            </option>
                                         @endforeach
                                     </select>
                                 </div>
 
-                                <!-- Phòng -->
                                 <div class="col-md-6">
                                     <label class="form-label fw-semibold">Phòng chiếu <span
                                             class="text-danger">*</span></label>
-                                    <select class="form-select" id="room" name="room_id" required>
-                                        <option value="" disabled selected>--- Chọn phòng ---</option>
+                                    <select class="form-select @error('room_id') is-invalid @enderror" id="room"
+                                        name="room_id">
+                                        <option value="" disabled {{ old('room_id') ? '' : 'selected' }}>--- Chọn
+                                            phòng ---</option>
                                         @foreach ($rooms as $room)
                                             <option value="{{ $room->room_id }}" cinema-data="{{ $room->cinema_id }}"
-                                                data-format="{{ $room->format }}">
-                                                {{ $room->room_name }} ({{ $room->total_seats }} chỗ) ({{ $room->format }})
+                                                data-format="{{ $room->format }}"
+                                                {{ old('room_id') == $room->room_id ? 'selected' : '' }}
+                                                @if (in_array($room->room_id, $usedRooms)) disabled @endif>
+                                                {{ $room->room_name }} ({{ $room->total_seats }} chỗ)
+                                                ({{ $room->format }})
                                             </option>
                                         @endforeach
                                     </select>
+                                    @error('room_id')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
                                 </div>
 
                                 <!-- Ngày -->
                                 <div class="col-md-6">
                                     <label class="form-label fw-semibold">Ngày chiếu <span
                                             class="text-danger">*</span></label>
-                                    <input type="date" class="form-control" name="date" required>
+                                    <input type="date" class="form-control @error('date') is-invalid @enderror"
+                                        name="date" value="{{ old('date') }}">
+                                    @error('date')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+
                                 </div>
 
                                 <div class="col-12">
@@ -172,12 +171,30 @@
                 </div>
             </div>
 
-            <!-- Right sidebar -->
-            <div class="col-lg-4">
+
+            <div class="col-lg-6">
                 <div class="card shadow-sm mb-4">
                     <div class="card-header bg-light py-3">
                         <h6 class="mb-0 fw-bold">Suất chiếu đang có</h6>
                     </div>
+                    <br>
+                    <form action="{{ route('showtimes.create') }}" method="GET" class="mb-3">
+                        <input type="date" name="date" value="{{ $filterDate }}"
+                            class="form-control w-auto d-inline-block me-2">
+
+                        <select name="cinema_id" class="form-control w-auto d-inline-block me-2">
+                            <option value="">-- Chọn rạp --</option>
+                            @foreach ($cinemas as $cinema)
+                                <option value="{{ $cinema->cinema_id }}"
+                                    {{ isset($filterCinema) && $filterCinema == $cinema->cinema_id ? 'selected' : '' }}>
+                                    {{ $cinema->name }}
+                                </option>
+                            @endforeach
+                        </select>
+
+                        <button type="submit" class="btn btn-primary">Lọc</button>
+                    </form>
+
                     <div class="card-body">
                         <div class="table-responsive">
                             <table class="table table-sm table-hover mb-0">
@@ -185,25 +202,37 @@
                                     <tr>
                                         <th class="py-2">Thời gian</th>
                                         <th class="py-2">Phòng</th>
+                                        <th class="py-2">Rạp</th>
+                                        <th class="py-2">Phim</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @foreach ($showtimes as $value)
                                         <tr>
-                                            <td>{{ $value->start_time }}</td>
+                                            <td>{{ \Carbon\Carbon::parse($value->start_time)->format('H:i') }}</td>
                                             <td>{{ $value->room->room_name }}</td>
+                                            <td>{{ $value->room->cinema->name }}</td>
+                                            <td>
+                                                <img src="{{ asset('storage/' . $value->movie->poster) }}"
+                                                    class="rounded me-3" alt="Poster" width="50" height="75">
+                                                <div>
+                                            </td>
                                         </tr>
                                     @endforeach
                                 </tbody>
                             </table>
                         </div>
-                        <div class="mt-3 d-flex justify-content-end">
-                            {{ $showtimes->links() }}
-                        </div>
 
+                        <div class="mt-3 d-flex justify-content-end">
+                            {{ $showtimes->appends([
+                                    'date' => $filterDate,
+                                    'cinema_id' => $filterCinema ?? '',
+                                ])->onEachSide(1)->links() }}
+                        </div>
                     </div>
                 </div>
             </div>
+
         </div>
     </div>
 @endsection
@@ -281,6 +310,31 @@
             roomSelect.selectedIndex = 0;
             formatInput.value = '';
         });
+
+        document.addEventListener("DOMContentLoaded", function() {
+    const oldDistrict = "{{ old('district') }}";
+    const oldCinema   = "{{ old('cinema_id') }}";
+    const oldRoom     = "{{ old('room_id') }}";
+
+    // Nếu có district cũ
+    if (oldDistrict) {
+        districtSelect.value = oldDistrict;
+        districtSelect.dispatchEvent(new Event('change'));
+    }
+
+    // Nếu có cinema cũ
+    if (oldCinema) {
+        cinemaSelect.value = oldCinema;
+        cinemaSelect.dispatchEvent(new Event('change'));
+    }
+
+    // Nếu có room cũ
+    if (oldRoom) {
+        roomSelect.value = oldRoom;
+        roomSelect.dispatchEvent(new Event('change'));
+    }
+});
+
 
         // Cập nhật format khi chọn phòng
         roomSelect.addEventListener('change', function() {

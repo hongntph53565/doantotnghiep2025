@@ -1,5 +1,17 @@
 @extends('layouts.admin')
 
+@section('title2')
+    Quản lý người dùng
+@endsection
+
+@section('title1')
+   Tài khoản
+@endsection
+
+@section('title')
+     Tài khoản
+@endsection
+
 @section('content')
 @if (session('success'))
     <div class="alert alert-success alert-dismissible fade show" role="alert">

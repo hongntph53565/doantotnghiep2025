@@ -1,7 +1,26 @@
 @extends('layouts.admin')
 
+@section('title2')
+     Quản lý rạp chiếu
+@endsection
+
+@section('title1')
+    Hệ thống rạp
+@endsection
+
+@section('title')
+     Quản lý rạp chiếu
+@endsection
+
 @section('content')
     <div class="card border-0 shadow-sm mt-3">
+        <div class="card border-0 shadow-sm mt-3">
+    @if (session('success'))
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        {{ session('success') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+@endif
         <div class="card-body">
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <h6 class="fw-bold">Danh sách rạp chiếu</h6>

@@ -203,29 +203,29 @@ public function returnPage(Request $request, $description)
         // ✅ Xác nhận ghế
         $this->bookingService->confirmSeats($booking);
 
-        // 🚀 Quy đổi điểm (giống PayOS/VNPAY)
-        $points = floor($booking->total_price / 1000);
-        $card = \App\Models\MemberShipCard::firstOrCreate(
-            ['user_id' => $booking->user_id],
-            [
-                'card_number' => 'CARD' . time(),
-                'card_type' => 'normal',
-                'points' => 0,
-            ]
-        );
-        $card->points += $points;
-        $card->save();
-        $card->updateCardType();
+        
+        // $points = floor($booking->total_price / 1000);
+        // $card = \App\Models\MemberShipCard::firstOrCreate(
+        //     ['user_id' => $booking->user_id],
+        //     [
+        //         'card_number' => 'CARD' . time(),
+        //         'card_type' => 'normal',
+        //         'points' => 0,
+        //     ]
+        // );
+        // $card->points += $points;
+        // $card->save();
+        // $card->updateCardType();
 
-        // 📝 Log
-        Log::info('MembershipCard updated (ZaloPay)', [
-            'booking_id'   => $booking->booking_id,
-            'user_id'      => $booking->user_id,
-            'total_price'  => $booking->total_price,
-            'points_earned'=> $points,
-            'new_points'   => $card->points,
-            'card_type'    => $card->card_type,
-        ]);
+       
+        // Log::info('MembershipCard updated (ZaloPay)', [
+        //     'booking_id'   => $booking->booking_id,
+        //     'user_id'      => $booking->user_id,
+        //     'total_price'  => $booking->total_price,
+        //     'points_earned'=> $points,
+        //     'new_points'   => $card->points,
+        //     'card_type'    => $card->card_type,
+        // ]);
 
         // ✅ Gắn combo food
         $foods = json_decode($booking->selected_foods, true) ?? [];
@@ -271,8 +271,8 @@ public function returnPage(Request $request, $description)
 
     return redirect()->to(route('profile') . '#transaction-history')
         ->with('message', $isCancel 
-            ? 'Thanh toán đã bị hủy, booking đã hủy.' 
-            : 'Thanh toán thành công, booking đã xác nhận.');
+            ? 'Thanh toán đã bị hủy' 
+            : 'Thanh toán thành công');
 }
 
 

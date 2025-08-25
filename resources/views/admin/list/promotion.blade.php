@@ -1,5 +1,17 @@
 @extends('layouts.admin')
 
+@section('title2')
+    Mã giảm giá
+@endsection
+
+@section('title1')
+    Dịch vụ & ưu đãi
+@endsection
+
+@section('title')
+    Mã giảm giá
+@endsection
+
 @section('content')
 @if (session('success'))
     <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -99,12 +111,27 @@
         </div>
     </div>
     </div>
+ 
     <div class="modal fade" id="promoModal" tabindex="-1" aria-hidden="true">
+
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
-                <form id="promoForm" method="POST">
+                           @if ($errors->any())
+    <div class="alert alert-danger">
+        <ul class="mb-0">
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
+                <form id="promoForm" method="POST" action="{{ route('promotions.store') }}">
                     @csrf
                     <input type="hidden" name="_method" id="formMethod" value="POST">
+
+              
+
+                    
                     <div class="modal-header bg-primary text-white">
                         <h5 class="modal-title" id="promoModalTitle">Thêm khuyến mãi mới</h5>
                         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
@@ -114,12 +141,12 @@
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <label class="form-label">Mã giảm giá <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" id="discountCode" name="discount_code" required>
+                                <input type="text" class="form-control" id="discountCode" name="discount_code">
                             </div>
 
                             <div class="col-md-6">
                                 <label class="form-label">Loại giảm giá <span class="text-danger">*</span></label>
-                                <select class="form-select" id="discountType" name="type_discount" required>
+                                <select class="form-select" id="discountType" name="type_discount" >
                                     <option value="">-- Chọn loại --</option>
                                     <option value="percent">Phần trăm</option>
                                     <option value="amount">Số tiền cố định</option>
@@ -130,7 +157,7 @@
                                 <label class="form-label">Phần trăm giảm</label>
                                 <div class="input-group">
                                     <input type="number" class="form-control" id="discountPercent" name="discount_percent"
-                                        min="1" max="100">
+                                        min="1" >
                                     <span class="input-group-text">%</span>
                                 </div>
                             </div>
@@ -161,7 +188,7 @@
 
                             <div class="col-md-6">
     <label class="form-label fw-semibold">Loại thẻ áp dụng <span class="text-danger">*</span></label>
-    <select class="form-select" name="card_type" id="cardType" required>
+    <select class="form-select" name="card_type" id="cardType" >
         <option value="normal">Normal</option>
         <option value="silver">Silver</option>
         <option value="gold">Gold</option>
@@ -180,12 +207,12 @@
 
                             <div class="col-md-6">
                                 <label class="form-label">Ngày bắt đầu</label>
-                                <input type="date" class="form-control" id="startDate" name="start_date" required>
+                                <input type="date" class="form-control" id="startDate" name="start_date" >
                             </div>
 
                             <div class="col-md-6">
                                 <label class="form-label">Ngày kết thúc</label>
-                                <input type="date" class="form-control" id="endDate" name="end_date" required>
+                                <input type="date" class="form-control" id="endDate" name="end_date" >
                             </div>
 
                             <div class="col-12">
@@ -209,7 +236,7 @@
     </div>
 
 
-    @push('scripts')
+    {{-- @push('scripts')
         <script>
             document.getElementById('discountType').addEventListener('change', function() {
                 const type = this.value;
@@ -224,7 +251,7 @@
                 document.getElementById('editAmountField1').style.display = type === 'amount' ? 'block' : 'none';
             });
         </script>
-    @endpush
+    @endpush --}}
 
     @push('styles')
         <style>
@@ -257,61 +284,138 @@
 @endsection
 
 @push('scripts')
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const promoModal = new bootstrap.Modal(document.getElementById('promoModal'));
-            const promoForm = document.getElementById('promoForm');
-            const formMethod = document.getElementById('formMethod');
-            const title = document.getElementById('promoModalTitle');
-            const typeSelect = document.getElementById('discountType');
-            const percentField = document.getElementById('percentField');
-            const amountField = document.getElementById('amountField');
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const promoModalEl = document.getElementById('promoModal');
+    const promoModal = new bootstrap.Modal(promoModalEl);
+    const promoForm = document.getElementById('promoForm');
+    const title = document.getElementById('promoModalTitle');
+    const typeSelect = document.getElementById('discountType');
+    const percentField = document.getElementById('percentField');
+    const amountField = document.getElementById('amountField');
+    const maxDiscountField = document.getElementById('maxDiscount').closest('.col-md-6');
 
-            function toggleFields(type) {
-                percentField.style.display = (type === 'percent') ? 'block' : 'none';
-                amountField.style.display = (type === 'amount') ? 'block' : 'none';
+    function toggleFields(type) {
+        if (type === 'percent') {
+            percentField.style.display = 'block';
+            amountField.style.display = 'none';
+            maxDiscountField.style.display = 'block';
+        } else if (type === 'amount') {
+            percentField.style.display = 'none';
+            amountField.style.display = 'block';
+            maxDiscountField.style.display = 'none';
+        } else {
+            percentField.style.display = 'none';
+            amountField.style.display = 'none';
+            maxDiscountField.style.display = 'none';
+        }
+    }
+
+    function fillForm(data, isEdit = false) {
+        promoForm.reset();
+
+        if (isEdit) {
+            promoForm.action = `{{ route('promotions.update', ':id') }}`.replace(':id', data.id);
+
+            // thêm hoặc cập nhật _method = PUT
+            let methodInput = promoForm.querySelector('input[name="_method"]');
+            if (!methodInput) {
+                methodInput = document.createElement('input');
+                methodInput.type = 'hidden';
+                methodInput.name = '_method';
+                promoForm.appendChild(methodInput);
             }
+            methodInput.value = 'PUT';
 
-            typeSelect.addEventListener('change', function() {
-                toggleFields(this.value);
-            });
+            title.textContent = "Chỉnh sửa khuyến mãi";
+        } else {
+            promoForm.action = `{{ route('promotions.store') }}`;
 
-            document.getElementById('btnAddPromo').addEventListener('click', function() {
-                const form = document.getElementById('promoForm');
-                form.action = '{{ route('promotions.store') }}';
-                form.method = 'POST';
+            // xoá _method nếu có
+            const methodInput = promoForm.querySelector('input[name="_method"]');
+            if (methodInput) methodInput.remove();
 
-                const methodInput = form.querySelector('input[name="_method"]');
-                if (methodInput) methodInput.remove();
+            title.textContent = "Thêm khuyến mãi mới";
+        }
 
-                form.reset();
+        document.getElementById('discountCode').value = data.code || '';
+        document.getElementById('discountType').value = data.type || 'percent';
+        document.getElementById('discountPercent').value = data.percent || '';
+        document.getElementById('discountAmount').value = data.amount || '';
+        document.getElementById('maxUses').value = data.maxUses || '';
+        document.getElementById('maxDiscount').value = data.maxDiscount || '';
+        document.getElementById('minOrder').value = data.minOrder || '';
+        document.getElementById('startDate').value = data.start || '';
+        document.getElementById('endDate').value = data.end || '';
+        document.getElementById('activeStatus').checked = data.status == 1 || data.status === 'active';
 
-                document.getElementById('percentField').style.display = 'block';
-                document.getElementById('amountField').style.display = 'none';
-            });
+        toggleFields(data.type || 'percent');
+    }
 
-            document.querySelectorAll('.edit-btn').forEach(button => {
-                button.addEventListener('click', function() {
-                    const data = this.dataset;
-                    title.textContent = "Chỉnh sửa khuyến mãi";
-                    promoForm.action = `{{ route('promotions.update', ':id') }}`.replace(':id',
-                        data.id);
-                    formMethod.value = 'POST';
+    // Khi chọn loại giảm giá
+    typeSelect.addEventListener('change', function() {
+        toggleFields(this.value);
+    });
 
-                    document.getElementById('discountCode').value = data.code;
-                    document.getElementById('discountType').value = data.type;
-                    document.getElementById('discountPercent').value = data.percent || '';
-                    document.getElementById('discountAmount').value = data.amount || '';
-                    document.getElementById('maxUses').value = data.maxUses || '';
-                    document.getElementById('maxDiscount').value = data.maxDiscount || '';
-                    document.getElementById('minOrder').value = data.minOrder || '';
-                    document.getElementById('startDate').value = data.start;
-                    document.getElementById('endDate').value = data.end;
-                    document.getElementById('activeStatus').checked = data.status === 'active';
+    // Thêm mới
+    document.getElementById('btnAddPromo').addEventListener('click', function() {
+        fillForm({}, false);
+    });
 
-                    toggleFields(data.type);
-                });
-            });
+    // Chỉnh sửa
+    document.querySelectorAll('.edit-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const data = this.dataset;
+            fillForm({
+                id: data.id,
+                code: data.code,
+                type: data.type,
+                percent: data.percent,
+                amount: data.amount,
+                maxUses: data.maxUses,
+                maxDiscount: data.maxDiscount,
+                minOrder: data.minOrder,
+                start: data.start,
+                end: data.end,
+                status: data.status,
+            }, true);
+
+            promoModal.show();
         });
-    </script>
+    });
+
+    // Nếu có lỗi validate thì mở modal lại
+    @if ($errors->any())
+        promoModal.show();
+        @if (session('edit_mode'))
+            fillForm({
+                id: "{{ session('edit_id') }}",
+                code: "{{ old('discount_code') }}",
+                type: "{{ old('type_discount') }}",
+                percent: "{{ old('discount_percent') }}",
+                amount: "{{ old('discount_amount') }}",
+                maxUses: "{{ old('max_uses') }}",
+                maxDiscount: "{{ old('max_discount') }}",
+                minOrder: "{{ old('min_order_value') }}",
+                start: "{{ old('start_date') }}",
+                end: "{{ old('end_date') }}",
+                status: "{{ old('status') }}",
+            }, true);
+        @else
+            fillForm({
+                code: "{{ old('discount_code') }}",
+                type: "{{ old('type_discount') }}",
+                percent: "{{ old('discount_percent') }}",
+                amount: "{{ old('discount_amount') }}",
+                maxUses: "{{ old('max_uses') }}",
+                maxDiscount: "{{ old('max_discount') }}",
+                minOrder: "{{ old('min_order_value') }}",
+                start: "{{ old('start_date') }}",
+                end: "{{ old('end_date') }}",
+                status: "{{ old('status') }}",
+            }, false);
+        @endif
+    @endif
+});
+</script>
 @endpush

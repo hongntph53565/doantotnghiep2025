@@ -655,7 +655,7 @@
 
 
 @push('scripts')
-    <script>
+    {{-- <script>
         document.addEventListener('DOMContentLoaded', function() {
             const dateInput = document.getElementById('delivery-date');
             const today = new Date().toISOString().split('T')[0];
@@ -753,7 +753,82 @@
 
             document.getElementById('food-only-form').submit();
         });
+    </script> --}}
+    <!-- SwiperJS CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+
+    <!-- SwiperJS JS -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+    {{-- <script>
+        const swiper = new Swiper('.promo-container.swiper', {
+            slidesPerView: 1,
+            spaceBetween: 20,
+            loop: true,
+            pagination: {
+                el: '.swiper-pagination',
+                clickable: true
+            },
+            navigation: {
+                nextEl: '.swiper-button-next',
+                prevEl: '.swiper-button-prev'
+            },
+            breakpoints: {
+                768: {
+                    slidesPerView: 2
+                },
+                1024: {
+                    slidesPerView: 3
+                }
+            }
+        });
+    </script> --}}
+@endpush
+@push('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Date input
+            const dateInput = document.getElementById('delivery-date');
+            const today = new Date().toISOString().split('T')[0];
+            dateInput.setAttribute('min', today);
+            if (!dateInput.value) {
+                dateInput.value = today;
+            }
+        });
+
+        // Confirm button
+        document.querySelector('.confirm-btn').addEventListener('click', function(e) {
+            e.preventDefault();
+
+            // Lấy payment_method
+            const selectedPayment = document.querySelector('input[name="payment"]:checked');
+            if (!selectedPayment) {
+                alert('Vui lòng chọn phương thức thanh toán');
+                return;
+            }
+            document.getElementById('payment_method').value = selectedPayment.value;
+
+            // Lấy danh sách món ăn
+            const foodData = [];
+            document.querySelectorAll('.qty-input').forEach(input => {
+                const qty = parseInt(input.value);
+                if (qty > 0) {
+                    foodData.push({
+                        food_id: input.dataset.foodId,
+                        qty: qty
+                    });
+                }
+            });
+            document.getElementById('selected_foods_input').value = JSON.stringify(foodData);
+
+            // Tính tổng
+            const totalText = document.querySelector('.total-row .price').textContent.replace(/[^\d]/g, '');
+            document.getElementById('total_price_hidden').value = parseInt(totalText);
+
+            document.getElementById('food-only-form').submit();
+        });
     </script>
+
     <!-- SwiperJS CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
 
@@ -784,6 +859,7 @@
         });
     </script>
 @endpush
+
 @section('content')
     <div class="container">
         <hr>
@@ -818,7 +894,7 @@
         @if (empty($cart))
             <div id="empty-cart-message" class="text-center py-5">
                 <h5 class="text-muted">Giỏ hàng của bạn đang trống.</h5>
-                <a href="{{ route('staff.combo') }}" class="btn btn-success mt-3">Tiếp tục mua sắm</a>
+                <a href="{{ route('combo') }}" class="btn btn-success mt-3">Tiếp tục mua sắm</a>
             </div>
         @else
             <main class="cart-container">
@@ -886,13 +962,13 @@
                 <section class="cart-checkout">
                     <div class="checkout-box">
 
-                        <!-- Ngày nhận hàng -->
+                        {{-- <!-- Ngày nhận hàng -->
                         <div class="checkout-row">
                             <label class="field-label">
                                 <i class="fa-regular fa-calendar" style="color: #72be43;"></i> Ngày nhận hàng
                             </label>
                             <input type="date" id="delivery-date" />
-                        </div>
+                        </div> --}}
 
                         <div class="customer-info">
                             <p><span class="field-label"><i class="fa-regular fa-user" style="color: #72be43;"></i>Họ
@@ -938,10 +1014,10 @@
                                     <img src="{{ asset('images/vnpay.png') }}" alt="VNPay" />
                                     <span style="font-size: 14px;">Thanh toán qua VNPAY</span>
                                 </label>
-                                <label><input type="radio" name="payment" value="payos" id="payos">
+                                {{-- <label><input type="radio" name="payment" value="payos" id="payos">
                                     <img src="{{ asset('images/payos.png') }}" alt="PayOS" style="width: 45px; height: 45px; object-fit: contain;" />
  Thanh toán bằng PayOS
-                                </label>
+                                </label> --}}
                                 <label><input type="radio" name="payment" value="zalopay" id="zalopay">
                                     <img src="{{ asset('images/zalopay.png') }}" alt="ZaloPay" /> Zalopay QR đa năng
                                 </label>
@@ -950,8 +1026,8 @@
                         <hr>
                         <!-- Xác nhận -->
                         <div class="confirm-row">
-                            <label><input type="checkbox" /> Tôi đã đọc và đồng ý với <a href="#">Điều khoản thanh
-                                    toán</a></label>
+                            {{-- <label><input type="checkbox" /> Tôi đã đọc và đồng ý với <a href="#">Điều khoản thanh
+                                    toán</a></label> --}}
                             <form id="food-only-form" action="{{ route('booking.foodOnly') }}" method="POST">
                                 @csrf
                                 <input type="hidden" name="user_id" value="{{ Auth::user()->user_id }}">
@@ -972,3 +1048,74 @@
 
     </div>
 @endsection
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const updateUrl = "{{ route('cart.update') }}";
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+    // Xử lý nút tăng/giảm
+    document.querySelectorAll('.btn-increase, .btn-decrease').forEach(button => {
+        button.addEventListener('click', async function(e) {
+            e.preventDefault(); // Ngăn form submit nếu trong form
+
+            const wrapper = this.closest('.quantity-control');
+            const input = wrapper.querySelector('.qty-input');
+            const foodId = input.dataset.foodId;
+            const price = parseInt(input.dataset.price);
+            let quantity = parseInt(input.value);
+
+            if (this.classList.contains('btn-increase')) {
+                quantity++;
+            } else {
+                quantity = Math.max(0, quantity - 1);
+            }
+
+            // Gửi request update cart
+            try {
+                const response = await fetch(updateUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken
+                    },
+                    body: JSON.stringify({ food_id: foodId, quantity: quantity })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    // Nếu sản phẩm bị remove
+                    if (result.removed) {
+                        wrapper.closest('.order-item').remove();
+                        if (document.querySelectorAll('.order-item').length === 0) {
+                            location.reload();
+                        }
+                        return;
+                    }
+
+                    // Cập nhật input và giá
+                    input.value = quantity;
+                    const priceEl = wrapper.closest('.order-item').querySelector('.price');
+                    priceEl.textContent = (price * quantity).toLocaleString('vi-VN') + ' VND';
+
+                    // Cập nhật tổng tiền
+                    const totalEl = document.querySelector('.total-row .price');
+                    if (totalEl) totalEl.textContent = result.totalAll;
+
+                    // Cập nhật badge giỏ
+                    const cartBadge = document.querySelector('.cart-badge');
+                    if (cartBadge && result.totalQuantity !== undefined) {
+                        cartBadge.textContent = result.totalQuantity;
+                    }
+                } else {
+                    alert('Cập nhật giỏ hàng thất bại!');
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Có lỗi xảy ra, vui lòng thử lại.');
+            }
+        });
+    });
+});
+</script>
+

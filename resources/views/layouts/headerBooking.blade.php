@@ -7,7 +7,6 @@
     <title>@yield('title', 'Trang Phim')</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
     <style>
         body {
@@ -321,6 +320,34 @@
         footer a.social-icon:hover {
             color: white !important;
         }
+        /* Style cho dropdown menu */
+.dropdown .dropdown-menu {
+    background-color: rgba(0, 0, 0, 0.6);
+    border: none;
+    border-radius: 10px;
+    padding: 10px;
+    display: none; /* sẽ hiện khi hover */
+    min-width: 200px; /* tuỳ chỉnh width nếu cần */
+}
+
+/* Hiển thị menu khi hover */
+.dropdown:hover .dropdown-menu {
+    display: block !important;
+    margin-top: 0;
+}
+
+/* Style link bên trong menu */
+.dropdown .dropdown-menu a.dropdown-item {
+    color: #f1f1f1;
+    font-weight: 500;
+}
+
+/* Hover link */
+.dropdown .dropdown-menu a.dropdown-item:hover {
+    color: #7bc043;
+    background-color: transparent;
+}
+
     </style>
     @stack('styles')
 
@@ -358,7 +385,7 @@
                         $selectedCity = session('selected_city') ?? 'Chọn khu vực của bạn';
                     @endphp
 
-                    <div class="dropdown hover-dropdown">
+                    {{-- <div class="dropdown hover-dropdown">
                         <button class="btn btn-outline-success dropdown-toggle" type="button">
                             {{ $selectedCity }}
                         </button>
@@ -368,7 +395,18 @@
                                         href="{{ route('set.city', ['city' => $city]) }}">{{ $city }}</a></li>
                             @endforeach
                         </ul>
-                    </div>
+                    </div> --}}
+                    <div class="dropdown">
+    <button class="btn btn-outline-success dropdown-toggle" type="button" data-bs-toggle="dropdown">
+        {{ $selectedCity }}
+    </button>
+    <ul class="dropdown-menu">
+        @foreach ($cities as $city)
+            <li><a class="dropdown-item" href="{{ route('set.city', ['city' => $city]) }}">{{ $city }}</a></li>
+        @endforeach
+    </ul>
+</div>
+
 
                     @if (Auth::check())
                         <a href="{{ url('/profile') }}" class="text-decoration-none text-dark">
@@ -537,4 +575,12 @@
             });
         }
     });
+    document.querySelectorAll('.dropdown-menu .dropdown-item').forEach(item => {
+    item.addEventListener('click', function(e) {
+        // Chỉ cần redirect bình thường, tránh event bị chặn
+        window.location.href = this.href;
+    });
+});
+
 </script>
+

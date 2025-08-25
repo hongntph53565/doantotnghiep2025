@@ -33,10 +33,14 @@ public function index(Request $request)
     public function store(Request $request)
     {
         $request->validate([
-            'template_name' => 'required',
-            'subject' => 'required',
-            'content' => 'required',
-        ]);
+        'template_name' => 'required',
+        'subject'       => 'required',
+        'content'       => 'required',
+    ], [
+        'template_name.required' => 'Vui lòng nhập tên mẫu email.',
+        'subject.required'       => 'Vui lòng nhập tiêu đề.',
+        'content.required'       => 'Vui lòng nhập nội dung.',
+    ]);
 
         EmailTemplate::create([
             'template_name' => $request->template_name,

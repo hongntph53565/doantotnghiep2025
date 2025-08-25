@@ -47,7 +47,7 @@
                 </p>
             @endforelse
 
-            {{ $nowShowing->appends(['search' => $search, 'soon_page' => $comingSoon->currentPage()])->links('pagination::bootstrap-4') }}
+          
         </div>
 
 
@@ -58,10 +58,10 @@
                     <div class="movie-img">
                         <img src="{{ asset('storage/' . $movie->poster) }}" alt="{{ $movie->title }}">
 
-                        {{-- @if (!empty($movie->trailer))
+                         @if (!empty($movie->trailer))
                             <a href="javascript:void(0);" class="play-button" onclick="openTrailer(this)"
                                 data-trailer="{{ $movie->trailer }}"></a>
-                        @endif --}}
+                        @endif 
 
                         <a href="{{ route('staff.booking1', $movie->movie_id) }}" class="buy-button">
                             ĐẶT VÉ
@@ -91,7 +91,6 @@
     </div>
 @endsection
 @push('styles')
-    {{-- phim đang+ sắp chiếu --}}
     <style>
         .btn1 {
             background-color: white;
@@ -117,7 +116,6 @@
 
         .movie-box {
             width: calc(20% - 20px);
-            /* ✅ 5 cột trên 100% trừ khoảng cách */
             display: flex;
             flex-direction: column;
         }
@@ -140,7 +138,6 @@
             border-radius: 10px;
         }
 
-        /* Nút trailer */
         .play-button {
             position: absolute;
             top: 50%;
@@ -164,7 +161,6 @@
             border-bottom: 8px solid transparent;
         }
 
-        /* Nút đặt vé */
         .buy-button {
             position: absolute;
             bottom: 12px;
@@ -191,7 +187,7 @@
             background-color: #72BE43;
         }
 
-        /* Hover thì mới hiện nút */
+
         .movie-img:hover .play-button,
         .movie-img:hover .buy-button {
             display: flex;

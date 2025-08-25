@@ -24,33 +24,33 @@ use Illuminate\Support\Facades\Session;
 class HomeController extends Controller
 {
     public function home()
-{
-    $today = Carbon::now()->toDateString();
+    {
+        $today = Carbon::now()->toDateString();
 
-    // Phim đang chiếu
-    $moviesNow = Movie::with('genre')
-        ->whereDate('release_date', '<=', $today)
-        ->orderBy('release_date', 'desc')
-        ->get();
+        // Phim đang chiếu
+        $moviesNow = Movie::with('genre')
+            ->whereDate('release_date', '<=', $today)
+            ->orderBy('release_date', 'desc')
+            ->get();
 
-    // Phim sắp chiếu
-    $moviesComing = Movie::with('genre')
-        ->whereDate('release_date', '>', $today)
-        ->orderBy('release_date', 'asc')
-        ->get();
+        // Phim sắp chiếu
+        $moviesComing = Movie::with('genre')
+            ->whereDate('release_date', '>', $today)
+            ->orderBy('release_date', 'asc')
+            ->get();
 
-    // Xử lý trailer cho cả 2 danh sách
-    foreach ([$moviesNow, $moviesComing] as $movieList) {
-        foreach ($movieList as $movie) {
-            if (!empty($movie->trailer) && Str::contains($movie->trailer, 'watch?v=')) {
-                $videoId = explode('watch?v=', $movie->trailer)[1];
-                $movie->trailer = 'https://www.youtube.com/embed/' . $videoId;
+        // Xử lý trailer cho cả 2 danh sách
+        foreach ([$moviesNow, $moviesComing] as $movieList) {
+            foreach ($movieList as $movie) {
+                if (!empty($movie->trailer) && Str::contains($movie->trailer, 'watch?v=')) {
+                    $videoId = explode('watch?v=', $movie->trailer)[1];
+                    $movie->trailer = 'https://www.youtube.com/embed/' . $videoId;
+                }
             }
         }
-    }
 
-    return view('Client.home', compact('moviesNow', 'moviesComing'));
-}
+        return view('Client.home', compact('moviesNow', 'moviesComing'));
+    }
 
 
 
@@ -215,25 +215,25 @@ class HomeController extends Controller
             ->groupBy(fn($item) => $item->room->cinema->cinema_id);
 
         $user = Auth::user();
-$userCardType = null;
+        $userCardType = null;
 
-// Nếu user đã đăng nhập, lấy card_type từ bảng membership_cards
-if ($user) {
-    $card = MembershipCard::where('user_id', $user->user_id)->first();
-    $userCardType = $card ? $card->card_type : null;
-}
-
-// Lấy các voucher còn hiệu lực và áp dụng cho loại thẻ của user
-$promotions = Promotion::where('status', 'active')
-    ->whereDate('start_date', '<=', now())
-    ->whereDate('end_date', '>=', now())
-    ->where(function($query) use ($userCardType) {
-        $query->whereNull('card_type'); // voucher áp dụng cho tất cả thẻ
-        if ($userCardType) {
-            $query->orWhere('card_type', $userCardType); // voucher dành riêng cho loại thẻ
+        // Nếu user đã đăng nhập, lấy card_type từ bảng membership_cards
+        if ($user) {
+            $card = MembershipCard::where('user_id', $user->user_id)->first();
+            $userCardType = $card ? $card->card_type : null;
         }
-    })
-    ->get();
+
+        // Lấy các voucher còn hiệu lực và áp dụng cho loại thẻ của user
+        $promotions = Promotion::where('status', 'active')
+            ->whereDate('start_date', '<=', now())
+            ->whereDate('end_date', '>=', now())
+            ->where(function ($query) use ($userCardType) {
+                $query->whereNull('card_type'); // voucher áp dụng cho tất cả thẻ
+                if ($userCardType) {
+                    $query->orWhere('card_type', $userCardType); // voucher dành riêng cho loại thẻ
+                }
+            })
+            ->get();
 
         $selectedShowtimeId = $request->input('showtime_id');
         $selectedShowtime = null;
@@ -279,12 +279,12 @@ $promotions = Promotion::where('status', 'active')
         ));
     }
     public function fetchSeatStatuses($id)
-{
-    $statuses = ShowtimeSeat::where('showtime_id', $id)
-        ->pluck('status', 'seat_id');
+    {
+        $statuses = ShowtimeSeat::where('showtime_id', $id)
+            ->pluck('status', 'seat_id');
 
-    return response()->json($statuses);
-}
+        return response()->json($statuses);
+    }
 
 
 
@@ -338,34 +338,54 @@ $promotions = Promotion::where('status', 'active')
 
 
 
+    // public function MovieShowtimes()
+    // {
+    //     $selectedCity = session('selected_city');
+    //     $today = Carbon::today();
+
+
+    //     $movieIds = Showtime::whereHas('room.cinema', function ($q) use ($selectedCity) {
+    //         $q->where('city', $selectedCity);
+    //     })
+    //         ->pluck('movie_id')
+    //         ->unique();
+
+
+    //     $nowShowing = Movie::with('genre')
+    //         ->whereIn('movie_id', $movieIds)
+    //         ->whereDate('release_date', '<=', $today)
+    //         ->orderBy('release_date', 'desc')
+    //         ->get();
+
+
+    //     $comingSoon = Movie::with('genre')
+    //         ->whereNotIn('movie_id', $movieIds)
+    //         ->whereDate('release_date', '>', $today)
+    //         ->orderBy('release_date', 'asc')
+    //         ->get();
+
+    //     return view('Client.MovieShowtimes', compact('nowShowing', 'comingSoon'));
+    // }
     public function MovieShowtimes()
     {
         $selectedCity = session('selected_city');
         $today = Carbon::today();
 
-
-        $movieIds = Showtime::whereHas('room.cinema', function ($q) use ($selectedCity) {
-            $q->where('city', $selectedCity);
-        })
-            ->pluck('movie_id')
-            ->unique();
-
-
+        // Lấy tất cả phim đang chiếu theo release_date
         $nowShowing = Movie::with('genre')
-            ->whereIn('movie_id', $movieIds)
             ->whereDate('release_date', '<=', $today)
             ->orderBy('release_date', 'desc')
             ->get();
 
-
+        // Lấy tất cả phim sắp chiếu theo release_date
         $comingSoon = Movie::with('genre')
-            ->whereNotIn('movie_id', $movieIds)
             ->whereDate('release_date', '>', $today)
             ->orderBy('release_date', 'asc')
             ->get();
 
-        return view('Client.MovieShowtimes', compact('nowShowing', 'comingSoon'));
+        return view('Client.MovieShowtimes', compact('nowShowing', 'comingSoon', 'selectedCity'));
     }
+
 
 
 
@@ -391,51 +411,51 @@ $promotions = Promotion::where('status', 'active')
 
         return view('Client.booking.steps.select_showtime', compact('movie', 'showtimes'))->render();
     }
-   public function ajaxShowtimes(Request $request)
-{
-    $movieId = $request->input('movie_id');
-    $date = $request->input('date');
-    $nowVN = Carbon::now('Asia/Ho_Chi_Minh');
+    public function ajaxShowtimes(Request $request)
+    {
+        $movieId = $request->input('movie_id');
+        $date = $request->input('date');
+        $nowVN = Carbon::now('Asia/Ho_Chi_Minh');
 
-    $selectedCity = strtolower(trim(Session::get('selected_city')));
+        $selectedCity = strtolower(trim(Session::get('selected_city')));
 
-    $query = Showtime::with(['room.cinema', 'movie'])
-        ->where('movie_id', $movieId)
-        ->where('status', 'active')
-        ->whereDate('date', Carbon::parse($date)->toDateString());
+        $query = Showtime::with(['room.cinema', 'movie'])
+            ->where('movie_id', $movieId)
+            ->where('status', 'active')
+            ->whereDate('date', Carbon::parse($date)->toDateString());
 
-    // Ưu tiên lọc theo cinema_id nếu là role_id = 3
-    if (Auth::check() && Auth::user()->role_id == 3 && Auth::user()->cinema_id) {
-        $cinemaId = Auth::user()->cinema_id;
-        $query->whereHas('room.cinema', function ($q) use ($cinemaId) {
-            $q->where('cinema_id', $cinemaId);
-        });
+       
+        if (Auth::check() && Auth::user()->role_id == 3 && Auth::user()->cinema_id) {
+            $cinemaId = Auth::user()->cinema_id;
+            $query->whereHas('room.cinema', function ($q) use ($cinemaId) {
+                $q->where('cinema_id', $cinemaId);
+            });
+        }
+       
+        elseif (!empty($selectedCity)) {
+            $query->whereHas('room.cinema', function ($q) use ($selectedCity) {
+                $q->whereRaw('LOWER(city) LIKE ?', ['%' . $selectedCity . '%']);
+            });
+        }
+
+        
+        if ($date === $nowVN->toDateString()) {
+            $query->whereTime('start_time', '>=', $nowVN->toTimeString());
+        }
+
+        $showtimes = $query
+            ->orderBy('start_time')
+            ->get()
+            ->groupBy(function ($item) {
+                return $item->room->cinema_id;
+            });
+
+        return view('ajax.showtimes', [
+            'showtimes' => $showtimes,
+            'movie' => Movie::find($movieId),
+            'selectedCity' => $selectedCity,
+        ]);
     }
-    // Nếu không thì lọc theo selectedCity
-    elseif (!empty($selectedCity)) {
-        $query->whereHas('room.cinema', function ($q) use ($selectedCity) {
-            $q->whereRaw('LOWER(city) LIKE ?', ['%' . $selectedCity . '%']);
-        });
-    }
-
-    // Nếu là ngày hôm nay thì chỉ lấy suất chiếu còn thời gian
-    if ($date === $nowVN->toDateString()) {
-        $query->whereTime('start_time', '>=', $nowVN->toTimeString());
-    }
-
-    $showtimes = $query
-        ->orderBy('start_time')
-        ->get()
-        ->groupBy(function ($item) {
-            return $item->room->cinema_id;
-        });
-
-    return view('ajax.showtimes', [
-        'showtimes' => $showtimes,
-        'movie' => Movie::find($movieId),
-        'selectedCity' => $selectedCity,
-    ]);
-}
 
 
     public function ajaxShowtimesByCinema(Request $request)
@@ -444,7 +464,7 @@ $promotions = Promotion::where('status', 'active')
         $date = $request->input('date', now()->toDateString());
 
         $nowVN = Carbon::now('Asia/Ho_Chi_Minh');
-        $selectedCity = strtolower(trim(Session::get('selected_city'))); // ✅ Lấy thành phố
+        $selectedCity = strtolower(trim(Session::get('selected_city'))); 
 
         $query = Showtime::with(['room.cinema', 'movie'])
             ->whereHas('room', function ($q) use ($cinemaId) {
@@ -464,10 +484,27 @@ $promotions = Promotion::where('status', 'active')
 
         return view('ajax.showtimes-by-cinema', [
             'showtimes' => $showtimes,
-            'selectedCity' => $selectedCity, // ✅ Truyền vào view
+            'selectedCity' => $selectedCity, 
         ])->render();
     }
+    public function about_us()
+    {
+        return view('Client.about_us');
+    }
 
+    public function recruitment()
+    {
+        return view('Client.recruitment');
+    }
+    public function importantNotice()
+    {
+        return view('Client.notice'); 
+    }
+
+    public function faq()
+    {
+        return view('Client.faq');
+    }
 
 
 

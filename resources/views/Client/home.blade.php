@@ -120,11 +120,11 @@
                                    data-trailer="{{ $movie->trailer }}"></a>
                             @endif
 
-                            <a href="{{ route('Client.booking.home', ['movie_id' => $movie->movie_id]) }}"
+                            {{-- <a href="{{ route('Client.booking.home', ['movie_id' => $movie->movie_id]) }}"
                                class="buy-button">
-                                MUA VÉ NGAY
+                                XEM NGAY
                                 <img src="{{ asset('images/ticket-svgrepo-com.svg') }}" alt="vé">
-                            </a>
+                            </a> --}}
                         </div>
                         <div class="info">
                             <div class="labels">

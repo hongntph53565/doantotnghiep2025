@@ -3,10 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Cinema extends Model
 {
 
+    use SoftDeletes;
     protected $primaryKey = 'cinema_id';
     public $incrementing = true;
     protected $keyType = 'int';
@@ -20,6 +22,8 @@ class Cinema extends Model
         'email',
         'status',
     ];
+
+    protected $dates = ['deleted_at'];
 
         public function rooms()
     {

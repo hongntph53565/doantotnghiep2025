@@ -3,20 +3,12 @@
 namespace App\Listeners;
 
 use App\Events\PaymentEvents;
-use App\Models\EmailTemplate;
 use App\Models\MemberShipCard;
 use App\Models\User;
 use App\Services\MailService;
-use Illuminate\Contracts\Mail\Mailer;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Support\Facades\Mail;
 
 class UpdateMemberCard
 {
-    /**
-     * Create the event listener.
-     */
     public $mailService;
 
     public function __construct(MailService $mailService)
@@ -24,44 +16,31 @@ class UpdateMemberCard
         $this->mailService = $mailService;
     }
 
-    /**
-     * Handle the event.
-     */
     public function handle(PaymentEvents $event): void
     {
         $payment = $event->payment;
 
+        // Chỉ xử lý khi thanh toán thành công và có user_id
         if ($payment->status !== 'paid' || empty($payment->user_id)) {
             return;
         }
 
-        $oldpoints = MemberShipCard::select('points')->where('user_id', $payment->user_id)->value('points');
-        $newPoint = floor($payment->price_amount / 1000);
-        $newPoint += $oldpoints;
-        $cardType = 'silver';
-        if ($newPoint >= 50000) {
-            $cardType = 'platinum';
-        } elseif ($newPoint >= 5000) {
-            $cardType = 'gold';
-        }
-        if ($payment->status == "paid") {
-            MemberShipCard::where('user_id', $payment->user_id)
-                ->update([
-                    'points' => $newPoint,
-                    'card_type' => $cardType,
-                ]);
-            if ($cardType !== 'silver') {
-                $user = User::where('user_id', $payment->user_id)->first();
-                $template = EmailTemplate::where('subject', 'Cảm ơn bạn đã đồng hành cùng Lumistar')->first();
+        // Lấy thẻ thành viên, nếu chưa có thì tạo
+        $card = MemberShipCard::firstOrCreate(
+            ['user_id' => $payment->user_id],
+            [
+                'card_number' => 'CARD' . time(),
+                'points' => 0,
+                'card_type' => 'normal',
+            ]
+        );
 
-                if ($user && $template) {
-                    $this->mailService->send($user->email, $template, array(
-                        'user_name' => $user->username,
-                        'card_type' => $cardType,
-                        'points' => $newPoint
-                    ));
-                }
-            }
-        }
+        // Cộng điểm từ thanh toán
+        $card->points += floor($payment->price_amount / 1000);
+
+        // Cập nhật hạng thẻ theo hàm có sẵn
+        $card->updateCardType();
+
+        // Nếu muốn có thể gửi email nhưng ở đây tạm bỏ, không dùng $template
     }
 }

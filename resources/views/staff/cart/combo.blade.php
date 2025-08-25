@@ -216,17 +216,24 @@
     <div class="container">
         <div class="content-top">
             {{-- Form chọn rạp --}}
-            <form method="GET" action="{{ route('staff.combo') }}">
+           <form method="GET" action="{{ route('staff.combo') }}">
+    @if(auth()->user()->role_id == 3)
+        {{-- Nhân viên đã gắn với cinema sẵn --}}
+        <input type="hidden" name="cinema_id" value="{{ auth()->user()->cinema_id }}">
+    @else
+        {{-- Admin hoặc role khác thì mới được chọn rạp --}}
+        <select class="cinema-select" name="cinema_id" onchange="this.form.submit()">
+            <option value="">Chọn rạp</option>
+            @foreach ($cinemas as $cinema)
+                <option value="{{ $cinema->cinema_id }}" 
+                    {{ (request('cinema_id') == $cinema->cinema_id) ? 'selected' : '' }}>
+                    {{ $cinema->name }}
+                </option>
+            @endforeach
+        </select>
+    @endif
+</form>
 
-                <select class="cinema-select" name="cinema_id" onchange="this.form.submit()">
-                    <option value="">Chọn rạp</option>
-                    @foreach ($cinemas as $cinema)
-                        <option value="{{ $cinema->cinema_id }}" {{ (request('cinema_id') == $cinema->cinema_id) ? 'selected' : '' }}>
-                            {{ $cinema->name }}
-                        </option>
-                    @endforeach
-                </select>
-            </form>
 
             <div class="cart-wrapper">
                 <a href="{{ route('staff.combo') }}" class="back-btn">
@@ -247,17 +254,21 @@
             <div class="section-title">Đồ ăn - Combo</div>
         </div>
 
-        {{-- Nếu chưa chọn rạp --}}
-        @if (!request('cinema_id'))
-            <div class="alert alert-warning text-center mt-4">
-                Vui lòng chọn rạp để xem danh sách combo đồ ăn.
-            </div>
+        @php
+    $currentCinemaId = request('cinema_id') ?? (auth()->user()->role_id == 3 ? auth()->user()->cinema_id : null);
+@endphp
 
-        {{-- Nếu đã chọn rạp nhưng không có combo --}}
-        @elseif(isset($combos) && count($combos) === 0)
-            <div class="alert alert-info text-center mt-4">
-                Hiện không có combo nào cho rạp này.
-            </div>
+{{-- Nếu chưa chọn rạp --}}
+@if (!$currentCinemaId)
+    <div class="alert alert-warning text-center mt-4">
+        Vui lòng chọn rạp để xem danh sách combo đồ ăn.
+    </div>
+
+{{-- Nếu đã chọn rạp nhưng không có combo --}}
+@elseif(isset($combos) && count($combos) === 0)
+    <div class="alert alert-info text-center mt-4">
+        Hiện không có combo nào cho rạp này.
+    </div>
 
         {{-- Nếu có combo --}}
         @elseif(isset($combos) && count($combos))

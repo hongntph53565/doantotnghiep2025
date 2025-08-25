@@ -37,67 +37,7 @@ class PayosController extends Controller
         }
     }
 
-    // public function returnPage(Request $request, $description)
-// {
-//     $allParams = $request->query();
 
-    //     $booking = Booking::with('bookingSeats.showtimeSeat')->where('booking_code', $description)->first();
-
-    //     if (!$booking) {
-//         return response()->json([
-//             'success' => false,
-//             'message' => 'Không tìm thấy booking.'
-//         ], 404);
-//     }
-
-    //     // Ghi nhận thanh toán nếu dùng payos
-//     if ($booking['payment_method'] === "payos") {
-//         $payment = Payment::create([
-//             'booking_id'     => $booking['booking_id'],
-//             'payment_method' => $booking['payment_method'],
-//             'price_amount'   => $booking->total_price,
-//             'status'         => ($allParams['cancel'] ?? 'false') === 'true' ? 'unpaid' : 'paid'
-//         ]);
-
-    //         $payment['user_id'] = $booking['user_id'];
-//         event(new PaymentEvents($payment));
-//     }
-
-    //     if (($allParams['cancel'] ?? 'false') !== 'true' && $booking['payment_method'] === "payos") {
-//         $booking->update([
-//             'payment_status' => 'paid',
-//             'booking_status' => 'confirmed'
-//         ]);
-
-    //         Log::info('Calling confirmSeats() for booking ID: ' . $booking->booking_id);
-//         $this->bookingService->confirmSeats($booking);
-
-    //         // Gắn lại đồ ăn cho booking
-//         $foods = json_decode($booking->selected_foods, true) ?? [];
-//         $this->bookingService->attachFoodsToBooking($booking->booking_id, $foods);
-//     }
-//     elseif (($allParams['cancel'] ?? 'false') === 'true' && $booking['payment_method'] === "payos") {
-//         $booking->update([
-//             'booking_status' => 'cancelled'
-//         ]);
-
-    //         Log::info('Calling cancelSeats() for booking ID: ' . $booking->booking_id);
-//         $this->bookingService->cancelSeats($booking);
-//     }
-
-    //     // ✅ Redirect theo role
-//     $user = $booking->user; // Booking có quan hệ tới user
-//     $isCancel = ($allParams['cancel'] ?? 'false') === 'true';
-
-    //     if ($user && $user->role_id == 3) {
-//         return redirect()->route('staff.search_ticket_online')
-//             ->with('message', $isCancel ? 'Đã hủy giao dịch.' : 'Thanh toán thành công. Đơn đã được xác nhận.');
-//     }
-
-    //     // Mặc định là người dùng bình thường (role_id = 4)
-//     return redirect()->to(route('profile') . '#transaction-history')
-//         ->with('message', $isCancel ? 'Thanh toán đã bị hủy, booking đã hủy.' : 'Thanh toán thành công, booking đã xác nhận.');
-// }
     public function returnPage(Request $request, $description)
     {
         $allParams = $request->query();
@@ -111,72 +51,78 @@ class PayosController extends Controller
             ], 404);
         }
 
-        // Ghi nhận thanh toán nếu dùng payos
+
         if ($booking['payment_method'] === "payos") {
             $payment = Payment::create([
-                'booking_id' => $booking['booking_id'],
-                'payment_method' => $booking['payment_method'],
+                'booking_id' => $booking->booking_id,
+                'payment_method' => $booking->payment_method,
                 'price_amount' => $booking->total_price,
                 'status' => ($allParams['cancel'] ?? 'false') === 'true' ? 'unpaid' : 'paid'
             ]);
 
-            $payment['user_id'] = $booking['user_id'];
+            $payment['user_id'] = $booking->user_id;
             event(new PaymentEvents($payment));
         }
 
-        if (($allParams['cancel'] ?? 'false') !== 'true' && $booking['payment_method'] === "payos") {
-    $booking->update([
-        'payment_status' => 'paid',
-        'booking_status' => 'confirmed'
-    ]);
 
-    Log::info('Calling confirmSeats() for booking ID: ' . $booking->booking_id);
-    $this->bookingService->confirmSeats($booking);
+        if (
+            ($allParams['cancel'] ?? 'false') !== 'true'
+            && $booking['payment_method'] === "payos"
+            && $booking->payment_status !== 'paid'
+        ) {
+            $booking->update([
+                'payment_status' => 'paid',
+                'booking_status' => 'confirmed'
+            ]);
 
-    // 🚀 Quy đổi điểm từ total_price
-    $points = floor($booking->total_price / 1000);
+            Log::info('Calling confirmSeats() for booking ID: ' . $booking->booking_id);
+            $this->bookingService->confirmSeats($booking);
 
-    $card = \App\Models\MemberShipCard::firstOrCreate(
-        ['user_id' => $booking->user_id],
-        [
-            'card_number' => 'CARD' . time(),
-            'card_type' => 'normal',
-            'points' => 0,
-        ]
-    );
+           
+            $points = floor($booking->total_price / 1000);
 
-    $card->points += $points;
-    $card->save();
+            
+            $card = \App\Models\MemberShipCard::firstOrCreate(
+                ['user_id' => $booking->user_id],
+                [
+                    'card_number' => 'CARD' . time(),
+                    'card_type' => 'normal',
+                    'points' => 0,
+                ]
+            );
 
-    // Cập nhật loại thẻ dựa trên điểm hiện tại
-    $card->updateCardType();
+          
+            $card->points += $points;
+            $card->save();
 
-    // 📝 Ghi log chi tiết
-    Log::info('MembershipCard updated', [
-        'booking_id'   => $booking->booking_id,
-        'user_id'      => $booking->user_id,
-        'total_price'  => $booking->total_price,
-        'points_earned'=> $points,
-        'new_points'   => $card->points,
-        'card_type'    => $card->card_type,
-    ]);
+           
+            $card->updateCardType();
 
-    // Gắn lại đồ ăn cho booking
-    $foods = json_decode($booking->selected_foods, true) ?? [];
-    $this->bookingService->attachFoodsToBooking($booking->booking_id, $foods);
+            Log::info('MembershipCard updated', [
+                'booking_id' => $booking->booking_id,
+                'user_id' => $booking->user_id,
+                'total_price' => $booking->total_price,
+                'points_earned' => $points,
+                'new_points' => $card->points,
+                'card_type' => $card->card_type,
+            ]);
 
-    $bookingPromotion = \App\Models\BookingPromotion::where('booking_id', $booking->booking_id)->first();
-    if ($bookingPromotion) {
-        $promotion = \App\Models\Promotion::find($bookingPromotion->promo_id);
-        if ($promotion && isset($promotion->used_count)) {
-            $promotion->increment('used_count');
-        }
-    }
+            
+            $foods = json_decode($booking->selected_foods, true) ?? [];
+            $this->bookingService->attachFoodsToBooking($booking->booking_id, $foods);
 
-    // 🚀 Dispatch event gửi mail cho khách
-    event(new \App\Events\BookingEvents($booking));
-}
- elseif (($allParams['cancel'] ?? 'false') === 'true' && $booking['payment_method'] === "payos") {
+            
+            $bookingPromotion = \App\Models\BookingPromotion::where('booking_id', $booking->booking_id)->first();
+            if ($bookingPromotion) {
+                $promotion = \App\Models\Promotion::find($bookingPromotion->promo_id);
+                if ($promotion && isset($promotion->used_count)) {
+                    $promotion->increment('used_count');
+                }
+            }
+
+            
+            event(new \App\Events\BookingEvents($booking));
+        } elseif (($allParams['cancel'] ?? 'false') === 'true' && $booking['payment_method'] === "payos") {
             $booking->update([
                 'booking_status' => 'cancelled'
             ]);
@@ -185,8 +131,8 @@ class PayosController extends Controller
             $this->bookingService->cancelSeats($booking);
         }
 
-        // ✅ Redirect theo role
-        $user = $booking->user; // Booking có quan hệ tới user
+
+        $user = $booking->user;
         $isCancel = ($allParams['cancel'] ?? 'false') === 'true';
 
         if ($user && $user->role_id == 3) {
@@ -194,7 +140,6 @@ class PayosController extends Controller
                 ->with('message', $isCancel ? 'Đã hủy giao dịch.' : 'Thanh toán thành công. Đơn đã được xác nhận.');
         }
 
-        // Mặc định là người dùng bình thường (role_id = 4)
         return redirect()->to(route('profile') . '#transaction-history')
             ->with('message', $isCancel ? 'Thanh toán đã bị hủy, booking đã hủy.' : 'Thanh toán thành công, booking đã xác nhận.');
     }

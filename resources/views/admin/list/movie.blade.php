@@ -1,6 +1,24 @@
 @extends('layouts.admin')
 
+@section('title2')
+    Quản lý phim
+@endsection
+
+@section('title1')
+    Phim & xuất chiếu
+@endsection
+
+@section('title')
+    Quản lý phim
+@endsection
+
 @section('content')
+@if (session('success'))
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        {{ session('success') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+@endif
     <div class="card border-0 shadow-sm mt-3">
         <div class="card-body">
             <div class="d-flex justify-content-between align-items-center mb-3">
@@ -42,26 +60,43 @@
                                 <td>{{ \Carbon\Carbon::parse($movie->release_date)->format('d/m/Y') }}</td>
                                 <td>{{ \Carbon\Carbon::parse($movie->end_date)->format('d/m/Y') }}</td>
                                 <td>
-                                    <span class="badge bg-{{ $movie->status == 'active' ? 'success' : 'secondary' }}">
-                                        {{ $movie->status == 'active' ? 'Hiển thị' : 'Ẩn' }}
-                                    </span>
-                                </td>
+    @if ($movie->trashed())
+        <span class="badge bg-danger">Đã xóa</span>
+    @else
+        <span class="badge bg-{{ $movie->status == 'active' ? 'success' : 'secondary' }}">
+            {{ $movie->status == 'active' ? 'Hiển thị' : 'Ẩn' }}
+        </span>
+    @endif
+</td>
                                 <td>
-                                    <a href="{{ route('movies.edit', $movie->movie_id) }}" class="btn btn-outline-primary btn-sm">
-                                        <i class="bi bi-pencil-fill"></i>
-                                    </a>
-                                    <a href="{{ route('movies.show', $movie->movie_id) }}" class="btn btn-outline-primary btn-sm">
-                                        <i class="bi bi-eye-fill"></i>
-                                    </a>
-                                    <form action="{{ route('movies.destroy', $movie->movie_id) }}" method="POST" style="display:inline"
-                                          onsubmit="return confirm('Bạn có chắc muốn xoá phim này?')">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-outline-danger btn-sm">
-                                            <i class="bi bi-trash-fill"></i>
-                                        </button>
-                                    </form>
-                                </td>
+    @if ($movie->trashed())
+        {{-- Nếu phim đã bị soft delete thì chỉ hiện nút khôi phục --}}
+        <form action="{{ route('movies.restore', $movie->movie_id) }}" method="POST" style="display:inline">
+            @csrf
+            @method('PATCH')
+            <button type="submit" class="btn btn-outline-success btn-sm">
+                <i class="bi bi-arrow-clockwise"></i>
+            </button>
+        </form>
+    @else
+        {{-- Nếu phim chưa bị xóa thì hiện đủ nút edit, show, delete --}}
+        <a href="{{ route('movies.edit', $movie->movie_id) }}" class="btn btn-outline-primary btn-sm">
+            <i class="bi bi-pencil-fill"></i>
+        </a>
+        <a href="{{ route('movies.show', $movie->movie_id) }}" class="btn btn-outline-primary btn-sm">
+            <i class="bi bi-eye-fill"></i>
+        </a>
+        <form action="{{ route('movies.destroy', $movie->movie_id) }}" method="POST" style="display:inline"
+              onsubmit="return confirm('Bạn có chắc muốn xoá phim này?')">
+            @csrf
+            @method('DELETE')
+            <button type="submit" class="btn btn-outline-danger btn-sm">
+                <i class="bi bi-trash-fill"></i>
+            </button>
+        </form>
+    @endif
+</td>
+
                             </tr>
                         @endforeach
                     </tbody>

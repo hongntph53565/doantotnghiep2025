@@ -3,7 +3,6 @@
 
         <hr>
         @if (session('success_cash'))
-            <!-- Modal -->
             <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content text-center p-4">
@@ -18,7 +17,7 @@
                 </div>
             </div>
 
-            <!-- Auto show modal -->
+
             <script>
                 document.addEventListener('DOMContentLoaded', function() {
                     const successModal = new bootstrap.Modal(document.getElementById('successModal'));
@@ -38,13 +37,13 @@
                     </label>
                 </div>
 
-                <div class="payment-option">
+                {{-- <div class="payment-option">
                     <input type="radio" name="payment" id="payos">
                     <label for="payos">
                         <img src="{{ asset('images/payos.png') }}" alt="MoMo">
                         <span>Thanh toán bằng Payos</span>
                     </label>
-                </div>
+                </div> --}}
 
                 <div class="payment-option">
                     <input type="radio" name="payment" id="zalopay">
@@ -110,27 +109,6 @@
             <p class="info" id="final-seat-info">Đang tải ghế...</p>
 
             <hr>
-            {{-- <div class="voucher-box mt-3">
-    <h5>Mã khuyến mãi</h5>
-    <select id="promo-select" class="form-select mb-2">
-        <option value="">-- Chọn mã khuyến mãi --</option>
-        @foreach ($promotions as $promo)
-            <option 
-                value="{{ $promo->discount_code }}"
-                data-type="{{ $promo->type_discount }}"
-                data-value="{{ $promo->discount_value }}"
-                data-max="{{ $promo->max_discount }}"
-                data-min="{{ $promo->min_order_value }}"
-            >
-                {{ $promo->discount_code }} - 
-                {{ $promo->type_discount == 'percent' ? $promo->discount_value . '%' : number_format($promo->discount_value) . '₫' }}
-            </option>
-        @endforeach
-    </select>
-    <button class="btn btn-outline-primary btn-sm" onclick="applyPromo()">Áp dụng</button>
-    <div id="promo-message" class="text-success mt-2"></div>
-</div> --}}
-
             <div class="voucher-box mt-3">
                 <h5>Mã khuyến mãi</h5>
                 <div class="d-flex justify-content-between align-items-center p-3 border rounded" role="button"
@@ -144,8 +122,7 @@
                 </div>
             </div>
 
-            <!-- Modal chọn mã -->
-            {{-- <div class="modal fade" id="voucherModal" tabindex="-1" aria-labelledby="voucherModalLabel"
+            <div class="modal fade" id="voucherModal" tabindex="-1" aria-labelledby="voucherModalLabel"
                 aria-hidden="true">
                 <div class="modal-dialog modal-dialog-scrollable">
                     <div class="modal-content">
@@ -156,17 +133,25 @@
                         <div class="modal-body">
                             <div id="voucher-error-message" class="text-danger small mb-3"></div>
                             <div id="voucher-list">
-                                @foreach ($promotions as $promo)
-                                    <div class="voucher-option mb-2 p-2 border">
+                                @forelse ($promotions as $promo)
+                                    @php
+                                        $isExpired = now()->lt($promo->start_date) || now()->gt($promo->end_date);
+                                        $isUsedUp = $promo->used_count >= $promo->max_uses;
+                                        $isActive = $promo->status === 'active' && !$isExpired && !$isUsedUp;
+                                    @endphp
+
+                                    <div
+                                        class="voucher-option mb-2 p-2 border {{ $isActive ? '' : 'bg-light text-muted' }}">
                                         <img src="{{ asset('images/logo.jpg') }}" alt="Voucher icon">
                                         <input type="radio" name="voucher" id="voucher_{{ $loop->index }}"
                                             class="d-none clickable-voucher" value="{{ $promo->discount_code }}"
                                             data-type="{{ $promo->type_discount }}"
                                             data-value="{{ $promo->discount_value }}"
                                             data-max="{{ $promo->max_discount }}"
-                                            data-min="{{ $promo->min_order_value }}">
+                                            data-min="{{ $promo->min_order_value }}"
+                                            {{ $isActive ? '' : 'disabled' }}>
                                         <label for="voucher_{{ $loop->index }}"
-                                            class="voucher-label border rounded p-2 d-block">
+                                            class="voucher-label border rounded p-2 d-block {{ $isActive ? '' : 'opacity-50' }}">
                                             <div class="d-flex justify-content-between align-items-center">
                                                 <strong class="voucher-code">{{ $promo->discount_code }}</strong>
                                                 <div class="voucher-discount">
@@ -175,12 +160,31 @@
                                                         : number_format($promo->discount_value) . '₫' }}
                                                 </div>
                                             </div>
-                                            <div class="voucher-min-order mt-1 text-muted small">
+                                            <div class="voucher-min-order mt-1 small">
                                                 Đơn tối thiểu: {{ number_format($promo->min_order_value) }} VND
                                             </div>
+
+                                            {{-- Thông báo trạng thái --}}
+                                            @if ($isExpired)
+                                                <div class="text-danger small">⛔ Hết hạn</div>
+                                            @elseif ($isUsedUp)
+                                                <div class="text-danger small">⛔ Đã hết lượt sử dụng</div>
+                                            @else
+                                                <div class="text-success small">✅ Còn hiệu lực</div>
+                                            @endif
+
+                                            {{-- Nếu voucher theo loại thẻ --}}
+                                            @if ($promo->card_type)
+                                                <div class="voucher-card-type mt-1 text-info small">
+                                                    Dành cho thẻ: {{ ucfirst($promo->card_type) }}
+                                                </div>
+                                            @endif
                                         </label>
                                     </div>
-                                @endforeach
+                                @empty
+                                    <p class="text-muted">Không có mã ưu đãi nào cho loại thẻ của bạn.</p>
+                                @endforelse
+
                             </div>
                         </div>
                         <div class="modal-footer">
@@ -190,80 +194,7 @@
                         </div>
                     </div>
                 </div>
-            </div> --}}
-            <div class="modal fade" id="voucherModal" tabindex="-1" aria-labelledby="voucherModalLabel"
-    aria-hidden="true">
-    <div class="modal-dialog modal-dialog-scrollable">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">MÃ ƯU ĐÃI</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
             </div>
-            <div class="modal-body">
-                <div id="voucher-error-message" class="text-danger small mb-3"></div>
-                <div id="voucher-list">
-                    @forelse ($promotions as $promo)
-    @php
-        $isExpired = now()->lt($promo->start_date) || now()->gt($promo->end_date);
-        $isUsedUp = $promo->used_count >= $promo->max_uses;
-        $isActive = $promo->status === 'active' && !$isExpired && !$isUsedUp;
-    @endphp
-
-    <div class="voucher-option mb-2 p-2 border {{ $isActive ? '' : 'bg-light text-muted' }}">
-        <img src="{{ asset('images/logo.jpg') }}" alt="Voucher icon">
-        <input type="radio" name="voucher" id="voucher_{{ $loop->index }}"
-            class="d-none clickable-voucher"
-            value="{{ $promo->discount_code }}"
-            data-type="{{ $promo->type_discount }}"
-            data-value="{{ $promo->discount_value }}"
-            data-max="{{ $promo->max_discount }}"
-            data-min="{{ $promo->min_order_value }}"
-            {{ $isActive ? '' : 'disabled' }}>
-        <label for="voucher_{{ $loop->index }}" 
-            class="voucher-label border rounded p-2 d-block {{ $isActive ? '' : 'opacity-50' }}">
-            <div class="d-flex justify-content-between align-items-center">
-                <strong class="voucher-code">{{ $promo->discount_code }}</strong>
-                <div class="voucher-discount">
-                    {{ $promo->type_discount == 'percent'
-                        ? $promo->discount_value . '%'
-                        : number_format($promo->discount_value) . '₫' }}
-                </div>
-            </div>
-            <div class="voucher-min-order mt-1 small">
-                Đơn tối thiểu: {{ number_format($promo->min_order_value) }} VND
-            </div>
-
-            {{-- Thông báo trạng thái --}}
-            @if ($isExpired)
-                <div class="text-danger small">⛔ Hết hạn</div>
-            @elseif ($isUsedUp)
-                <div class="text-danger small">⛔ Đã hết lượt sử dụng</div>
-            @else
-                <div class="text-success small">✅ Còn hiệu lực</div>
-            @endif
-
-            {{-- Nếu voucher theo loại thẻ --}}
-            @if($promo->card_type)
-                <div class="voucher-card-type mt-1 text-info small">
-                    Dành cho thẻ: {{ ucfirst($promo->card_type) }}
-                </div>
-            @endif
-        </label>
-    </div>
-@empty
-    <p class="text-muted">Không có mã ưu đãi nào cho loại thẻ của bạn.</p>
-@endforelse
-
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-outline-secondary"
-                    data-bs-dismiss="modal">Đóng</button>
-                <button type="button" class="btn btn-danger" onclick="applyVoucher()">Áp dụng</button>
-            </div>
-        </div>
-    </div>
-</div>
 
 
             <hr>
@@ -331,16 +262,12 @@
                     }
                 });
 
-                // 👉 Nếu có voucher thì finalTotal đã được tính sẵn trong selectedVoucher
+            
                 let finalTotal = originalTotal;
-                // if (selectedVoucher) {
-                //     finalTotal = selectedVoucher.newTotal; // chỉ lấy ra, không trừ thêm lần nào nữa
-                // }
-
-                // gán vào form
+               
                 document.getElementById("showtime_id").value = showtimeId;
                 document.getElementById("payment_method").value = paymentMethod;
-                document.getElementById("total_price_hidden").value = Math.round(finalTotal); // submit số tiền cuối
+                document.getElementById("total_price_hidden").value = Math.round(finalTotal); 
                 document.getElementById("selected_seats").value = JSON.stringify(seatIds);
                 document.getElementById("selected_foods").value = JSON.stringify(selectedFoods);
                 document.getElementById("promo_code_hidden").value = selectedVoucher ? selectedVoucher.code : "";
@@ -349,7 +276,7 @@
             }
 
 
-            // ------------------- chỉ giữ logic voucher -------------------
+            
             let selectedVoucher = null;
 
             function applyVoucher() {
@@ -369,7 +296,7 @@
                 const foodTotal = parseInt(sessionStorage.getItem("foodTotal")) || 0;
                 const originalTotal = ticketTotal + foodTotal;
 
-                // check điều kiện tối thiểu
+                
                 if (originalTotal < minOrder) {
                     document.getElementById("voucher-error-message").innerText =
                         `Đơn hàng tối thiểu: ${minOrder.toLocaleString('vi-VN')} VND để áp dụng mã này.`;
@@ -378,24 +305,24 @@
                     document.getElementById("voucher-error-message").innerText = "";
                 }
 
-                // tính giảm giá
+                
                 let discount = (type === 'percent') ? originalTotal * value / 100 : value;
                 discount = Math.min(discount, maxDiscount);
                 const newTotal = originalTotal - discount;
 
-                // cập nhật UI
+               
                 document.getElementById("final-total-payment").innerText =
                     newTotal.toLocaleString('vi-VN') + " VND";
                 document.getElementById("selected-voucher-label").innerText =
                     code + " (-" + Math.round(discount).toLocaleString('vi-VN') + "₫)";
 
-                // chỉ lưu mã, không cần submit số tiền cuối
+                
                 selectedVoucher = {
                     code
                 };
             }
 
-            // toggle chọn/bỏ voucher
+            
             document.addEventListener("DOMContentLoaded", function() {
                 let lastChecked = null;
                 document.querySelectorAll('.clickable-voucher').forEach(radio => {
@@ -414,7 +341,7 @@
                                         parseInt(sessionStorage.getItem("foodTotal") || 0))
                                     .toLocaleString('vi-VN') + " VND";
 
-                                selectedVoucher = null; // reset
+                                selectedVoucher = null; 
                                 e.preventDefault();
                             } else {
                                 lastChecked = radio;

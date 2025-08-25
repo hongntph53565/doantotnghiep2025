@@ -1,5 +1,17 @@
 @extends('layouts.admin')
 
+@section('title2')
+    Thể loại phim
+@endsection
+
+@section('title1')
+    Phim & xuất chiếu
+@endsection
+
+@section('title')
+    Thể loại phim
+@endsection
+
 @section('content')
     @if (session('success'))
         <div class="alert alert-success alert-dismissible fade show" role="alert">

@@ -1,5 +1,17 @@
 @extends('layouts.admin')
 
+@section('title2')
+    Thêm thể loại phim
+@endsection
+
+@section('title1')
+    Phim & suất chiếu
+@endsection
+
+@section('title')
+    Thể loại
+@endsection
+
 @section('content')
     <div class="card border-0 shadow-sm rounded-3 mt-3">
         <div class="card-header bg-light py-3">
@@ -16,22 +28,36 @@
                     <div class="col-md-6">
                         <label for="genreName" class="form-label fw-semibold">Tên thể loại <span
                                 class="text-danger">*</span></label>
-                        <input type="text" class="form-control" id="genreName" name="genre_name"
-                            placeholder="VD: Hành động, Hài, Kinh dị" required>
+                        <input type="text" class="form-control @error('genre_name') is-invalid @enderror"
+                               id="genreName" name="genre_name"
+                               value="{{ old('genre_name') }}"
+                               placeholder="VD: Hành động, Hài, Kinh dị" >
+                        @error('genre_name')
+                            <div class="invalid-feedback">
+                                {{ $message }}
+                            </div>
+                        @enderror
                     </div>
 
                     <!-- Mô tả -->
                     <div class="col-md-6">
                         <label for="description" class="form-label fw-semibold">Mô tả</label>
-                        <input type="text" class="form-control" id="description" name="description"
-                            placeholder="Thông tin thêm về thể loại (tuỳ chọn)">
+                        <input type="text" class="form-control @error('description') is-invalid @enderror"
+                               id="description" name="description"
+                               value="{{ old('description') }}"
+                               placeholder="Thông tin thêm về thể loại (tuỳ chọn)">
+                        @error('description')
+                            <div class="invalid-feedback">
+                                {{ $message }}
+                            </div>
+                        @enderror
                     </div>
 
                     <!-- Trạng thái -->
                     <div class="col-12">
                         <div class="form-check form-switch">
                             <input class="form-check-input" type="checkbox" name="status" id="activeStatus" value="1"
-                                checked>
+                                {{ old('status', true) ? 'checked' : '' }}>
                             <label class="form-check-label fw-semibold" for="activeStatus">
                                 Kích hoạt thể loại
                             </label>
@@ -44,7 +70,7 @@
                     <a href="{{ route('genres.index') }}" class="btn btn-outline-secondary px-4">
                         <i class="bi bi-arrow-left me-2"></i>Quay lại
                     </a>
-                    <div class="d-flex gap-2">
+<div class="d-flex gap-2">
                         <button type="reset" class="btn btn-outline-danger px-4">
                             <i class="bi bi-x-circle me-2"></i>Đặt lại
                         </button>

@@ -14,10 +14,11 @@ class BookingFood extends Model
     protected $primaryKey = 'id';
 
     protected $fillable = [
-        'booking_id',
-        'food_id',
-        'quantity',
-    ];
+    'booking_id',
+    'food_id',
+    'quantity',
+    'price',
+];
 
     public function booking()
     {

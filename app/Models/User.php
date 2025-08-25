@@ -45,4 +45,10 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Role::class, 'role_id', 'role_id');
     }
+    public function managedCinemas()
+{
+    return $this->belongsToMany(Cinema::class, 'manager_cinema', 'user_id', 'cinema_id')
+                ->withTimestamps();
+}
+
 }

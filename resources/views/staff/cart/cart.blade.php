@@ -820,7 +820,7 @@
                 </select>
             </form>
             <div class="cart-wrapper">
-                <a href="{{ route('combo') }}" class="back-btn">
+                <a href="{{ route('staff.combo') }}" class="back-btn">
                     ← TRỞ LẠI
                 </a>
                 <div class="cart-link">

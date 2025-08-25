@@ -201,6 +201,11 @@ public function getCombos(Request $request)
     $cinemaId = $request->input('cinema_id');
     $sessionCinemaId = session('selected_cinema_id');
 
+    // Nếu là nhân viên → mặc định cinemaId = rạp của họ
+    if (Auth::user()->role_id == 3 && !$cinemaId) {
+        $cinemaId = Auth::user()->cinema_id;
+    }
+
     // Nếu chọn rạp khác → reset giỏ hàng và lưu lại rạp mới
     if ($cinemaId && $cinemaId != $sessionCinemaId) {
         session()->forget('cart'); // Xoá giỏ hàng cũ
@@ -217,9 +222,7 @@ public function getCombos(Request $request)
             ->where('cinema_id', $cinemaId)
             ->get();
     } else {
-        $combos = Food::where('type', 'combo')
-            ->where('status', 'active')
-            ->get();
+        $combos = collect(); // không chọn rạp thì trả về rỗng
     }
 
     // Tính tổng số lượng sản phẩm trong giỏ
@@ -228,6 +231,7 @@ public function getCombos(Request $request)
 
     return view('staff.cart.combo', compact('combos', 'totalQuantity', 'cinemas', 'cinemaId'));
 }
+
 
    public function showCombo(Request $request, $id)
 {

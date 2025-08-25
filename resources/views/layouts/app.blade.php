@@ -14,6 +14,13 @@
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rubik+Mono+One&display=swap"rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
 
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+
+
     <style>
         body {
             background-color: #f8f9fa;
@@ -135,19 +142,20 @@
         }
 
         .topbar {
-    background-color: #f8f8f8;
-    padding: 12px 0;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-}
-.topbar {
-    transition: all 0.3s ease;
-    padding: 12px 0;
-}
+            background-color: #f8f8f8;
+            padding: 12px 0;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
 
-.topbar.shrink {
-    padding: 4px 0;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
+        .topbar {
+            transition: all 0.3s ease;
+            padding: 12px 0;
+        }
+
+        .topbar.shrink {
+            padding: 4px 0;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
 
 
 
@@ -371,16 +379,40 @@
         footer a.social-icon:hover {
             color: white !important;
         }
-        .nav-link.active-link {
-    color: #7bc043 !important;
-    font-weight: 700;
-}
 
+        .nav-link.active-link {
+            color: #7bc043 !important;
+            font-weight: 700;
+        }
     </style>
     @stack('styles')
 </head>
 
 <body>
+    @if (session('error'))
+        <div class="position-fixed top-0 end-0 p-3" style="z-index: 9999">
+            <div id="toastError" class="toast align-items-center text-white bg-danger border-0" role="alert">
+                <div class="d-flex">
+                    <div class="toast-body">
+                        {{ session('error') }}
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto"
+                        data-bs-dismiss="toast"></button>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                const toastErrorEl = document.getElementById('toastError');
+                const toastError = new bootstrap.Toast(toastErrorEl, {
+                    delay: 4000
+                });
+                toastError.show();
+            });
+        </script>
+    @endif
+
     @if (session('message'))
         <script>
             document.addEventListener("DOMContentLoaded", function() {
@@ -392,114 +424,119 @@
         <img src="{{ asset('images/Z1-1748x155-1.jpg') }}" alt="Banner Summer" class="w-100">
     </div>
     <div class="topbar sticky-top">
-    <div class="container d-flex justify-content-between align-items-center">
-        <div class="d-flex align-items-center">
-            <a href="{{ url('/') }}">
-                <img style="width: 150px; height: 70px;"
-                    src="{{ asset('images/z6776223534015_3ec1a499b9bb824d97c41f77d3a677be-removebg-preview.png') }}"
-                    alt="Logo">
-            </a>
-            <nav class="navbar navbar-expand-lg align-items-center">
-                <div class="container">
-                    <div class="collapse navbar-collapse">
-                        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                            <li class="nav-item dropdown hover-dropdown">
-                                <a class="nav-link dropdown-toggle {{ request()->is('lich-chieu-rap') || request()->is('lich-chieu-phim') ? 'active-link' : '' }}"
-                                    href="#">
-                                    NOW SHOWING
-                                </a>
-                                <ul class="dropdown-menu custom-dropdown">
-                                    <li><a class="dropdown-item" href="{{ route('Client.cinemaShowtime') }}">LỊCH
-                                            CHIẾU RẠP</a></li>
-                                    <li><a class="dropdown-item" href="{{ url('/lich-chieu-phim') }}">LỊCH CHIẾU
-                                            PHIM</a></li>
-                                </ul>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link {{ request()->is('cua-hang*') ? 'active-link' : '' }}"
-                                    href="{{ url('/cua-hang') }}">THỨC ĂN & NƯỚC</a>
-                            </li>
-                            <li class="nav-item dropdown hover-dropdown">
-                                <a class="nav-link dropdown-toggle {{ request()->is('he-thong-rap') || request()->is('ve-chung-toi') || request()->is('tuyen-dung') ? 'active-link' : '' }}"
-                                    href="#">
-                                    GIỚI THIỆU
-                                </a>
-                                <ul class="dropdown-menu custom-dropdown">
-                                    <li><a class="dropdown-item" href="{{ url('/he-thong-rap') }}">HỆ THỐNG RẠP</a>
-                                    </li>
-                                    <li><a class="dropdown-item" href="#">VỀ CHÚNG TÔI</a></li>
-                                    <li><a class="dropdown-item" href="#">TUYỂN DỤNG</a></li>
-                                </ul>
-                            </li>
-                        </ul>
+        <div class="container d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center">
+                <a href="{{ url('/') }}">
+                    <img style="width: 150px; height: 70px;"
+                        src="{{ asset('images/z6776223534015_3ec1a499b9bb824d97c41f77d3a677be-removebg-preview.png') }}"
+                        alt="Logo">
+                </a>
+                <nav class="navbar navbar-expand-lg align-items-center">
+                    <div class="container">
+                        <div class="collapse navbar-collapse">
+                            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                                <li class="nav-item dropdown hover-dropdown">
+                                    <a class="nav-link dropdown-toggle {{ request()->is('lich-chieu-rap') || request()->is('lich-chieu-phim') ? 'active-link' : '' }}"
+                                        href="#">
+                                        Phim
+                                    </a>
+                                    <ul class="dropdown-menu custom-dropdown">
+                                        <li><a class="dropdown-item" href="{{ route('Client.cinemaShowtime') }}">LỊCH
+                                                CHIẾU RẠP</a></li>
+                                        <li><a class="dropdown-item" href="{{ url('/lich-chieu-phim') }}">LỊCH CHIẾU
+                                                PHIM</a></li>
+                                    </ul>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link {{ request()->is('cua-hang*') ? 'active-link' : '' }}"
+                                        href="{{ url('/cua-hang') }}">THỨC ĂN & NƯỚC</a>
+                                </li>
+                                <li class="nav-item dropdown hover-dropdown">
+                                    <a class="nav-link dropdown-toggle {{ request()->is('he-thong-rap') || request()->is('ve-chung-toi') || request()->is('tuyen-dung') ? 'active-link' : '' }}"
+                                        href="#">
+                                        GIỚI THIỆU
+                                    </a>
+                                    <ul class="dropdown-menu custom-dropdown">
+                                        <li><a class="dropdown-item" href="{{ url('/he-thong-rap') }}">HỆ THỐNG RẠP</a>
+                                        </li>
+                                        <li><a class="dropdown-item" href="{{ url('/ve-chung-toi') }}">VỀ CHÚNG TÔI</a>
+                                        </li>
+                                        <li><a class="dropdown-item" href="{{ url('/tuyen-dung') }}">TUYỂN DỤNG</a>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
                     </div>
-                </div>
-            </nav>
-        </div>
-
-        <div class="d-flex align-items-center">
-            @php
-                $selectedCity = session('selected_city') ?? 'Chọn khu vực của bạn';
-            @endphp
-
-            <div class="dropdown hover-dropdown">
-                <button class="btn btn-outline-success dropdown-toggle" type="button">
-                    {{ $selectedCity }}
-                </button>
-                <ul class="dropdown-menu custom-dropdown">
-                    @foreach ($cities as $city)
-                        <li><a class="dropdown-item"
-                                href="{{ route('set.city', ['city' => $city]) }}">{{ $city }}</a></li>
-                    @endforeach
-                </ul>
+                </nav>
             </div>
 
-            @if (Auth::check())
-                <a href="{{ url('/profile') }}" class="text-decoration-none text-dark">
+            <div class="d-flex align-items-center">
+                @php
+                    $selectedCity = session('selected_city') ?? 'Chọn khu vực của bạn';
+                @endphp
+
+                <div class="dropdown hover-dropdown">
+                    <button class="btn btn-outline-success dropdown-toggle" type="button">
+                        {{ $selectedCity }}
+                    </button>
+                    <ul class="dropdown-menu custom-dropdown">
+                        @foreach ($cities as $city)
+                            <li><a class="dropdown-item"
+                                    href="{{ route('set.city', ['city' => $city]) }}">{{ $city }}</a></li>
+                        @endforeach
+                    </ul>
+                </div>
+
+                @if (Auth::check())
                     <div class="d-flex align-items-center ms-3">
                         <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" width="24" class="me-1">
-                        <span>{{ Auth::user()->full_name }} /
-                            <strong>
-                                <a href="#"
-                                    onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
-                                    class="text-dark text-decoration-none">Thoát</a>
-                            </strong>
+
+                        <span>
+                            <a href="{{ url('/profile') }}" class="text-decoration-none text-dark">
+                                {{ Auth::user()->full_name }}
+                            </a>
+                            /
+                            <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-inline">
+                                @csrf
+                                <button type="submit"
+                                    class="btn btn-link text-dark text-decoration-none p-0 m-0 align-baseline">
+                                    <strong>Thoát</strong>
+                                </button>
+                            </form>
                         </span>
                     </div>
-                </a>
-                <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
-                    @csrf
-                </form>
-            @else
-                <div class="auth-hover-parent">
-                    <button class="btn btn-success">Đăng nhập/Đăng ký</button>
-                    <div class="auth-hover-box">
-                        <form action="{{ route('login') }}" method="POST">
-                            @csrf
-                            <div class="mb-2">
-                                <label>Email *</label>
-                                <input type="email" name="email" class="form-control" required>
-                            </div>
-                            <div class="mb-2">
-                                <label>Mật khẩu *</label>
-                                <input type="password" name="password" class="form-control" required>
-                            </div>
-                            <div class="mb-2 text-end">
-                                <a href="{{ route('forgotPassword') }}" class="forgot-password">Quên mật khẩu?</a>
-                            </div>
-                            <button type="submit" class="btn btn-success mb-2">Đăng nhập</button>
-                        </form>
+                @else
+                    <div class="auth-hover-parent">
+                        <button class="btn btn-success">Đăng nhập/Đăng ký</button>
+                        <div class="auth-hover-box">
+                            <form action="{{ route('login') }}" method="POST">
+                                @csrf
+                                <div class="mb-2">
+                                    <label>Email *</label>
+                                    <input type="email" name="email" class="form-control" required>
+                                </div>
+                                <div class="mb-2">
+                                    <label>Mật khẩu *</label>
+                                    <input type="password" name="password" class="form-control" required>
+                                </div>
+                                <div class="mb-2 text-end">
+                                    <a href="{{ route('forgotPassword') }}" class="forgot-password">Quên mật
+                                        khẩu?</a>
+                                </div>
+                                <button type="submit" class="btn btn-success mb-2">Đăng nhập</button>
+                            </form>
 
-                        <button class="btn btn-primary w-100"
-                            onclick="window.location.href='{{ route('register.form') }}'">
-                            Đăng ký thành viên
-                        </button>
+                            <button class="btn btn-primary w-100"
+                                onclick="window.location.href='{{ route('register.form') }}'">
+                                Đăng ký thành viên
+                            </button>
+                        </div>
                     </div>
-                </div>
-            @endif
+                @endif
+            </div>
         </div>
     </div>
-</div>
 
 
     @yield('content')
@@ -578,18 +615,18 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const topbar = document.querySelector('.topbar');
+        document.addEventListener("DOMContentLoaded", function() {
+            const topbar = document.querySelector('.topbar');
 
-        window.addEventListener('scroll', function () {
-            if (window.scrollY > 50) {
-                topbar.classList.add('shrink');
-            } else {
-                topbar.classList.remove('shrink');
-            }
+            window.addEventListener('scroll', function() {
+                if (window.scrollY > 50) {
+                    topbar.classList.add('shrink');
+                } else {
+                    topbar.classList.remove('shrink');
+                }
+            });
         });
-    });
-</script>
+    </script>
 
     @stack('scripts')
     @if (session('success'))

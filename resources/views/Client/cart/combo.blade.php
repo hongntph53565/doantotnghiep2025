@@ -216,16 +216,18 @@
     <div class="container">
         <div class="content-top">
             {{-- Form chọn rạp --}}
-            <form method="GET" action="{{ route('combo') }}">
-                <select class="cinema-select" name="cinema_id" onchange="this.form.submit()">
-                    <option value="">Chọn rạp</option>
-                    @foreach ($cinemas as $cinema)
-                        <option value="{{ $cinema->cinema_id }}" {{ (request('cinema_id') == $cinema->cinema_id) ? 'selected' : '' }}>
-                            {{ $cinema->name }}
-                        </option>
-                    @endforeach
-                </select>
-            </form>
+           <form method="GET" action="{{ route('combo') }}">
+    <select class="cinema-select" name="cinema_id" onchange="this.form.submit()">
+        <option value="">Chọn rạp</option>
+        @foreach ($cinemas as $cinema)
+            <option value="{{ $cinema->cinema_id }}" 
+                {{ request('cinema_id') == $cinema->cinema_id ? 'selected' : '' }}>
+                {{ $cinema->name }}
+            </option>
+        @endforeach
+    </select>
+</form>
+
 
             <div class="cart-wrapper">
                 <a href="{{ route('combo') }}" class="back-btn">
@@ -281,7 +283,18 @@
                                         <input type="hidden" name="action" value="buy_now">
                                         <button type="submit" class="btn-buy-now">MUA NGAY</button>
                                     </form> --}}
-                                    <a href="{{ route('combo.show', ['id' => $combo->food_id, 'cinema_id' => request('cinema_id')]) }}" class="btn btn-primary btn-buy-now">MUA NGAY</a>
+                                   {{-- Nếu đã đăng nhập --}}
+@if (Auth::check())
+    <a href="{{ route('combo.show', ['id' => $combo->food_id, 'cinema_id' => request('cinema_id')]) }}" 
+       class="btn btn-primary btn-buy-now">
+        MUA NGAY
+    </a>
+@else
+    {{-- Nếu chưa đăng nhập thì chuyển hướng sang form đăng nhập/đăng ký --}}
+    <a href="{{ route('register.form') }}" class="btn btn-primary btn-buy-now">
+        MUA NGAY
+    </a>
+@endif
 
 
                                 </div>

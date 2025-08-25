@@ -12,7 +12,6 @@
             <div class="row g-0">
                 <div class="col-md-2">
                     <img src="{{ asset('storage/' . $movie->poster) }}" class="img" alt="{{ $movie->title }}">
-                    {{-- Giả sử poster lưu trong storage --}}
                 </div>
                 <div class="col-md-10">
                     <div class="card-body">

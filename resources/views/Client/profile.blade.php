@@ -11,7 +11,6 @@
             <hr>
             <h4 class="text-center fw-bold mb-4">TÀI KHOẢN</h4>
             <div class="row g-4">
-                <!-- Cột trái -->
                 <div class="col-lg-8 col-md-12">
                     <div class="account-box">
                         <div class="d-flex align-items-center mb-3 flex-wrap">
@@ -28,34 +27,39 @@
                                 </div>
 
                                 <p class="mb-1 small">
-    Tổng chi tiêu trong tháng
-    ({{ $monthFilter ? \Carbon\Carbon::createFromFormat('Y-m', $monthFilter)->format('m/Y') : now()->format('m/Y') }}):
-    {{ number_format($monthlySpendingForSelectedMonth, 0, ',', '.') }} VNĐ
-</p>
-
-
-
+                                    Tổng chi tiêu trong tháng
+                                    ({{ $monthFilter ? \Carbon\Carbon::createFromFormat('Y-m', $monthFilter)->format('m/Y') : now()->format('m/Y') }}):
+                                    {{ number_format($monthlySpendingForSelectedMonth, 0, ',', '.') }} VNĐ
+                                </p>
                             </div>
-
                         </div>
                         <form action="{{ route('profile.updateInside') }}" method="POST">
+
                             @csrf
                             <div class="row g-3">
                                 <div class="col-md-6">
-                                    <label class="form-label">Họ *</label>
+                                    <label class="form-label">Họ </label>
                                     <input type="text" class="form-control" name="last_name"
-                                        value="{{ explode(' ', $user->full_name)[0] ?? '' }}">
+                                        value="{{ old('last_name', explode(' ', $user->full_name)[0] ?? '') }}">
+                                    @error('last_name')
+                                        <div class="text-danger mt-1">{{ $message }}</div>
+                                    @enderror
+                                </div>
 
-                                </div>
                                 <div class="col-md-6">
-                                    <label class="form-label">Tên đệm và tên *</label>
+                                    <label class="form-label">Tên đệm và tên </label>
                                     <input type="text" class="form-control" name="first_name"
-                                        value="{{ implode(' ', array_slice(explode(' ', $user->full_name), 1)) ?? '' }}">
+                                        value="{{ old('first_name', implode(' ', array_slice(explode(' ', $user->full_name), 1)) ?? '') }}">
+                                    @error('first_name')
+                                        <div class="text-danger mt-1">{{ $message }}</div>
+                                    @enderror
                                 </div>
+
                                 <div class="col-12">
-                                    <label class="form-label">Email *</label>
+                                    <label class="form-label">Email </label>
                                     <input type="email" class="form-control" value="{{ $user->email }}" readonly>
                                 </div>
+
                                 <div class="col-12">
                                     <label class="form-label">Mật khẩu *</label>
                                     <div class="input-group mb-3">
@@ -68,154 +72,152 @@
                                         <div class="row g-3">
                                             <div class="col-md-6">
                                                 <label class="form-label">Mật khẩu mới *</label>
-                                                <input type="password" class="form-control" name="password"
-                                                    placeholder="Mật khẩu mới">
+                                                <input type="password"
+                                                    class="form-control @error('password') is-invalid @enderror"
+                                                    name="password" placeholder="Mật khẩu mới">
+                                               
+                                                @error('password')
+                                                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                                                @enderror
                                             </div>
                                             <div class="col-md-6">
                                                 <label class="form-label">Nhập lại mật khẩu *</label>
-                                                <input type="password" class="form-control" name="password_confirmation"
-                                                    placeholder="Nhập lại mật khẩu">
+                                                <input type="password"
+                                                    class="form-control @error('password_confirmation') is-invalid @enderror"
+                                                    name="password_confirmation" placeholder="Nhập lại mật khẩu">
+                                               
+                                                @error('password_confirmation')
+                                                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                                                @enderror
                                             </div>
                                         </div>
-                                        <button type="submit" class="btn btn-primary mt-3">Lưu mật khẩu</button>
+                                        {{-- <button type="button" class="btn btn-green mt-3" id="btn-change-password-submit">
+    Lưu mật khẩu
+</button> --}}
                                     </div>
                                 </div>
+
                                 <div class="col-12">
-                                    <label class="form-label">Số điện thoại *</label>
-                                    <input type="text" class="form-control" name="phone" value="{{ $user->phone }}">
+                                    <label class="form-label">Số điện thoại </label>
+                                    <input type="text" class="form-control" name="phone"
+                                        value="{{ old('phone', $user->phone) }}">
+                                    @error('phone')
+                                        <div class="text-danger mt-1">{{ $message }}</div>
+                                    @enderror
                                 </div>
-                                {{-- <div class="col-12">
-                                    <label class="form-label">Giới tính *</label>
-                                    <select class="form-select" name="gender">
-    <option value="nam" {{ $user->gender === 'nam' ? 'selected' : '' }}>Nam</option>
-    <option value="nu" {{ $user->gender === 'nu' ? 'selected' : '' }}>Nữ</option>
-    <option value="khac" {{ $user->gender === 'khac' ? 'selected' : '' }}>Khác</option>
-</select>
-                                </div> --}}
+
                                 <div class="col-12">
-                                    <label class="form-label">Ngày sinh *</label>
+                                    <label class="form-label">Ngày sinh </label>
                                     @php
                                         $birthdate = $user->birthday ? \Carbon\Carbon::parse($user->birthday) : null;
                                     @endphp
-
                                     <div class="row">
                                         <div class="col-md-4">
                                             <input type="number" name="birth_day" class="form-control" placeholder="Ngày"
                                                 value="{{ old('birth_day', $birthdate?->day) }}" min="1"
-                                                max="31" oninput="limitNumber(this, 31)">
+                                                max="31">
+                                            @error('birth_day')
+                                                <div class="text-danger mt-1">{{ $message }}</div>
+                                            @enderror
                                         </div>
                                         <div class="col-md-4">
                                             <input type="number" name="birth_month" class="form-control"
                                                 placeholder="Tháng" value="{{ old('birth_month', $birthdate?->month) }}"
-                                                min="1" max="12" oninput="limitNumber(this, 12)">
+                                                min="1" max="12">
+                                            @error('birth_month')
+                                                <div class="text-danger mt-1">{{ $message }}</div>
+                                            @enderror
                                         </div>
                                         <div class="col-md-4">
                                             <input type="number" name="birth_year" class="form-control" placeholder="Năm"
                                                 value="{{ old('birth_year', $birthdate?->year) }}" min="1990"
-                                                max="{{ date('Y') }}"
-                                                oninput="limitNumber(this, {{ date('Y') }}, 1990)">
+                                                max="{{ date('Y') }}">
+                                            @error('birth_year')
+                                                <div class="text-danger mt-1">{{ $message }}</div>
+                                            @enderror
                                         </div>
                                     </div>
                                 </div>
+
                                 <div class="col-12">
-                                    <label class="form-label">Tỉnh/Thành phố *</label>
+                                    <label class="form-label">Tỉnh/Thành phố </label>
                                     <select name="address" id="province" class="form-select">
-                                        <option disabled selected>Chọn Tỉnh/Thành phố</option>
+                                        <option disabled>Chọn Tỉnh/Thành phố</option>
                                     </select>
+
                                     @error('address')
                                         <div class="text-danger mt-1">{{ $message }}</div>
                                     @enderror
                                 </div>
+
                                 <div class="col-12 text-center">
-                                    <button type="submit" class="btn btn-green px-4">CẬP NHẬT</button>
+                                    <button type="button" class="btn btn-green px-4" id="btn-submit">
+                                        <span class="spinner-border spinner-border-sm me-2 d-none" role="status"
+                                            aria-hidden="true"></span>
+                                        CẬP NHẬT
+                                    </button>
                                 </div>
                             </div>
+
+
                         </form>
                     </div>
                 </div>
-
-                <!-- Cột phải -->
                 <div class="col-lg-4 col-md-12">
                     <div class="account-box border border-success rounded-3 p-3">
-    <div class="d-flex align-items-start flex-wrap justify-content-center justify-content-md-start">
-        {{-- ✅ QR từ số thẻ --}}
-        <img src="https://api.qrserver.com/v1/create-qr-code/?data={{ $cardNumber }}&size=100x100" 
-             alt="QR"
-             class="me-md-3 mb-3 p-2 bg-white rounded shadow-sm"
-             style="width: 100px; height: 100px;">
+                        <div class="d-flex align-items-start flex-wrap justify-content-center justify-content-md-start">
+                            <img src="https://api.qrserver.com/v1/create-qr-code/?data={{ $cardNumber }}&size=100x100"
+                                alt="QR" class="me-md-3 mb-3 p-2 bg-white rounded shadow-sm"
+                                style="width: 100px; height: 100px;">
 
-        <div class="text-start small">
-            <p class="mb-1"><strong>Tên đăng nhập:</strong><br>{{ $user->email }}</p>
-            <p class="mb-1"><strong>Số thẻ:</strong> {{ $cardNumber }}</p>
-            <p class="mb-1"><strong>Hạng thẻ:</strong> {{ ucfirst($cardType) }}</p>
-            <p class="mb-0"><strong>Ngày đăng ký:</strong> {{ $user->created_at->format('d/m/Y') }}</p>
+                            <div class="text-start small">
+                                <p class="mb-1"><strong>Tên đăng nhập:</strong><br>{{ $user->email }}</p>
+                                <p class="mb-1"><strong>Số thẻ:</strong> {{ $cardNumber }}</p>
+                                <p class="mb-1"><strong>Hạng thẻ:</strong> {{ ucfirst($cardType) }}</p>
+                                <p class="mb-0"><strong>Ngày đăng ký:</strong> {{ $user->created_at->format('d/m/Y') }}
+                                </p>
 
-            {{-- ✅ Thêm dòng in nghiêng còn bao nhiêu điểm lên hạng --}}
-            @if($nextRank && $pointsNeeded > 0)
-                <p class="mt-1 text-muted fst-italic">
-                    Cần thêm {{ $pointsNeeded }} điểm nữa để lên hạng <strong>{{ ucfirst($nextRank) }}</strong>.
-                </p>
-            @endif
-        </div>
-    </div>
-</div>
-
-
-
-
-                    {{-- <div class="text-center mt-3">
-                        @switch($user->role_id)
-                            @case(1)
-                                <a href="{{ route('admin.dashboard') }}" class="btn btn-green w-100 py-2 rounded-3 fw-bold">Tới
-                                    Quản trị</a>
-                            @break
-
-                            @case(2)
-                                <a href="{{ route('manager.static') }}" class="btn btn-green w-100 py-2 rounded-3 fw-bold">Tới
-                                    Quản trị</a>
-                            @break
-
-                            @case(3)
-                                <a href="{{ route('staff.list') }}" class="btn btn-green w-100 py-2 rounded-3 fw-bold">Nhân
-                                    Viên</a>
-                            @break
-
-                            @default
-                        @endswitch
-                    </div> --}}
+                                @if ($nextRank && $pointsNeeded > 0)
+                                    <p class="mt-1 text-muted fst-italic">
+                                        Cần thêm {{ $pointsNeeded }} điểm nữa để lên hạng
+                                        <strong>{{ ucfirst($nextRank) }}</strong>.
+                                    </p>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
                     <div class="text-center mt-3">
-    @auth
-        @switch(Auth::user()->role_id)
-            @case(1)
-                <a href="{{ route('admin.dashboard') }}" class="btn btn-green w-100 py-2 rounded-3 fw-bold">
-                    Tới Quản trị
-                </a>
-            @break
+                        @auth
+                            @switch(Auth::user()->role_id)
+                                @case(1)
+                                    <a href="{{ route('admin.dashboard') }}" class="btn btn-green w-100 py-2 rounded-3 fw-bold">
+                                        Tới Quản trị
+                                    </a>
+                                @break
 
-            @case(2)
-                <a href="{{ route('manager.static') }}" class="btn btn-green w-100 py-2 rounded-3 fw-bold">
-                    Tới Quản trị
-                </a>
-            @break
+                                @case(2)
+                                    <a href="{{ route('manager.static') }}" class="btn btn-green w-100 py-2 rounded-3 fw-bold">
+                                        Tới Quản trị
+                                    </a>
+                                @break
 
-            @case(3)
-                <a href="{{ route('staff.list') }}" class="btn btn-green w-100 py-2 rounded-3 fw-bold">
-                    Nhân Viên
-                </a>
-            @break
-        @endswitch
-    @else
-        {{-- Nếu chưa đăng nhập thì cho về trang home --}}
-        <script>
-            window.location.href = "{{ route('home') }}";
-        </script>
-    @endauth
-</div>
+                                @case(3)
+                                    <a href="{{ route('staff.list') }}" class="btn btn-green w-100 py-2 rounded-3 fw-bold">
+                                        Nhân Viên
+                                    </a>
+                                @break
+                            @endswitch
+                        @else
+                            <script>
+                                window.location.href = "{{ route('home') }}";
+                            </script>
+                        @endauth
+                    </div>
 
                 </div>
             </div>
 
-            <!-- Lịch sử giao dịch -->
+            
             <div class="mt-5">
                 <h5 id="transaction-history" class="fw-bold">Lịch sử giao dịch</h5>
                 <div class="d-flex flex-wrap justify-content-end gap-2 mb-2">
@@ -249,7 +251,7 @@
                             @forelse ($bookings as $index => $booking)
                                 <tr>
                                     <td>{{ ($bookings->currentPage() - 1) * $bookings->perPage() + $index + 1 }}</td>
-                                    <td>{{ $booking->created_at->format('d/m/Y H:i') }}</td>
+                                    <td>{{ $booking->created_at->timezone('Asia/Ho_Chi_Minh')->format('d/m/Y H:i') }}</td>
                                     <td>
                                         <div class="booking-barcode">
                                             {!! DNS1D::getBarcodeHTML($booking->booking_code, 'C128', 1, 40) !!}
@@ -281,67 +283,32 @@
                                         </button>
 
 
-                                        {{-- <div class="modal fade" id="ticketModal{{ $booking->booking_id }}" tabindex="-1"
-                                            aria-labelledby="ticketModalLabel{{ $booking->booking_id }}" aria-hidden="true">
-                                            <div class="modal-dialog modal-dialog-centered">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <h5 class="modal-title" id="ticketModalLabel{{ $booking->booking_id }}">
-                                                            Thông tin vé</h5>
-                                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                            aria-label="Đóng"></button>
-                                                    </div>
-                                                    <div class="modal-body">
-                                                        <p><strong>Mã vé:</strong> {{ $booking->booking_code }}</p>
-                                                        <p><strong>Phim:</strong>
-                                                            {{ $booking->showtime->movie->title ?? 'N/A' }}</p>
-                                                        <img src="{{ asset('storage/' . $booking->showtime->movie->poster) }}"
-                                                            alt="" width="200" />
-                                                        <p><strong>Rạp:</strong>
-                                                            {{ $booking->showtime->room->cinema->name ?? 'N/A' }}</p>
-                                                        <p><strong>Phòng:</strong>
-                                                            {{ $booking->showtime->room->room_name ?? 'N/A' }}</p>
-                                                        <p><strong>Suất chiếu:</strong>
-                                                            {{ $booking->showtime->start_time ?? 'N/A' }}</p>
-                                                        <p><strong>Ghế:</strong>
-                                                            @foreach ($booking->bookingSeats as $bs)
-                                                            {{ $bs->showtimeSeat->seat->seat_code ?? 'N/A' }}@if (!$loop->last),
-                                                            @endif
-                                                            @endforeach
-                                                        </p>
-                                                    </div>
-                                                    <div class="modal-footer">
-                                                        <button type="button" class="btn btn-secondary"
-                                                            data-bs-dismiss="modal">Đóng</button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div> --}}
+                                    
                                         <div class="modal fade" id="ticketModal{{ $booking->booking_id }}"
                                             tabindex="-1" aria-labelledby="ticketModalLabel{{ $booking->booking_id }}"
                                             aria-hidden="true">
                                             <div class="modal-dialog modal-dialog-centered modal-lg">
                                                 <div class="modal-content p-4 ticket-style">
                                                     <div class="row g-3">
-                                                        {{-- LEFT: Poster --}}
+                                                        
                                                         <div class="col-md-3 text-center ">
                                                             @if ($booking->showtime && $booking->showtime->movie)
-                                                                {{-- Nếu có phim thì hiển thị poster phim --}}
+                                                                
                                                                 <img src="{{ asset('storage/' . $booking->showtime->movie->poster) }}"
                                                                     alt="poster" class="img-fluid rounded shadow">
                                                             @elseif ($booking->bookingFoods->first()?->food?->image)
-                                                                {{-- Nếu là đơn combo-only thì hiển thị ảnh combo food --}}
+                                                                
                                                                 <img src="{{ asset('storage/' . $booking->bookingFoods->first()->food->image) }}"
                                                                     alt="combo" class="img-fluid rounded shadow">
                                                             @else
-                                                                {{-- Trường hợp không có gì thì hiển thị ảnh mặc định --}}
+                                                               
                                                                 <img src="{{ asset('images/default-poster.jpg') }}"
                                                                     alt="default" class="img-fluid rounded shadow">
                                                             @endif
                                                         </div>
 
 
-                                                        {{-- RIGHT: Info --}}
+                                                      
                                                         <div class="col-md-9 px-0">
                                                             <div class="ticket-info">
                                                                 @if ($booking->showtime && $booking->showtime->movie)
@@ -435,7 +402,6 @@
                                                     <hr class="my-4">
 
                                                     <div class="row align-items-center">
-                                                        {{-- QR --}}
                                                         <div class="col-md-3 text-center">
                                                             <img src="https://api.qrserver.com/v1/create-qr-code/?data={{ $booking->booking_code }}&size=100x100"
                                                                 alt="QR" class="img-thumbnail">
@@ -444,44 +410,32 @@
 
 
                                                         <div class="col-md-9">
-
-
                                                             @php
                                                                 $discount = $booking->bookingPromotions->sum(
                                                                     'discount_amount',
                                                                 );
 
-                                                                $comboTotal = 0;
-                                                                foreach ($booking->bookingFoods as $bf) {
-                                                                    if ($bf->food && $bf->quantity) {
-                                                                        $comboTotal += $bf->food->price * $bf->quantity;
-                                                                    }
-                                                                }
+                                                                $comboTotal = $booking->bookingFoods->sum(function (
+                                                                    $bf,
+                                                                ) {
+                                                                    return $bf->price * $bf->quantity;
+                                                                });
 
-                                                                $ticketPrice =
-                                                                    $booking->total_price + $discount - $comboTotal;
+                                                                $ticketPrice = 0;
+                                                                if ($booking->showtime) {
+                                                                    $ticketPrice =
+                                                                        $booking->total_price + $discount - $comboTotal;
+                                                                }
                                                             @endphp
 
                                                             <div class="d-flex justify-content-between">
                                                                 <span><i class="bi bi-ticket-perforated me-1"></i> Giá
                                                                     vé:</span>
-                                                                <span>{{ number_format($ticketPrice, 0, ',', '.') }}
-                                                                    đ</span>
+                                                                <span>{{ $ticketPrice > 0 ? number_format($ticketPrice, 0, ',', '.') . ' đ' : '0 đ' }}</span>
                                                             </div>
 
                                                             <div class="d-flex justify-content-between">
                                                                 <span><i class="bi bi-cup-straw me-1"></i> Bắp nước:</span>
-                                                                @php
-                                                                    $comboTotal = 0;
-
-                                                                    foreach ($booking->bookingFoods as $bf) {
-                                                                        if ($bf->food && $bf->quantity) {
-                                                                            $comboTotal +=
-                                                                                $bf->food->price * $bf->quantity;
-                                                                        }
-                                                                    }
-                                                                @endphp
-
                                                                 <span>{{ number_format($comboTotal, 0, ',', '.') }}
                                                                     đ</span>
                                                             </div>
@@ -542,45 +496,135 @@
     </body>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            if (window.location.hash === "#transaction-history") {
-                const el = document.getElementById("transaction-history");
-                if (el) {
-                    el.scrollIntoView({
-                        behavior: "smooth"
+            
+            const provinces = [
+                "Hà Nội", "TP. Hồ Chí Minh", "Hải Phòng", "Đà Nẵng", "Cần Thơ", "Huế",
+                "An Giang", "Bắc Ninh", "Cà Mau", "Cao Bằng", "Đắk Lắk", "Điện Biên",
+                "Đồng Nai", "Đồng Tháp", "Gia Lai", "Hà Tĩnh", "Hưng Yên", "Khánh Hòa",
+                "Lai Châu", "Lạng Sơn", "Lào Cai", "Lâm Đồng", "Nghệ An", "Ninh Bình",
+                "Phú Thọ", "Quảng Ngãi", "Quảng Ninh", "Quảng Trị", "Sơn La", "Tây Ninh",
+                "Thái Nguyên", "Thanh Hóa", "Tuyên Quang", "Vĩnh Long"
+            ];
+
+            const select = document.getElementById('province');
+            const current = "{{ old('address', Auth::user()->address) }}";
+
+            if (select) {
+                provinces.forEach(province => {
+                    let option = document.createElement('option');
+                    option.value = province;
+                    option.text = province;
+                    if (province === current) {
+                        option.selected = true;
+                    }
+                    select.appendChild(option);
+                });
+            }
+
+         
+            toastr.options = {
+                "closeButton": true,
+                "progressBar": true,
+                "positionClass": "toast-top-right",
+                "timeOut": "3000"
+            };
+
+            
+            function handleSubmit(btn) {
+                const spinner = btn.querySelector('.spinner-border');
+                if (spinner) spinner.classList.remove('d-none');
+                btn.setAttribute('disabled', 'true');
+
+                const form = btn.closest('form');
+                const formData = new FormData(form);
+
+                fetch(form.action, {
+                        method: "POST",
+                        headers: {
+                            "X-CSRF-TOKEN": document.querySelector('input[name="_token"]').value
+                        },
+                        body: formData
+                    })
+                    .then(async res => {
+                        if (spinner) spinner.classList.add('d-none');
+                        btn.removeAttribute('disabled');
+
+                        const data = await res.json().catch(() => ({}));
+
+                  
+                        if (res.ok && data.success) {
+                            toastr.success(data.message || "Cập nhật thành công");
+                        
+                            form.querySelectorAll('.text-danger').forEach(el => el.remove());
+                            return;
+                        }
+
+                      
+                        if (res.status === 422 && data.errors) {
+                            form.querySelectorAll('.text-danger').forEach(el => el.remove());
+                            Object.keys(data.errors).forEach(key => {
+                                const input = form.querySelector(`[name="${key}"]`);
+                                if (input) {
+                                    let errorDiv = document.createElement("div");
+                                    errorDiv.className = "text-danger mt-1";
+                                    errorDiv.innerText = data.errors[key][0];
+                                    input.insertAdjacentElement("afterend", errorDiv);
+                                }
+                            });
+                            toastr.error("Vui lòng kiểm tra lại thông tin");
+                            return;
+                        }
+
+                       
+                        toastr.error(data.message || "Có lỗi xảy ra, vui lòng thử lại");
+                    })
+                    .catch(() => {
+                        if (spinner) spinner.classList.add('d-none');
+                        btn.removeAttribute('disabled');
+                        toastr.error("Không thể kết nối server");
                     });
-                }
+            }
+
+            
+            document.getElementById('btn-submit')?.addEventListener('click', function(e) {
+                e.preventDefault();
+                handleSubmit(this);
+            });
+
+            
+            document.getElementById('btn-change-password-submit')?.addEventListener('click', function(e) {
+                e.preventDefault();
+                handleSubmit(this);
+            });
+
+            
+            const btnChangePassword = document.getElementById("btn-change-password");
+            const changePasswordFields = document.getElementById("change-password-fields");
+
+            if (btnChangePassword && changePasswordFields) {
+                btnChangePassword.addEventListener("click", function() {
+                    changePasswordFields.style.display =
+                        changePasswordFields.style.display === "none" ? "block" : "none";
+                });
             }
         });
-    
-        document.getElementById('btn-change-password').addEventListener('click', function() {
-            document.getElementById('change-password-fields').style.display = 'block';
-            document.querySelector('[name="password"]').setAttribute('required', 'required');
-            document.querySelector('[name="password_confirmation"]').setAttribute('required', 'required');
-            this.style.display = 'none';
-        });
-   
-        const provinces = [
-            "Hà Nội", "TP. Hồ Chí Minh", "Hải Phòng", "Đà Nẵng", "Cần Thơ", "Huế",
-            "An Giang", "Bắc Ninh", "Cà Mau", "Cao Bằng", "Đắk Lắk", "Điện Biên",
-            "Đồng Nai", "Đồng Tháp", "Gia Lai", "Hà Tĩnh", "Hưng Yên", "Khánh Hòa",
-            "Lai Châu", "Lạng Sơn", "Lào Cai", "Lâm Đồng", "Nghệ An", "Ninh Bình",
-            "Phú Thọ", "Quảng Ngãi", "Quảng Ninh", "Quảng Trị", "Sơn La", "Tây Ninh",
-            "Thái Nguyên", "Thanh Hóa", "Tuyên Quang", "Vĩnh Long"
-        ];
-
-        const select = document.getElementById('province');
-        provinces.forEach(province => {
-            let option = document.createElement('option');
-            option.value = province;
-            option.text = province;
-            option.selected = "{{ old('address', Auth::user()->address) }}" === province;
-            select.appendChild(option);
-        });
-    
-        function limitNumber(el, max, min = 1) {
-            let value = parseInt(el.value);
-            if (value > max) el.value = max;
-            if (value < min && el.value !== "") el.value = min;
-        }
     </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            toastr.options = {
+                "closeButton": true,
+                "progressBar": true,
+                "positionClass": "toast-top-right",
+                "timeOut": "3000"
+            };
+
+            @if (session('message'))
+                toastr.success("{{ session('message') }}");
+            @endif
+        });
+    </script>
+
+
+
+
 @endsection

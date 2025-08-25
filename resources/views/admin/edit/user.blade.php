@@ -1,5 +1,17 @@
 @extends('layouts.admin')
 
+@section('title2')
+    Quản lý người dùng
+@endsection
+
+@section('title1')
+   Tài khoản
+@endsection
+
+@section('title')
+     Tài khoản
+@endsection
+
 @section('content')
     <div class="container-fluid">
         <div class="row">
@@ -47,7 +59,7 @@
                                         @error('phone')
                                             <span class="invalid-feedback" role="alert">
                                                 <strong>{{ $message }}</strong>
-                                            </span>
+</span>
                                         @enderror
                                     </div>
                                 </div>
@@ -95,6 +107,7 @@
         <option value="">-- Chọn vai trò --</option>
         @foreach ($roles as $role)
             <option value="{{ $role->role_id }}"
+                data-role="{{ $role->role_id }}"
                 {{ old('role_id', $user->role_id) == $role->role_id ? 'selected' : '' }}>
                 {{ $role->name }}
             </option>
@@ -114,7 +127,7 @@
         <option value="">-- Chọn rạp --</option>
         @foreach ($cinemas as $cinema)
             <option value="{{ $cinema->cinema_id }}"
-                {{ old('cinema_id', $user->cinema_id) == $cinema->cinema_id ? 'selected' : '' }}>
+                {{ old('cinema_id', $cinemaId ?? null) == $cinema->cinema_id ? 'selected' : '' }}>
                 {{ $cinema->name }}
             </option>
         @endforeach
@@ -125,6 +138,7 @@
         </span>
     @enderror
 </div>
+
 
 
                             <div class="form-group">
@@ -168,18 +182,19 @@
     </script>
     <script>
     function toggleCinemaSelect() {
-        let roleValue = document.getElementById('roleSelect').value;
-        let cinemaBox = document.getElementById('cinemaSelectBox');
-        if (roleValue == 3) {
-            cinemaBox.style.display = 'block';
-        } else {
-            cinemaBox.style.display = 'none';
-        }
+    let roleValue = document.getElementById('roleSelect').value;
+    let cinemaBox = document.getElementById('cinemaSelectBox');
+    if (roleValue == 2 || roleValue == 3) {   
+        cinemaBox.style.display = 'block';
+    } else {
+        cinemaBox.style.display = 'none';
     }
+}
 
     // Gọi khi load trang và khi thay đổi
     document.getElementById('roleSelect').addEventListener('change', toggleCinemaSelect);
-    toggleCinemaSelect();
+toggleCinemaSelect();
 </script>
+
 
 @endpush

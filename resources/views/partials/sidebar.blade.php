@@ -80,13 +80,13 @@
         <a href="{{ route('promotions.index') }}" class="{{ request()->routeIs('promotions.*') ? 'active' : '' }}">
             <span class="menu-text">Mã giảm giá</span>
         </a>
-        <a href="{{ route('extraprices.index') }}" class="{{ request()->routeIs('extraprices.*') ? 'active' : '' }}">
+        {{-- <a href="{{ route('extraprices.index') }}" class="{{ request()->routeIs('extraprices.*') ? 'active' : '' }}">
             <span class="menu-text">Ngày lễ</span>
-        </a>
+        </a> --}}
     </div>
 
     {{-- Quản lý bài viết --}}
-    @php
+    {{-- @php
         $isPostMenu = request()->routeIs('posts.*');
     @endphp
     <a data-bs-toggle="collapse" href="#sidebarpost" role="button" aria-expanded="{{ $isPostMenu ? 'true' : 'false' }}">
@@ -96,7 +96,11 @@
         <a href="{{ route('posts.index') }}" class="{{ request()->routeIs('posts.*') ? 'active' : '' }}">
             <span class="menu-text">Bài viết</span>
         </a>
-    </div>
+    </div> --}}
+
+     <a href="{{ route('bills.index') }}" class="{{ request()->routeIs('bills.index') ? 'active' : '' }}">
+        <i class="bi bi-receipt-cutoff"></i><span class="menu-text">Hóa đơn</span>
+    </a>
 
     {{-- Email --}}
     @php
@@ -108,9 +112,6 @@
     <div class="collapse submenu {{ $isEmailMenu ? 'show' : '' }}" id="email">
         <a href="{{ route('template.index') }}" class="{{ request()->routeIs('template.*') ? 'active' : '' }}">
             <span class="menu-text">Mẫu email</span>
-        </a>
-        <a href="{{ route('emaillog.index') }}" class="{{ request()->routeIs('emaillog.*') ? 'active' : '' }}">
-            <span class="menu-text">Mail đã gửi</span>
         </a>
     </div>
 

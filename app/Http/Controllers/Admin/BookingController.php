@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Booking;
 use App\Models\Movie;
 use App\Models\Showtime;
+use App\Models\Payment;
 use App\Models\ShowtimeSeat;
 use App\Services\BookingService;
 use Illuminate\Http\Request;
@@ -224,7 +225,7 @@ public function store(Request $request, BookingService $bookingService)
     }
 
     // ✅ Dispatch job hủy vé sau 10 phút nếu chưa thanh toán
-    CancelBookingJob::dispatch($booking->booking_id)->delay(now()->addMinutes(10));
+    CancelBookingJob::dispatch($booking->booking_id)->delay(now()->addMinutes(16));
 
     // Chuyển hướng theo phương thức thanh toán
     switch ($data['payment_method']) {
@@ -244,12 +245,21 @@ public function store(Request $request, BookingService $bookingService)
                 'description' => $data['booking_code'],
             ]);
         case 'cash':
-            $booking->update([
-                'payment_status' => 'paid',
-                'booking_status' => 'confirmed',
-            ]);
-            return redirect()->route('staff.search_ticket_online')
-                ->with('success_cash', 'true');
+    $booking->update([
+        'payment_status' => 'paid',
+        'booking_status' => 'confirmed',
+    ]);
+
+    Payment::create([
+        'booking_id'     => $booking->booking_id,
+        'payment_method' => 'cash',
+        'price_amount'   => $booking->total_price,
+        'status'         => 'paid'
+    ]);
+
+    return redirect()->route('staff.search_ticket_online')
+        ->with('success_cash', 'true');
+
         default:
             return redirect()->route('bookings.index')->with('success', 'Đặt vé thành công.');
     }
@@ -334,11 +344,20 @@ public function store(Request $request, BookingService $bookingService)
                     'description' => $data['booking_code'],
                 ]);
             case 'cash':
-                $booking->update([
-                    'payment_status' => 'paid',
-                    'booking_status' => 'confirmed',
-                ]);
-                return redirect()->route('staff.cart')->with('success_cash', 'true');
+    $booking->update([
+        'payment_status' => 'paid',
+        'booking_status' => 'confirmed',
+    ]);
+
+    // 👉 Tạo bản ghi payment cho cash
+    Payment::create([
+        'booking_id'     => $booking->booking_id,
+        'payment_method' => 'cash',
+        'price_amount'   => $booking->total_price,
+        'status'         => 'paid'
+    ]);
+
+    return redirect()->route('staff.cart')->with('success_cash', 'true');
             default:
                 return redirect()->route('cart')->with('success', 'Mua đồ ăn thành công.');
         }

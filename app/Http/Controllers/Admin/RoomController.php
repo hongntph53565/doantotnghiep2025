@@ -12,11 +12,11 @@ use Illuminate\Http\Request;
 
 class RoomController extends Controller
 {
-    public function index(Request $request)
+     public function index(Request $request)
     {
         $keyword = $request->input('keyword');
 
-        $query = Room::with('cinema');
+        $query = Room::withTrashed()->with('cinema');
 
         if ($keyword) {
             $query->whereHas('cinema', function ($q) use ($keyword) {
@@ -29,9 +29,7 @@ class RoomController extends Controller
 
         return view('admin.list.room', compact('rooms', 'index'));
     }
-
-
-    public function create()
+     public function create()
     {
         $districts = Cinema::select('city')->distinct()->get();
         $cinemas = Cinema::select('cinema_id', 'name', 'city')->get();
@@ -40,11 +38,37 @@ class RoomController extends Controller
 
     public function store(Request $request)
     {
-        $data = $request->validate([
-            'cinema_id' => 'required|exists:cinemas,cinema_id',
-            'room_name' => 'required|string|max:255',
-            'total_seats' => 'required|integer|min:1',
-        ]);
+         $messages = [
+        'cinema_id.required'   => 'Vui lòng chọn rạp.',
+        'cinema_id.exists'     => 'Rạp đã chọn không tồn tại.',
+        'room_name.required'   => 'Vui lòng nhập tên phòng.',
+        'room_name.string'     => 'Tên phòng phải là chuỗi ký tự.',
+        'room_name.max'        => 'Tên phòng không được vượt quá 255 ký tự.',
+        'room_name.min'        => 'Tên phòng ít nhất 3 ký tự.',
+        'total_seats.required' => 'Vui lòng nhập số ghế.',
+        'total_seats.integer'  => 'Số ghế phải là một số nguyên.',
+        'total_seats.min'      => 'Số ghế phải lớn hơn 0.',
+    ];
+
+    $data = $request->validate([
+        'cinema_id'   => 'required|exists:cinemas,cinema_id',
+           'room_name' => [
+            'required',
+            'string',
+            'max:255',
+            'min:3',
+            function ($attribute, $value, $fail) use ($request) {
+                $exists = Room::where('cinema_id', $request->cinema_id)
+                              ->where('room_name', $value)
+                              ->exists();
+                if ($exists) {
+                    $fail('Tên phòng đã tồn tại trong rạp này.');
+                }
+            },
+        ],
+        'total_seats' => 'required|integer|min:1',
+        'format'      => 'required|string|in:2D,3D,IMAX,VIP',
+    ], $messages);
 
         Room::create($data);
 
@@ -56,44 +80,95 @@ class RoomController extends Controller
         $this->generateSeats($room_id, $request->input('total_seats'));
 
 
-        return redirect()->route('rooms.index')->with('success', 'Đã cập nhật template');
+        return redirect()->route('rooms.index')->with('success', 'Đã thêm mới phòng chiếu thành công');
     }
 
     public function update(Request $request, $id)
-    {
-        $data = $request->validate([
-            'cinema_id' => 'required|exists:cinemas,cinema_id',
-            'room_name' => 'required|string|max:255',
-            'total_seats' => 'required|integer|min:1',
-        ]);
-        try {
+{
+    $messages = [
+        'cinema_id.required'   => 'Vui lòng chọn rạp.',
+        'cinema_id.exists'     => 'Rạp đã chọn không tồn tại.',
+        'room_name.required'   => 'Vui lòng nhập tên phòng.',
+        'room_name.string'     => 'Tên phòng phải là chuỗi ký tự.',
+        'room_name.max'        => 'Tên phòng không được vượt quá 255 ký tự.',
+        'total_seats.required' => 'Vui lòng nhập số ghế.',
+        'total_seats.integer'  => 'Số ghế phải là một số nguyên.',
+        'total_seats.min'      => 'Số ghế phải lớn hơn 0.',
+        'format.required'      => 'Vui lòng chọn định dạng phòng.',
+        'format.in'            => 'Định dạng phòng không hợp lệ.',
+    ];
 
-            $room = Room::find($id);
+    $data = $request->validate([
+        'cinema_id' => 'required|exists:cinemas,cinema_id',
+        'room_name' => [
+            'required',
+            'string',
+            'max:255',
+            function ($attribute, $value, $fail) use ($request, $id) {
+                $exists = Room::where('cinema_id', $request->cinema_id)
+                              ->where('room_name', $value)
+                              ->where('room_id', '!=', $id)
+                              ->exists();
+                if ($exists) {
+                    $fail('Tên phòng đã tồn tại trong rạp này.');
+                }
+            },
+        ],
+        'total_seats' => 'required|integer|min:1',
+        'format'      => 'required|string|in:2D,3D,IMAX,VIP',
+    ], $messages);
 
-            if (!$room) {
-                return redirect()->back()->withErrors(['error' => 'Phòng không tồn tại']);
-            }
+    try {
+        $room = Room::find($id);
 
-            $room->update($data);
-
-            return redirect()->route('rooms.show', $room->room_id)->with('success', 'Cập nhật phòng thành công');
-
-        } catch (Exception $e) {
-            $logPath = storage_path('logs/RoomsLogs');
-            if (!file_exists($logPath)) {
-                mkdir($logPath, 0755, true);
-            }
-            $dateName = date("d-m-Y");
-            file_put_contents($dateName . '_logs.txt', $e->getMessage() . "\n", FILE_APPEND);
+        if (!$room) {
+            return redirect()->back()->withErrors(['error' => 'Phòng không tồn tại']);
         }
+
+        $oldTotalSeats = $room->total_seats; // Lưu số ghế cũ
+        $room->update($data);
+
+        // Nếu total_seats thay đổi, generate lại ghế
+        if ($data['total_seats'] != $oldTotalSeats) {
+            $this->generateSeats($room->room_id, $data['total_seats']);
+        }
+
+        return redirect()->route('rooms.show', $room->room_id)
+                         ->with('success', 'Cập nhật phòng thành công');
+
+    } catch (Exception $e) {
+        $logPath = storage_path('logs/RoomsLogs');
+        if (!file_exists($logPath)) {
+            mkdir($logPath, 0755, true);
+        }
+        $dateName = date("d-m-Y");
+        file_put_contents($logPath . '/' . $dateName . '_logs.txt', $e->getMessage() . "\n", FILE_APPEND);
+
+        return redirect()->back()->withErrors(['error' => 'Có lỗi xảy ra, vui lòng thử lại.']);
     }
+}
+
+public function restore($id)
+{
+    $room = Room::withTrashed()->findOrFail($id);
+
+    if ($room->trashed()) {
+        $room->restore();
+        return redirect()->route('rooms.index')->with('success', 'Khôi phục phòng thành công!');
+    }
+
+    return redirect()->route('rooms.index')->with('info', 'Phòng này chưa bị xóa.');
+}
+
+
+ 
 
     public function delete($id)
     {
         $room = Room::findOrFail($id);
         $room->delete();
 
-        return redirect()->route('rooms.index')->with('success', 'Xoá mẫu email thành công!');
+        return redirect()->route('rooms.index')->with('success', 'Xoá phòng chiếu thành công!');
     }
 
     public function show($id)
@@ -143,7 +218,7 @@ class RoomController extends Controller
             $rows = 7;
             $colsPerRow = 12;
             $coupleRow = 'G';
-            $vipRows = ['D', 'E', 'F'];
+$vipRows = ['D', 'E', 'F'];
             $vipCols = [3, 10];
         } elseif ($quantity == 120) {
             $rows = 10;
@@ -231,7 +306,7 @@ class RoomController extends Controller
             $letter = '';
             $n = $i;
             while ($n >= 0) {
-                $letter = chr($n % 26 + 65) . $letter;
+$letter = chr($n % 26 + 65) . $letter;
                 $n = floor($n / 26) - 1;
             }
             $letters[] = $letter;

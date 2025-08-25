@@ -25,8 +25,10 @@ class CheckRole
         }
 
         if (!in_array($user->role->name, $roles)) {
-            abort(403, 'Bạn không có quyền truy cập.');
-        }
+    // Nếu là user thường thì redirect về home
+    return redirect()->route('home')->with('error', 'Bạn không có quyền truy cập vào trang này.');
+}
+
 
         return $next($request);
     }

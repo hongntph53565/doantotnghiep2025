@@ -22,9 +22,10 @@ use App\Http\Controllers\Admin\StaticController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\VnpayController;
 use App\Http\Controllers\Admin\ZalopayController;
+use App\Http\Controllers\Admin\BillController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Client\HomeController;
-use App\Http\Controllers\Manager\DashboardController as ManagerDashboardController;
+
 use App\Http\Controllers\Client\CartController;
 use App\Http\Controllers\Client\ComboController;
 use Illuminate\Support\Facades\Route;
@@ -33,6 +34,13 @@ use App\Http\Controllers\Staff\StaffBookingController;
 use App\Http\Controllers\Staff\BookingSearchController;
 use App\Http\Controllers\Staff\BookingController as StaffBooking;
 use App\Http\Controllers\Auth\ForgotPasswordController;
+use App\Http\Controllers\Manager\DashboardController as ManagerDashboardController;
+use App\Http\Controllers\Manager\ShowtimeController as ManagerShowtimeController;
+use App\Http\Controllers\Manager\GenreController as ManagerGenreController;
+use App\Http\Controllers\Manager\MovieController as ManagerMovieController;
+use App\Http\Controllers\Manager\RoomController as ManagerRoomController;
+use App\Http\Controllers\Manager\FoodController as ManagerFoodController;
+use App\Http\Controllers\Manager\CinemaSeatTypePriceController as ManagerCinemaSeatTypePriceController;
 
 Route::get('/forgot-password', [ForgotPasswordController::class, 'showEmailForm'])->name('forgot.password');
 Route::post('/forgot-password', [ForgotPasswordController::class, 'checkEmail'])->name('forgot.password.post');
@@ -52,8 +60,10 @@ Route::prefix('booking')->name('booking.')->group(function () {
     Route::delete('/delete/{id}', [BookingController::class, 'delete'])->name('delete');
 });
 
-Route::prefix('admin')->middleware(['auth', 'role:admin,employee'])->group(function () {
+Route::prefix('admin')->middleware(['auth', 'role:admin,employee,manager'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
+    Route::get('revenue-data', [DashboardController::class, 'getRevenueData'])->name('revenue.data');
+    Route::get('seat-type-stats', [DashboardController::class, 'getSeatTypeStats'])->name('seatType.stats');
 
     Route::get('/static', [StaticController::class, 'index'])->name('admin.static');
 
@@ -69,9 +79,24 @@ Route::prefix('admin')->middleware(['auth', 'role:admin,employee'])->group(funct
         Route::get('/create', [CinemaController::class, 'create'])->name('create');
         Route::post('/store', [CinemaController::class, 'store'])->name('store');
         Route::get('/edit/{id}', [CinemaController::class, 'edit'])->name('edit');
-        Route::post('/update/{id}', [CinemaController::class, 'update'])->name('update');
+        Route::put('/update/{id}', [CinemaController::class, 'update'])->name('update');
         Route::delete('/delete/{id}', [CinemaController::class, 'delete'])->name('delete');
     });
+
+    // Route::prefix('bill')->name('bills.')->group(function () {
+    //     Route::get('/', [BillController::class, 'index'])->name('index');
+    //     Route::get('/show/{id}', [BillController::class, 'show'])->name('show');
+    // });
+    // Route::get('cinemas-by-city/{city}', [CinemaController::class, 'getByCity']);
+    // Route::get('movies-by-cinema/{cinema}', [MovieController::class, 'getByCinema']);
+    // Route::get('/bookings-ajax', [BillController::class, 'ajaxList']);
+
+
+    Route::prefix('bill')->name('bills.')->group(function () {
+        Route::get('/',             [BillController::class, 'index'])->name('index');
+        Route::get('/show/{id}',             [BillController::class, 'show'])->name('show');
+    });
+    Route::get('/bookings-ajax', [BillController::class, 'ajaxList']);
 
     Route::prefix('room')->name('rooms.')->group(function () {
         Route::get('/', [RoomController::class, 'index'])->name('index');
@@ -79,9 +104,7 @@ Route::prefix('admin')->middleware(['auth', 'role:admin,employee'])->group(funct
         Route::post('/store', [RoomController::class, 'store'])->name('store');
         Route::get('/edit/{id}', [RoomController::class, 'edit'])->name('edit');
         Route::post('/update/{id}', [RoomController::class, 'update'])->name('update');
-
-
-
+        Route::patch('/restore/{id}', [RoomController::class, 'restore'])->name('restore');
         Route::get('/show/{id}', [RoomController::class, 'show'])->name('show');
         Route::delete('/delete/{id}', [RoomController::class, 'delete'])->name('delete');
     });
@@ -91,7 +114,7 @@ Route::prefix('admin')->middleware(['auth', 'role:admin,employee'])->group(funct
         Route::get('/create', [GenreController::class, 'create'])->name('create');
         Route::post('/store', [GenreController::class, 'store'])->name('store');
         Route::get('/edit/{id}', [GenreController::class, 'edit'])->name('edit');
-        Route::post('/update/{id}', [GenreController::class, 'update'])->name('update');
+        Route::put('/update/{id}', [GenreController::class, 'update'])->name('update');
         Route::delete('/delete/{id}', [GenreController::class, 'destroy'])->name('delete');
 
     });
@@ -105,6 +128,9 @@ Route::prefix('admin')->middleware(['auth', 'role:admin,employee'])->group(funct
         Route::post('/update/{id}', [MovieController::class, 'update'])->name('update');
         Route::get('/show/{id}', [MovieController::class, 'show'])->name('show');
         Route::delete('/delete/{id}', [MovieController::class, 'destroy'])->name('destroy');
+        Route::patch('/{id}/restore', [MovieController::class, 'restore'])->name('restore');
+
+
     });
 
     Route::prefix('review')->name('reviews.')->group(function () {
@@ -122,6 +148,8 @@ Route::prefix('admin')->middleware(['auth', 'role:admin,employee'])->group(funct
         Route::post('/update/{id}', [FoodController::class, 'update'])->name('update');
         Route::get('/show/{id}', [FoodController::class, 'show'])->name('show');
         Route::delete('/delete/{id}', [FoodController::class, 'destroy'])->name('destroy');
+         Route::patch('/restore/{id}', [FoodController::class, 'restore'])->name('restore');
+    Route::delete('/force-destroy/{id}', [FoodController::class, 'forceDestroy'])->name('forceDestroy');
     });
 
     Route::prefix('showtime')->name('showtimes.')->group(function () {
@@ -132,6 +160,9 @@ Route::prefix('admin')->middleware(['auth', 'role:admin,employee'])->group(funct
         Route::post('/update/{id}', [ShowtimeController::class, 'update'])->name('update');
         Route::post('/search', [ShowtimeController::class, 'search'])->name('search');
         Route::delete('/delete/{id}', [ShowtimeController::class, 'delete'])->name('delete');
+        Route::post('/restore/{id}', [ShowtimeController::class, 'restore'])->name('restore');
+
+
     });
 
     Route::prefix('template')->name('template.')->group(function () {
@@ -160,7 +191,8 @@ Route::prefix('admin')->middleware(['auth', 'role:admin,employee'])->group(funct
     Route::prefix('promotion')->name('promotions.')->group(function () {
         Route::get('/', [PromotionController::class, 'index'])->name('index');
         Route::post('/store', [PromotionController::class, 'store'])->name('store');
-        Route::post('/update/{id}', [PromotionController::class, 'update'])->name('update');
+        Route::put('/update/{id}', [PromotionController::class, 'update'])->name('update');
+
         Route::get('/show/{id}', [PromotionController::class, 'show'])->name('show');
         Route::delete('/delete/{id}', [PromotionController::class, 'destroy'])->name('destroy');
     });
@@ -221,6 +253,7 @@ Route::prefix('staff')->name('staff.')->group(function () {
     Route::get('/search-ticket-online', [BookingSearchController::class, 'search'])->name('search_ticket_online');
     // Route::get('/staff/bookings/{booking}/print', [StaffBooking::class, 'print'])->name('booking.print');
     Route::get('/staff/booking/{booking}/print', [StaffBooking::class, 'printView'])->name('booking.print');
+    Route::post('bookings/{id}/mark-printed', [StaffBooking::class, 'markPrinted'])->name('bookings.markPrinted');
     Route::get('/dat-do-an', [StaffBookingController::class, 'getCombos'])->name('combo');
     Route::get('/combo/{id}', [StaffBookingController::class, 'showCombo'])->name('combo.show');
     Route::get('/cart', [StaffBookingController::class, 'showCart'])->name('cart');
@@ -243,7 +276,10 @@ Route::get('/', function () {
 });
 Route::get('/lich-chieu-phim', [HomeController::class, 'MovieShowtimes'])->name('Client.MovieShowtimes');
 Route::get('/set-city/{city}', [HomeController::class, 'setCity'])->name('set.city');
-
+Route::get('/ve-chung-toi', [HomeController::class, 'about_us'])->name('Client.about_us');
+Route::get('/tuyen-dung', [HomeController::class, 'recruitment'])->name('Client.recruitment');
+Route::get('/thong-bao-quan-trong', [HomeController::class, 'importantNotice'])->name('important.notice');
+Route::get('/faq', [HomeController::class, 'faq'])->name('Client.faq');
 
 
 
@@ -266,7 +302,7 @@ Route::post('/cart/remove', [CartController::class, 'removeFromCart'])->name('ca
 
 Route::get('/profile', [AuthController::class, 'profile'])->name('profile');
 
-// web.php
+
 Route::get('/thong-tin-rap/{cinema_id}', [CinemaController::class, 'infoCinema'])->name('Client.infoCinema');
 
 Route::get('/dat-ve', function () {
@@ -284,8 +320,10 @@ Route::get('/', [HomeController::class, 'home'])->name('home');
 Route::get('/dat-ve/{movie_id}', [HomeController::class, 'booking'])->name('Client.booking.home');
 Route::get('/ajax/showtimes', [HomeController::class, 'ajaxShowtimes']);
 Route::get('/ajax-showtimes-by-cinema', [HomeController::class, 'ajaxShowtimesByCinema'])->name('Client.ajaxShowtimesByCinema');
-// web.php
+
 Route::get('/ajax/showtime/{id}/seats-status', [HomeController::class, 'fetchSeatStatuses']);
+
+
 
 
 
@@ -345,15 +383,15 @@ Route::prefix('payos')->name('payos.')->group(function () {
     Route::get('/create-link/{amount}/{description}', [PayosController::class, 'createLink'])->name('create');
     Route::get('/return-link/{description}', [PayosController::class, 'returnPage'])->name('return');
 });
- Route::prefix('zalopay')->name('zalopay.')->group(function () {
-        Route::get('/create-link/{amount}/{description}', [ZalopayController::class, 'createLink'])->name('create');
-        Route::get('/return-link/{description}', [ZalopayController::class, 'returnPage'])->name('return');
-    });
+Route::prefix('zalopay')->name('zalopay.')->group(function () {
+    Route::get('/create-link/{amount}/{description}', [ZalopayController::class, 'createLink'])->name('create');
+    Route::get('/return-link/{description}', [ZalopayController::class, 'returnPage'])->name('return');
+});
 
-    Route::prefix('vnpay')->name('vnpay.')->group(function () {
-        Route::get('/create-link/{amount}/{description}', [VnpayController::class, 'createLink'])->name('create');
-        Route::get('/return-link/{description}', [VnpayController::class, 'returnPage'])->name('return');
-    });
+Route::prefix('vnpay')->name('vnpay.')->group(function () {
+    Route::get('/create-link/{amount}/{description}', [VnpayController::class, 'createLink'])->name('create');
+    Route::get('/return-link/{description}', [VnpayController::class, 'returnPage'])->name('return');
+});
 
 
 
@@ -362,16 +400,75 @@ Route::middleware('web')->group(function () {
     Route::post('/login', [AuthController::class, 'login'])->name('login');
     Route::post('/register', [AuthController::class, 'register'])->name('register');
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
-      Route::post('/profile/update', [AuthController::class, 'update'])->name('profile.update');
+    Route::post('/profile/update', [AuthController::class, 'update'])->name('profile.update');
     //   Route::post('/profile/update-inside', [AuthController::class, 'updateInside'])->name('profile.updateInside');
 
 });
 Route::middleware(['web', 'auth'])->group(function () {
     Route::post('/profile/update-inside', [AuthController::class, 'updateInside'])->name('profile.updateInside');
-    // các route cần đăng nhập khác...
+  
 });
 
 
 Route::get('/register/form', function () {
     return view('Client.auth');
 })->name('register.form');
+
+Route::prefix('manager')
+    ->name('manager.')
+    ->middleware(['auth', 'role:manager'])   
+    ->group(function () {
+
+        Route::get('/', [ManagerDashboardController::class, 'index'])
+            ->name('static'); 
+    
+        Route::prefix('showtime')->name('showtimes.')->group(function () {
+            Route::get('/', [ManagerShowtimeController::class, 'index'])->name('index');
+            Route::get('/create', [ManagerShowtimeController::class, 'create'])->name('create');
+            Route::post('/store', [ManagerShowtimeController::class, 'store'])->name('store');
+            Route::get('/edit/{id}', [ManagerShowtimeController::class, 'edit'])->name('edit');
+            Route::post('/update/{id}', [ManagerShowtimeController::class, 'update'])->name('update');
+            Route::get('/show/{id}', [ManagerShowtimeController::class, 'show'])->name('show');
+            Route::delete('/delete/{id}', [ManagerShowtimeController::class, 'delete'])->name('delete');
+            Route::post('/search', [ManagerShowtimeController::class, 'search'])->name('search');
+        });
+
+        Route::prefix('genre')->name('genres.')->group(function () {
+            Route::get('/', [ManagerGenreController::class, 'index'])->name('index');
+            Route::get('/create', [ManagerGenreController::class, 'create'])->name('create');
+        });
+
+        Route::prefix('movie')->name('movies.')->group(function () {
+            Route::get('/', [ManagerMovieController::class, 'index'])->name('index');
+            Route::get('/create', [ManagerMovieController::class, 'create'])->name('create');
+            Route::post('/store', [ManagerMovieController::class, 'store'])->name('store');
+            Route::get('/edit/{id}', [ManagerMovieController::class, 'edit'])->name('edit');
+            Route::post('/update/{id}', [ManagerMovieController::class, 'update'])->name('update');
+            Route::get('/show/{id}', [ManagerMovieController::class, 'show'])->name('show');
+            Route::delete('/delete/{id}', [ManagerMovieController::class, 'destroy'])->name('destroy');
+        });
+
+        Route::prefix('room')->name('rooms.')->group(function () {
+            Route::get('/', [ManagerRoomController::class, 'index'])->name('index');
+            Route::get('/create', [ManagerRoomController::class, 'create'])->name('create');
+            Route::post('/store', [ManagerRoomController::class, 'store'])->name('store');
+            Route::get('/edit/{id}', [ManagerRoomController::class, 'edit'])->name('edit');
+            Route::put('/update/{id}', [ManagerRoomController::class, 'update'])->name('update');
+            Route::get('/show/{id}', [ManagerRoomController::class, 'show'])->name('show');
+            // Route::delete('/ded/{id}', [ManagerRoomController::class, 'destroy'])->name('destroy');
+        });
+        Route::prefix('food')->name('foods.')->group(function () {
+            Route::get('/', [ManagerFoodController::class, 'index'])->name('index');
+            Route::get('/create', [ManagerFoodController::class, 'create'])->name('create');
+            Route::post('/store', [ManagerFoodController::class, 'store'])->name('store');
+            Route::get('/edit/{id}', [ManagerFoodController::class, 'edit'])->name('edit');
+            Route::post('/update/{id}', [ManagerFoodController::class, 'update'])->name('update');
+            Route::get('/show/{id}', [ManagerFoodController::class, 'show'])->name('show');
+            Route::delete('/delete/{id}', [ManagerFoodController::class, 'destroy'])->name('destroy');
+        });
+
+        Route::prefix('cinemaseatprice')->name('cinemaseatprices.')->group(function () {
+            Route::get('/', [ManagerCinemaSeatTypePriceController::class, 'index'])->name('index');
+            Route::post('/update/{id}', [ManagerCinemaSeatTypePriceController::class, 'update'])->name('update');
+        });
+    });
