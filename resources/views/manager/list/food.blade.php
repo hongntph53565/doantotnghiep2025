@@ -43,7 +43,7 @@
                                         <th>Mô tả</th>
                                         <th>Giá</th>
                                         <th>Trạng thái</th>
-                                        <th width="120">Thao tác</th>
+                                        {{-- <th width="120">Thao tác</th> --}}
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -58,7 +58,7 @@
                                                     {{ $value->status === 'active' ? 'Đang bán' : 'Ngừng bán' }}
                                                 </span>
                                             </td>
-                                            <td>
+                                            {{-- <td>
                                                                                     <a href="{{ route('manager.foods.edit', ['id' => $value->food_id]) }}"
                                         class="btn btn-outline-primary btn-sm me-1">
                                         <i class="bi bi-pencil-fill"></i>
@@ -71,7 +71,7 @@
                                             <i class="bi bi-trash-fill"></i>
                                         </button>
                                     </form>
-                                            </td>
+                                            </td> --}}
                                         </tr>
                                     @empty
                                         <tr><td colspan="6" class="text-center">Không có món nào</td></tr>

@@ -412,16 +412,23 @@
 @section('content')
     <div class="container">
         <div class="content-top">
-            <form method="GET" action="{{ route('staff.combo.show', $combo->food_id) }}">
-                <select class="cinema-select" name="cinema_id" onchange="this.form.submit()">
-                    <option value="">Chọn rạp</option>
-                    @foreach ($cinemas as $cinema)
-                        <option value="{{ $cinema->cinema_id }}" {{ $cinemaId == $cinema->cinema_id ? 'selected' : '' }}>
-                            {{ $cinema->name }}
-                        </option>
-                    @endforeach
-                </select>
-            </form>
+             <form method="GET" action="{{ route('staff.combo') }}">
+    @if(auth()->user()->role_id == 3)
+        {{-- Nhân viên đã gắn với cinema sẵn --}}
+        <input type="hidden" name="cinema_id" value="{{ auth()->user()->cinema_id }}">
+    @else
+        {{-- Admin hoặc role khác thì mới được chọn rạp --}}
+        <select class="cinema-select" name="cinema_id" onchange="this.form.submit()">
+            <option value="">Chọn rạp</option>
+            @foreach ($cinemas as $cinema)
+                <option value="{{ $cinema->cinema_id }}" 
+                    {{ (request('cinema_id') == $cinema->cinema_id) ? 'selected' : '' }}>
+                    {{ $cinema->name }}
+                </option>
+            @endforeach
+        </select>
+    @endif
+</form>
 
             <div class="cart-wrapper">
                 <a href="{{ route('staff.combo', ['cinema_id' => $cinemaId]) }}" class="back-btn">← TRỞ LẠI</a>

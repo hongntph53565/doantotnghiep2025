@@ -46,7 +46,7 @@ class Booking extends Model
     public function foods()
     {
         return $this->belongsToMany(Food::class, 'booking_food', 'booking_id', 'food_id')
-            ->withPivot('quantity')
+            ->withPivot(['quantity', 'price'])
             ->withTimestamps();
     }
     public function seats()

@@ -166,7 +166,7 @@ public function update(Request $request, $id)
     // ❌ Không xóa ảnh ở đây nếu chỉ xóa mềm
     $food->delete(); // chỉ set deleted_at
 
-    return redirect()->back()->with('success', 'Đã xoá món ăn thành công (xóa mềm)');
+    return redirect()->back()->with('success', 'Đã xoá món ăn thành công ');
 }
 
 

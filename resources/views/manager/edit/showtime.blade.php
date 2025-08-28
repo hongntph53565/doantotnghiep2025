@@ -1,4 +1,4 @@
-@extends('layouts.admin')
+@extends('layouts.manager')
 
 @section('content')
     <div class="container-fluid">
@@ -12,7 +12,7 @@
                     </div>
 
                     <div class="card-body">
-                        <form action="{{ route('showtimes.update', $showtime->showtime_id) }}" method="POST">
+                         <form action="{{ route('manager.showtimes.update', $showtime->showtime_id) }}" method="POST">
                             @csrf
                             <div class="row g-3">
                                 <!-- Movie -->
@@ -88,8 +88,8 @@
                                     <label class="form-label fw-semibold">Ngày chiếu <span
                                             class="text-danger">*</span></label>
                                     <input type="date" class="form-control" name="date"
-                                        value="{{ \Carbon\Carbon::parse($showtime->start_time)->format('Y-m-d') }}"
-                                        required>
+    value="{{ $showtime->date }}"
+    required>
                                 </div>
 
                                 <div class="col-12">
@@ -115,7 +115,7 @@
                             </div>
 
                             <div class="d-flex justify-content-between mt-4">
-                                <a href="{{ route('showtimes.index') }}" class="btn btn-outline-secondary">
+                                <a href="{{ route('manager.showtimes.index') }}" class="btn btn-outline-secondary">
                                     <i class="bi bi-arrow-left me-2"></i>Quay lại
                                 </a>
                                 <button type="submit" class="btn btn-primary px-4">

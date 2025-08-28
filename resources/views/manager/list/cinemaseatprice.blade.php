@@ -37,7 +37,7 @@
                                             data-seat-type-id="{{ $price->seat_type_id }}" data-price="{{ $price->price }}">
                                             <i class="bi bi-pencil-square"></i>
                                         </button>
-                                        <form action="{{ route('cinemaseatprices.destroy', $price->id) }}" method="POST"
+                                        {{-- <form action="{{ route('cinemaseatprices.destroy', $price->id) }}" method="POST"
                                             class="d-inline">
                                             @csrf
                                             @method('DELETE')
@@ -45,7 +45,7 @@
                                                 onclick="return confirm('Bạn chắc chắn muốn xóa?')">
                                                 <i class="bi bi-trash"></i>
                                             </button>
-                                        </form>
+                                        </form> --}}
                                     </td>
                                 </tr>
                             @endforeach

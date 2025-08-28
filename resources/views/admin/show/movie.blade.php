@@ -1,5 +1,15 @@
 @extends('layouts.admin')
 
+@section('title', 'Phim và suất chiếu')
+
+@section('title2')
+ Chi tiết phim 
+@endsection
+
+@section('title1')
+    Quản lý phim
+@endsection
+
 @section('content')
     <div class="d-flex align-items-center mb-3">
         <h4 class="mb-0">Thông tin chi tiết phim</h4>

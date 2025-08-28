@@ -423,7 +423,7 @@
     <div class="header-banner">
         <img src="{{ asset('images/Z1-1748x155-1.jpg') }}" alt="Banner Summer" class="w-100">
     </div>
-    <div class="topbar sticky-top">
+    <div class="topbar sticky-top d-none d-lg-block">
         <div class="container d-flex justify-content-between align-items-center">
             <div class="d-flex align-items-center">
                 <a href="{{ url('/') }}">
@@ -537,6 +537,136 @@
             </div>
         </div>
     </div>
+
+    <nav class="mobile-header sticky-top d-lg-none bg-white border-bottom">
+        <div class="container d-flex justify-content-between align-items-center py-2">
+          
+            <button class="btn p-0" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileMenu"
+                aria-controls="mobileMenu">
+                <i class="bi bi-list" style="font-size:28px;"></i>
+            </button>
+
+       
+            <a href="{{ url('/') }}" class="d-inline-flex align-items-center">
+                <img src="{{ asset('images/z6776223534015_3ec1a499b9bb824d97c41f77d3a677be-removebg-preview.png') }}"
+                    alt="Logo" style="height:40px;">
+            </a>
+
+            
+            @php
+                $selectedCity = session('selected_city') ?? 'Khu vực';
+                if ($selectedCity === 'TP. Hồ Chí Minh') {
+                    $selectedCity = 'TPHCM';
+                }
+            @endphp
+            <div class="d-inline-flex align-items-center gap-2">
+                
+                <button class="btn btn-outline-success btn-sm" data-bs-toggle="offcanvas"
+                    data-bs-target="#mobileCities">
+                    {{ \Illuminate\Support\Str::limit($selectedCity, 12) }}
+                </button>
+
+                @if (Auth::check())
+                    <a href="{{ url('/profile') }}"
+                        class="text-dark text-decoration-none d-inline-flex align-items-center">
+                        <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" width="22"
+                            class="me-1">
+                        <span
+                            class="fw-semibold">{{ \Illuminate\Support\Str::limit(Auth::user()->full_name, 10) }}</span>
+                    </a>
+                @else
+                    <button class="btn btn-success btn-sm" data-bs-toggle="offcanvas" data-bs-target="#mobileAuth">
+                        Đăng nhập
+                    </button>
+                @endif
+            </div>
+        </div>
+    </nav>
+
+    
+    <div class="offcanvas offcanvas-start" tabindex="-1" id="mobileMenu" aria-labelledby="mobileMenuLabel">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="mobileMenuLabel">Menu</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+        </div>
+        <div class="offcanvas-body">
+            <div class="list-group list-group-flush">
+                <a class="list-group-item list-group-item-action" href="{{ url('/') }}">Home</a>
+                <a class="list-group-item list-group-item-action" href="{{ route('Client.cinemaShowtime') }}">Lịch
+                    chiếu rạp</a>
+                <a class="list-group-item list-group-item-action" href="{{ url('/lich-chieu-phim') }}">Lịch chiếu
+                    phim</a>
+                <a class="list-group-item list-group-item-action" href="{{ url('/cua-hang') }}">Thức ăn & Nước</a>
+
+                <div class="mt-3 small text-uppercase text-muted">Giới thiệu</div>
+                <a class="list-group-item list-group-item-action" href="{{ url('/he-thong-rap') }}">Hệ thống rạp</a>
+                <a class="list-group-item list-group-item-action" href="{{ url('/ve-chung-toi') }}">Về chúng tôi</a>
+                <a class="list-group-item list-group-item-action" href="{{ url('/tuyen-dung') }}">Tuyển dụng</a>
+            </div>
+
+            @if (Auth::check())
+                <hr>
+                <div class="d-flex align-items-center justify-content-between">
+                    <a href="{{ url('/profile') }}" class="btn btn-outline-secondary">Trang cá nhân</a>
+                    <form id="logout-form-mobile" action="{{ route('logout') }}" method="POST" class="d-inline">
+                        @csrf
+                        <button type="submit" class="btn btn-danger">Thoát</button>
+                    </form>
+                </div>
+            @endif
+        </div>
+    </div>
+
+   
+    <div class="offcanvas offcanvas-bottom" tabindex="-1" id="mobileCities" aria-labelledby="mobileCitiesLabel"
+        style="height:55vh;">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="mobileCitiesLabel">Chọn khu vực</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+        </div>
+        <div class="offcanvas-body">
+            <div class="row g-2">
+                @foreach ($cities as $city)
+                    <div class="col-6">
+                        <a class="btn btn-outline-success w-100"
+                            href="{{ route('set.city', ['city' => $city]) }}">{{ $city }}</a>
+                    </div>
+                @endforeach
+            </div>
+        </div>
+    </div>
+
+    
+    @if (!Auth::check())
+        <div class="offcanvas offcanvas-end" tabindex="-1" id="mobileAuth" aria-labelledby="mobileAuthLabel"
+            style="max-width: 92vw;">
+            <div class="offcanvas-header">
+                <h5 class="offcanvas-title" id="mobileAuthLabel">Đăng nhập</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+            </div>
+            <div class="offcanvas-body">
+                <form action="{{ route('login') }}" method="POST" class="mb-3">
+                    @csrf
+                    <div class="mb-2">
+                        <label class="form-label">Email *</label>
+                        <input type="email" name="email" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Mật khẩu *</label>
+                        <input type="password" name="password" class="form-control" required>
+                    </div>
+                    <div class="text-end mb-3">
+                        <a href="{{ route('forgotPassword') }}" class="small">Quên mật khẩu?</a>
+                    </div>
+                    <button type="submit" class="btn btn-success w-100">Đăng nhập</button>
+                </form>
+                <button class="btn btn-primary w-100" onclick="window.location.href='{{ route('register.form') }}'">
+                    Đăng ký thành viên
+                </button>
+            </div>
+        </div>
+    @endif
+
 
 
     @yield('content')

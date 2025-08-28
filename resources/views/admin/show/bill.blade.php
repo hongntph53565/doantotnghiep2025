@@ -1,5 +1,15 @@
 @extends('layouts.admin')
 
+@section('title', 'Danh sách hóa đơn')
+
+@section('title2')
+ Chi tiết hóa đơn 
+@endsection
+
+@section('title1')
+    Hóa đơn
+@endsection
+
 @section('content')
     <style>
         .page-wrap {
@@ -159,218 +169,154 @@
         </div>
 
         <div class="row g-4">
-            <!-- CỘT TRÁI: 3/4 -->
-            <div class="col-12 col-lg-9">
-                <!-- Thông tin phim -->
-                <div class="box p-3 mb-3">
-                    <div class="table-responsive">
-                        <table class="table table-sm align-middle">
-                            <thead>
-                                <tr>
-                                    <th>Phim</th>
-                                    <th>Ghế ngồi</th>
-                                    <th class="text-end">Tổng tiền ghế</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>
-                                        <div class="d-flex align-items-start gap-2">
-                                            <img src="{{ asset('storage/' . $booking->showtime->movie?->poster) }}"
-                                                class="movie-poster" alt="Poster">
-
-                                            <div class="movie-info">
-                                                <div class="fw-bold movie-title">{{ $booking->showtime->movie?->title }}
-                                                </div>
-
-                                                <div class="labels mt-1">
-                                                    <span
-                                                        class="label age">{{ $booking->showtime->movie?->age_rating }}</span>
-                                                    <span
-                                                        class="label subtitle">{{ $booking->showtime->movie?->language }}</span>
-                                                    <span class="label type">{{ $booking->showtime->movie?->format }}</span>
-                                                </div>
-
-                                                <div class="movie-info mt-2">
-                                                    <div class="info-item">Thời lượng:
-                                                        {{ $booking->showtime->movie?->duration }} phút</div>
-                                                    <div class="info-item">Thể loại:
-                                                        {{ $booking->showtime->movie?->genre->genre_name }}</div>
-                                                    <div class="info-item">Địa điểm: {{ $booking->showtime->cinema->name }}
-                                                        - {{ $booking->showtime->cinema->address_detail }} -
-                                                        {{ $booking->showtime->room->room_name }}</div>
-                                                    <div>
-                                                        Lịch chiếu:
-                                                        <span class="screening-time">
-                                                            {{ \Carbon\Carbon::parse($booking->showtime->start_time)->format('H:i') }}
-                                                            -
-                                                            {{ \Carbon\Carbon::parse($booking->showtime->end_time)->format('H:i') }}
-                                                            ({{ \Carbon\Carbon::parse($booking->showtime->date)->format('d/m/Y') }})
-                                                        </span>
-                                                    </div>
-                                                </div>
+    <!-- CỘT TRÁI: 3/4 -->
+    <div class="col-12 col-lg-9">
+    <!-- Thông tin phim / đồ ăn -->
+    <div class="box p-3 mb-3">
+        <div class="table-responsive">
+            <table class="table table-sm align-middle">
+                <thead>
+                    <tr>
+                        <th>Sản phẩm</th>
+                        <th>Chi tiết / Ghế</th>
+                        <th class="text-end">Tổng tiền</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{-- Vé phim --}}
+                    @if($booking->showtime_id)
+                        <tr>
+                            <td>
+                                <div class="d-flex align-items-start gap-2">
+                                    <img src="{{ $booking->showtime?->movie?->poster
+                                        ? asset('storage/' . $booking->showtime->movie->poster)
+                                        : 'https://via.placeholder.com/100' }}"
+                                        class="movie-poster" alt="Poster">
+                                    <div class="movie-info">
+                                        <div class="fw-bold movie-title">{{ $booking->showtime->movie?->title }}</div>
+                                        <div class="labels mt-1">
+                                            <span class="label age">{{ $booking->showtime->movie?->age_rating }}</span>
+                                            <span class="label subtitle">{{ $booking->showtime->movie?->language }}</span>
+                                            <span class="label type">{{ $booking->showtime->movie?->format }}</span>
+                                        </div>
+                                        <div class="movie-info mt-2">
+                                            <div class="info-item">Thời lượng: {{ $booking->showtime->movie?->duration }} phút</div>
+                                            <div class="info-item">Thể loại: {{ $booking->showtime->movie?->genre->genre_name }}</div>
+                                            <div class="info-item">Địa điểm: {{ $booking->showtime->cinema->name }} - {{ $booking->showtime->cinema->address_detail }} - {{ $booking->showtime->room->room_name }}</div>
+                                            <div>Lịch chiếu: 
+                                                <span class="screening-time">
+                                                    {{ \Carbon\Carbon::parse($booking->showtime->start_time)->format('H:i') }} -
+                                                    {{ \Carbon\Carbon::parse($booking->showtime->end_time)->format('H:i') }}
+                                                    ({{ \Carbon\Carbon::parse($booking->showtime->date)->format('d/m/Y') }})
+                                                </span>
                                             </div>
-
                                         </div>
-                                    </td>
-                                    <td class="text-center">
-                                        <div class="info-item">
-                                            @foreach ($booking->seats as $seat)
-                                                {{ $seat->seat_code }}{{ !$loop->last ? ', ' : '' }}
-                                            @endforeach
-                                        </div>
-                                    </td>
-
-                                    <td class="text-end">{{ number_format($totalSeatPrice, 0, ',', '.') }} VNĐ</td>
-
-
-
-
-
-
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <!-- Combo -->
-                @isset($booking->foods)
-                    @if ($booking->foods->count() > 0)
-                        <div class="box p-3 mb-3">
-                            <div class="table-responsive">
-                                <table class="table table-sm align-middle">
-                                    <thead>
-                                        <tr>
-                                            <th>Combo</th>
-                                            <th>Chi tiết</th>
-                                            <th>Số lượng x giá</th>
-                                            <th class="text-end">Giá combo</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach ($booking->foods as $food)
-                                            <tr>
-                                                <td>
-                                                    <div class="d-flex align-items-center gap-2">
-                                                        <img src="{{ asset('storage/' . $food->image) }}" class="combo-img"
-                                                            alt=""><br>
-                                                        <span>{{ $food->name }}</span>
-                                                    </div>
-                                                </td>
-                                                <td class="small">{{ $food->description }}</td>
-                                                <td>{{ $food->pivot->quantity }} x
-                                                    {{ number_format($food->price, 0, ',', '.') }} VNĐ</td>
-                                                <td class="text-end">
-                                                    {{ number_format($food->pivot->quantity * $food->price, 0, ',', '.') }} VNĐ
-                                                </td>
-                                            </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                {{ $booking->seats->pluck('seat_code')->join(', ') }}
+                            </td>
+                            <td class="text-end">{{ number_format($totalSeatPrice, 0, ',', '.') }} VNĐ</td>
+                        </tr>
                     @endif
-                @endisset
 
+                    {{-- Đơn đồ ăn --}}
+                    @if($booking->bookingFoods->count())
+                        @foreach($booking->bookingFoods as $bf)
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <img src="{{ $bf->food->image ? asset('storage/' . $bf->food->image) : 'https://via.placeholder.com/100' }}" class="combo-img" alt="{{ $bf->food->name }}">
+                                        <span>{{ $bf->food->name }}</span>
+                                    </div>
+                                </td>
+                                <td class="small">
+                                    Số lượng: {{ $bf->quantity }} <br>
+                                    Giá: {{ number_format($bf->food->price ?? 0, 0, ',', '.') }} VNĐ
+                                </td>
+                                <td class="text-end">
+                                    {{ number_format($bf->quantity * ($bf->food->price ?? 0), 0, ',', '.') }} VNĐ
+                                </td>
+                            </tr>
+                        @endforeach
+                    @endif
+                </tbody>
+            </table>
+        </div>
+    </div>
 
-
-                <!-- Tổng tiền -->
-                <div class="box p-3">
-                    <div class="d-flex flex-column align-items-end">
-                        <div>Giảm giá: <strong>{{ number_format($booking->total_discount, 0, ',', '.') }} VNĐ</strong>
-                        </div>
-
-
-                        <div class="fs-5 fw-bold">
-                            <i class="bi bi-coin text-warning"></i>
-                            Điểm: {{ floor(($booking->payment?->price_amount ?? 0) / 1000) }}
-                        </div>
-                        <div class="fs-5 fw-bold">Tổng tiền:
-                            {{ number_format($booking->payment?->price_amount ?? 0, 0, ',', '.') }} VNĐ</div>
-                    </div>
-                </div>
+    <!-- Tổng tiền và combo -->
+    <div class="box p-3">
+        <div class="d-flex flex-column align-items-end">
+            <div>Giảm giá: <strong>{{ number_format($booking->total_discount, 0, ',', '.') }} VNĐ</strong></div>
+            <div class="fs-5 fw-bold">
+                <i class="bi bi-coin text-warning"></i> Điểm: {{ floor(($booking->payment?->price_amount ?? 0) / 1000) }}
             </div>
-
-            <!-- CỘT PHẢI: 1/4 -->
-            <div class="col-12 col-lg-3">
-                <!-- Trạng thái vé -->
-                <div class="box p-3 mb-3">
-                    <div class="fw-semibold text-success">Trạng thái vé</div>
-                    <div>
-                        @if ($booking->printed_count > 0)
-                            <span class="badge bg-success fs-6">
-                                Đã xuất vé ({{ $booking->printed_at->format('H:i - d/m/Y') }})
-                            </span>
-                        @else
-                            <span class="badge bg-secondary fs-6">
-                                Chưa xuất vé
-                            </span>
-                        @endif
-                    </div>
+            <div class="fs-5 fw-bold">Tổng tiền: {{ number_format($booking->payment?->price_amount ?? 0, 0, ',', '.') }} VNĐ</div>
+        </div>
+    </div>
+</div>
 
 
-                    <div class="booking-barcode">
-                        {!! DNS1D::getBarcodeHTML($booking->booking_code, 'C128', 1, 40) !!}
-                        <small>{{ $booking->booking_code }}</small>
-                    </div>
-                </div>
-
-
-                
-                <div class="box p-3 mb-3">
-                    <div class="d-flex justify-content-between align-items-center mb-2">
-                        <span class="fw-semibold">Thông tin người đặt</span>
-
-                    </div>
-
-                    <div class="mb-2 d-flex align-items-center gap-2">
-                        <i class="bi bi-person fs-4 text-secondary"></i>
-                        <div>
-                            <div class="fw-semibold">{{ $booking->user->full_name }}</div>
-                            <div class="small text-muted">
-                                @if ($booking->user->role_id == 1)
-                                    Admin
-                                @elseif ($booking->user->role_id == 2)
-                                    Quản lý rạp
-                                @elseif ($booking->user->role_id == 3)
-                                    Nhân viên
-                                @elseif ($booking->user->role_id == 4)
-                                    Người dùng
-                                @else
-                                    Không xác định
-                                @endif
-                            </div>
-                        </div>
-                    </div>
-
-
-                    <div class="mb-1 d-flex align-items-center gap-2">
-                        <i class="bi bi-envelope text-secondary"></i>
-                        <span class="small">{{ $booking->user->email }}</span>
-                    </div>
-
-                    <div class="d-flex align-items-center gap-2">
-                        <i class="bi bi-telephone text-secondary"></i>
-                        <span class="small">{{ $booking->user->phone }}</span>
-                    </div>
-                </div>
-
-
-                
-                <div class="box p-3">
-                    <div class="fw-semibold mb-1">Thông tin thanh toán</div>
-                    <div class="small">
-                        Thanh toán lúc: {{ $booking->payment?->created_at?->format('H:i - d/m/Y') ?? '' }}
-                    </div>
-
-                    <div class="small">Phương thức: {{ $booking->payment?->payment_method ?? 'Chưa thanh toán' }}</div>
-                    <div class="small">Tên tài khoản: {{ $booking->user->full_name }}</div>
-                    <div class="fw-bold mt-2">
-                        Tổng tiền: {{ number_format($booking->payment?->price_amount ?? 0, 0, ',', '.') }} VNĐ
-                    </div>
-                </div>
+    <!-- CỘT PHẢI: 1/4 -->
+    <div class="col-12 col-lg-3">
+        <!-- Trạng thái vé -->
+        <div class="box p-3 mb-3">
+            <div class="fw-semibold text-success">Trạng thái vé</div>
+            <div>
+                @if ($booking->printed_count > 0)
+                    <span class="badge bg-success fs-6">
+                        Đã xuất vé ({{ $booking->printed_at?->format('H:i - d/m/Y') }})
+                    </span>
+                @else
+                    <span class="badge bg-secondary fs-6">Chưa xuất vé</span>
+                @endif
+            </div>
+            <div class="booking-barcode">
+                {!! DNS1D::getBarcodeHTML($booking->booking_code, 'C128', 1, 40) !!}
+                <small>{{ $booking->booking_code }}</small>
             </div>
         </div>
+
+        <!-- Thông tin người đặt -->
+        <div class="box p-3 mb-3">
+            <div class="fw-semibold mb-2">Thông tin người đặt</div>
+            <div class="mb-2 d-flex align-items-center gap-2">
+                <i class="bi bi-person fs-4 text-secondary"></i>
+                <div>
+                    <div class="fw-semibold">{{ $booking->user->full_name }}</div>
+                    <div class="small text-muted">
+                        @switch($booking->user->role_id)
+                            @case(1) Admin @break
+                            @case(2) Quản lý rạp @break
+                            @case(3) Nhân viên @break
+                            @case(4) Người dùng @break
+                            @default Không xác định
+                        @endswitch
+                    </div>
+                </div>
+            </div>
+            <div class="mb-1 d-flex align-items-center gap-2">
+                <i class="bi bi-envelope text-secondary"></i>
+                <span class="small">{{ $booking->user->email }}</span>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+                <i class="bi bi-telephone text-secondary"></i>
+                <span class="small">{{ $booking->user->phone }}</span>
+            </div>
+        </div>
+
+        <!-- Thông tin thanh toán -->
+        <div class="box p-3">
+            <div class="fw-semibold mb-1">Thông tin thanh toán</div>
+            <div class="small">Thanh toán lúc: {{ $booking->payment?->created_at?->format('H:i - d/m/Y') ?? '' }}</div>
+            <div class="small">Phương thức: {{ $booking->payment?->payment_method ?? 'Chưa thanh toán' }}</div>
+            <div class="small">Tên tài khoản: {{ $booking->user->full_name }}</div>
+            <div class="fw-bold mt-2">Tổng tiền: {{ number_format($booking->payment?->price_amount ?? 0, 0, ',', '.') }} VNĐ</div>
+        </div>
+    </div>
+</div>
+
     </div>
 @endsection

@@ -80,7 +80,7 @@
 
 
     <div class="container mt-4">
-        <!-- Search box bên phải -->
+       
         <div class="row mb-3">
             <div class="col d-flex justify-content-end">
                 <form method="GET" action="" class="input-group" style="max-width: 285px;">
@@ -91,7 +91,7 @@
             </div>
         </div>
 
-        <!-- Table -->
+   
         <table class="table table-bordered align-middle text-center">
             <thead class="table-light">
                 <tr>
@@ -107,54 +107,83 @@
                     <tr>
                         <td class="align-middle text-center">{{ $booking->booking_code }}</td>
 
-                        <!-- Thông tin user -->
+                      
                         <td class="align-middle text-start">
                             <b>Người dùng:</b> {{ $booking->user->full_name ?? 'N/A' }} <br>
                             <b>Email:</b> {{ $booking->user->email ?? 'N/A' }} <br>
                             <b>Phương thức thanh toán:</b> {{ $booking->payment_method ?? 'N/A' }}
                         </td>
 
-                        <!-- Hình ảnh phim -->
+                       
                         <td>
-                            <img src="{{ $booking->showtime?->movie?->poster
-                                ? asset('storage/' . $booking->showtime->movie->poster)
-                                : 'https://via.placeholder.com/100' }}"
-                                alt="Poster" width="100">
+                            @if ($booking->showtime_id)
+                             
+                                <img src="{{ $booking->showtime?->movie?->poster
+                                    ? asset('storage/' . $booking->showtime->movie->poster)
+                                    : 'https://via.placeholder.com/100' }}"
+                                    alt="Poster" width="100">
+                            @elseif($booking->bookingFoods->count())
+                               
+                                @foreach ($booking->bookingFoods as $bf)
+                                    <img src="{{ $bf->food->image ? asset('storage/' . $bf->food->image) : 'https://via.placeholder.com/100' }}"
+                                        alt="{{ $bf->food->name }}" width="100">
+                                @endforeach
+                            @endif
                         </td>
 
-                        <!-- Thông tin vé -->
                         <td class="align-middle text-start">
-                            <b>Phim:</b> {{ $booking->showtime->movie->title ?? 'N/A' }} <br>
-                            <b>Rạp:</b> {{ $booking->showtime->cinema->name ?? 'N/A' }} <br>
-                            <b>Nơi chiếu:</b> {{ $booking->showtime->cinema->city ?? 'N/A' }} -
-                            {{ $booking->showtime->cinema->ward ?? 'N/A' }} -
-                            {{ $booking->showtime->cinema->district ?? 'N/A' }} -
-                            {{ $booking->showtime->room->room_name ?? 'N/A' }} <br>
-                            <b>Ghế:</b>
-                            @if ($booking->seats->count())
-                                {{ $booking->seats->pluck('seat_code')->join(', ') }}
-                            @else
-                                N/A
-                            @endif <br>
-                            <b>Tổng tiền:</b> {{ number_format($booking->total_price, 0, ',', '.') }} VND <br>
-                            <b>Trạng thái:</b>
-                            @if ($booking->printed_count > 0)
-                                <span class="badge bg-success">Đã xuất vé</span>
-                            @else
-                                <span class="badge bg-warning">Chưa xuất vé</span>
-                            @endif <br>
-                            <b>Lịch chiếu:</b>
-                            {{ $booking->showtime?->start_time ? \Carbon\Carbon::parse($booking->showtime->start_time)->format('H:i') : '' }}
-
-                            -
-                            {{ $booking->showtime?->end_time ? \Carbon\Carbon::parse($booking->showtime->end_time)->format('H:i') : '' }}
-                            <br>
-                            <b>Thời gian sử dụng:</b>
-                            {{ $booking->showtime?->end_time ? \Carbon\Carbon::parse($booking->showtime->end_time)->format('H:i') : '' }}
-                            -
-                            {{ $booking->showtime?->date ? \Carbon\Carbon::parse($booking->showtime->date)->format('d/m/Y') : '' }}
-                            <br>
+                            @if ($booking->showtime_id)
+                               
+                                <b>Phim:</b> {{ $booking->showtime->movie->title ?? 'N/A' }} <br>
+                                <b>Rạp:</b> {{ $booking->showtime->room->cinema->name ?? 'N/A' }} <br>
+                                <b>Nơi chiếu:</b> {{ $booking->showtime->room->cinema->city ?? 'N/A' }} -
+                                {{ $booking->showtime->room->cinema->ward ?? 'N/A' }} -
+                                {{ $booking->showtime->room->cinema->district ?? 'N/A' }} -
+                                {{ $booking->showtime->room->room_name ?? 'N/A' }} <br>
+                                <b>Ghế:</b>
+                                @if ($booking->seats->count())
+                                    {{ $booking->seats->pluck('seat_code')->join(', ') }}
+                                @else
+                                    N/A
+                                @endif <br>
+                                <b>Tổng tiền:</b> {{ number_format($booking->total_price, 0, ',', '.') }} VND <br>
+                                <b>Trạng thái:</b>
+                                @if ($booking->printed_count > 0)
+                                    <span class="badge bg-success">Đã xuất vé</span>
+                                @else
+                                    <span class="badge bg-warning">Chưa xuất vé</span>
+                                @endif <br>
+                                <b>Lịch chiếu:</b>
+                                {{ $booking->showtime?->start_time ? \Carbon\Carbon::parse($booking->showtime->start_time)->format('H:i') : '' }}
+                                -
+                                {{ $booking->showtime?->end_time ? \Carbon\Carbon::parse($booking->showtime->end_time)->format('H:i') : '' }}
+                                <br>
+                                <b>Thời gian sử dụng:</b>
+                                {{ $booking->showtime?->end_time ? \Carbon\Carbon::parse($booking->showtime->end_time)->format('H:i') : '' }}
+                                -
+                                {{ $booking->showtime?->date ? \Carbon\Carbon::parse($booking->showtime->date)->format('d/m/Y') : '' }}
+                                <br>
+                            @elseif($booking->bookingFoods->count())
+                                {{-- Đơn đồ ăn --}}
+                                @foreach ($booking->bookingFoods as $bf)
+                                    <b>Món ăn:</b> {{ $bf->food->name ?? 'N/A' }} <br>
+                                    <b>Số lượng:</b> {{ $bf->quantity }} <br>
+                                    <b>Giá:</b> {{ number_format($bf->food->price ?? 0, 0, ',', '.') }} VND <br>
+                                    <b>Trạng thái:</b>
+                                    @if ($booking->printed_count > 0)
+                                        <span class="badge bg-success">Đã xuất vé</span>
+                                    @else
+                                        <span class="badge bg-warning">Chưa xuất vé</span>
+                                    @endif <br>
+                                    <b>Rạp:</b>
+                                    {{ $bf->food->cinema_id ? \App\Models\Cinema::find($bf->food->cinema_id)->name : 'N/A' }}
+                                    <br>
+                                    <b>Tổng tiền:</b>
+                                    {{ number_format($bf->quantity * ($bf->food->price ?? 0), 0, ',', '.') }} VND <br>
+                                @endforeach
+                            @endif
                         </td>
+
 
                         <!-- Chức năng -->
                         <td class="align-middle text-center">

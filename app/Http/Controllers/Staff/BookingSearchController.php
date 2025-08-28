@@ -8,6 +8,7 @@ use App\Models\Booking;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Auth;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class BookingSearchController extends Controller
 {
@@ -18,6 +19,12 @@ public function search(Request $request)
 {
     $query = $request->input('query');
     $user = Auth::user();
+
+    // Nếu chưa login hoặc không có cinema_id thì redirect về home
+    if (!$user || !$user->cinema_id) {
+        return redirect()->route('home')->with('error', 'Bạn không có quyền thực hiện thao tác này.');
+    }
+
     $cinema_id = $user->cinema_id;
 
     $bookings = Booking::with(['user', 'showtime.movie', 'bookingFoods.food'])
@@ -52,6 +59,7 @@ public function search(Request $request)
 
     return view('staff.search_ticket_online', compact('bookings', 'query'));
 }
+
 
 
 

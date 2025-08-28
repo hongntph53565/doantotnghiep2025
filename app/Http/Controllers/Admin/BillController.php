@@ -14,7 +14,7 @@ class BillController extends Controller
   public function index(Request $request)
   {
     // Query cơ bản
-    $query = Booking::with(['user', 'showtime.movie', 'showtime.room.cinema', 'seats'])
+    $query = Booking::with(['user', 'showtime.movie', 'showtime.room.cinema', 'seats','bookingFoods.food'])
       ->where('payment_status', 'paid');
 
     // Filter theo city
@@ -122,16 +122,15 @@ $totalSeatPrice = ($booking->payment?->price_amount ?? 0) - $totalCombo + ($book
     $cities = Cinema::select('city')->distinct()->get();
 
     // Rạp theo city của booking
-    $selectedCinemas = $booking->showtime->room->cinema
-        ? Cinema::where('city', $booking->showtime->room->cinema->city)->get()
-        : Cinema::all();
+   $selectedCinemas = $booking->showtime && $booking->showtime->room && $booking->showtime->room->cinema
+    ? Cinema::where('city', $booking->showtime->room->cinema->city)->get()
+    : Cinema::all();
 
-    // Phim theo cinema của booking
-    $selectedMovies = $booking->showtime->movie
-        ? Movie::whereHas('showtimes.room', function($q) use ($booking) {
-            $q->where('cinema_id', $booking->showtime->room->cinema->cinema_id);
-        })->get()
-        : Movie::all();
+$selectedMovies = $booking->showtime && $booking->showtime->movie && $booking->showtime->room && $booking->showtime->room->cinema
+    ? Movie::whereHas('showtimes.room', function($q) use ($booking) {
+        $q->where('cinema_id', $booking->showtime->room->cinema->cinema_id);
+    })->get()
+    : Movie::all();
 
     $search = ''; // Search trống
 

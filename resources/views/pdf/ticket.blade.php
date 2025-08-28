@@ -106,7 +106,7 @@
 
         <div class="footer">
             Cảm ơn quý khách đã sử dụng dịch vụ LumiStar<br>
-            Nhân viên: {{ auth()->user()->name ?? 'N/A' }}
+             Nhân viên: {{ auth()->user()->full_name ?? 'N/A' }}<br>
         </div>
     </div>
 @endforeach
@@ -140,7 +140,7 @@
         <div class="footer">
             Cảm ơn quý khách đã sử dụng dịch vụ LumiStar<br>
             Nhân viên: {{ auth()->user()->full_name ?? 'N/A' }}<br>
-Tài khoản: {{ auth()->user()->username ?? 'N/A' }}
+{{-- Tài khoản: {{ auth()->user()->username ?? 'N/A' }} --}}
 
 
 

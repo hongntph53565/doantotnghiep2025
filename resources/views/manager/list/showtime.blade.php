@@ -3,6 +3,12 @@
 @section('content')
     <div class="card border-0 shadow-sm mt-3">
         <div class="card-body p-0">
+            @if (session('success'))
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    {{ session('success') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            @endif
             <form action="{{ route('manager.showtimes.index') }}">
                 <div class="container-fluid bg-light p-4 rounded-top">
                     <div class="row align-items-end g-3">
@@ -139,16 +145,41 @@
                                     <span class="badge {{ $badgeClass }}">{{ $status }}</span>
                                 </td>
                                 <td class="text-center">
-                                    <div class="d-flex justify-content-center gap-2">
-                                        <a href="{{ route('showtimes.edit', $showtime->showtime_id) }}"
-                                            class="btn btn-icon btn-sm btn-outline-primary">
-                                            <i class="bi bi-pencil-fill"></i>
-                                        </a>
-                                        <button class="btn btn-icon btn-sm btn-outline-danger" data-bs-toggle="modal"
-                                            data-bs-target="#deleteModal" data-id="{{ $showtime->showtime_id }}">
-                                            <i class="bi bi-trash-fill"></i>
-                                        </button>
-                                    </div>
+                                    @if ($showtime->trashed())
+                                        <span class="badge bg-danger">Đã xóa</span>
+                                        <br>
+                                        @php
+                                            $user = $showtime->deletedByUser;
+                                            $roleName = match ($user?->role_id) {
+                                                1 => 'Admin',
+                                                2 => 'Quản lý',
+                                                default => 'Không xác định',
+                                            };
+                                        @endphp
+                                        <small class="text-muted">
+                                            {{ $user?->full_name ?? 'Không xác định' }} - {{ $roleName }}
+                                        </small>
+                                        <br>
+                                        <!-- Nút khôi phục -->
+                                        <form action="{{ route('manager.showtimes.restore', $showtime->showtime_id) }}"
+                                            method="POST" class="mt-1">
+                                            @csrf
+                                            <button type="submit" class="btn btn-sm btn-outline-success">
+                                                <i class="bi bi-arrow-counterclockwise"></i> Khôi phục
+                                            </button>
+                                        </form>
+                                    @else
+                                        <div class="d-flex justify-content-center gap-2">
+                                            <a href="{{ route('manager.showtimes.edit', $showtime->showtime_id) }}"
+                                                class="btn btn-icon btn-sm btn-outline-primary">
+                                                <i class="bi bi-pencil-fill"></i>
+                                            </a>
+                                            <button class="btn btn-icon btn-sm btn-outline-danger" data-bs-toggle="modal"
+                                                data-bs-target="#deleteModal" data-id="{{ $showtime->showtime_id }}">
+                                                <i class="bi bi-trash-fill"></i>
+                                            </button>
+                                        </div>
+                                    @endif
                                 </td>
                             </tr>
                         @endforeach
@@ -174,12 +205,17 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body py-4">
-                    Bạn có chắc chắn muốn xóa xuất chiếu này? Thao tác này không thể hoàn tác.
+                    Bạn có chắc chắn muốn xóa suất chiếu này? Thao tác này không thể hoàn tác.
                 </div>
                 <div class="modal-footer border-0">
                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Hủy bỏ</button>
-                    <button type="button" class="btn btn-danger">Xác nhận xóa</button>
+                    <form id="deleteForm" method="POST">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-danger">Xác nhận xóa</button>
+                    </form>
                 </div>
+
             </div>
         </div>
     </div>
@@ -223,6 +259,17 @@
                 });
 
                 cinemaSelect.selectedIndex = 0;
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const deleteModal = document.getElementById('deleteModal');
+            const deleteForm = document.getElementById('deleteForm');
+
+            deleteModal.addEventListener('show.bs.modal', function(event) {
+                const button = event.relatedTarget; // nút bấm mở modal
+                const id = button.getAttribute('data-id');
+                deleteForm.action = "{{ url('manager/showtime/delete') }}/" + id;
             });
         });
     </script>

@@ -5,11 +5,11 @@
 @endsection
 
 @section('title1')
-   Tài khoản
+    Tài khoản
 @endsection
 
 @section('title')
-     Tài khoản
+    Tài khoản
 @endsection
 
 @section('content')
@@ -27,58 +27,38 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label>Họ và tên</label>
-                                        <input type="text" name="full_name"
-                                            class="form-control @error('full_name') is-invalid @enderror"
-                                            value="{{ old('full_name', $user->full_name) }}">
-                                        @error('full_name')
-                                            <span class="invalid-feedback" role="alert">
-                                                <strong>{{ $message }}</strong>
-                                            </span>
-                                        @enderror
+                                        <input type="text" name="full_name" class="form-control"
+                                            value="{{ $user->full_name }}" readonly>
                                     </div>
                                 </div>
+
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label>Account name</label>
-                                        <input type="text" name="username"
-                                            class="form-control @error('username') is-invalid @enderror"
-                                            value="{{ old('username', $user->username) }}">
-                                        @error('username')
-                                            <span class="invalid-feedback" role="alert">
-                                                <strong>{{ $message }}</strong>
-                                            </span>
-                                        @enderror
+                                        <input type="text" name="username" class="form-control"
+                                            value="{{ $user->username }}" readonly>
                                     </div>
                                 </div>
+
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label>Số điện thoại</label>
-                                        <input type="text" name="phone"
-                                            class="form-control @error('phone') is-invalid @enderror"
-                                            value="{{ old('username', $user->phone) }}">
-                                        @error('phone')
-                                            <span class="invalid-feedback" role="alert">
-                                                <strong>{{ $message }}</strong>
-</span>
-                                        @enderror
+                                        <input type="text" name="phone" class="form-control"
+                                            value="{{ $user->phone }}" readonly>
                                     </div>
                                 </div>
+
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label>Email</label>
-                                        <input type="email" name="email"
-                                            class="form-control @error('email') is-invalid @enderror"
-                                            value="{{ old('email', $user->email) }}">
-                                        @error('email')
-                                            <span class="invalid-feedback" role="alert">
-                                                <strong>{{ $message }}</strong>
-                                            </span>
-                                        @enderror
+                                        <input type="email" name="email" class="form-control"
+                                            value="{{ $user->email }}" readonly>
                                     </div>
                                 </div>
+
                             </div>
 
-                            <div class="row">
+                            {{-- <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label>Mật khẩu mới</label>
@@ -99,56 +79,56 @@
                                             placeholder="Xác nhận mật khẩu mới">
                                     </div>
                                 </div>
+                            </div> --}}
+
+                            <div class="form-group">
+                                <label>Vai trò</label>
+                                <select class="form-control @error('role_id') is-invalid @enderror" name="role_id"
+                                    id="roleSelect">
+                                    <option value="">-- Chọn vai trò --</option>
+                                    @foreach ($roles as $role)
+                                        <option value="{{ $role->role_id }}" data-role="{{ $role->role_id }}"
+                                            {{ old('role_id', $user->role_id) == $role->role_id ? 'selected' : '' }}>
+                                            {{ $role->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @error('role_id')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
                             </div>
 
-                            <div class="form-group">
-    <label>Vai trò</label>
-    <select class="form-control @error('role_id') is-invalid @enderror" name="role_id" id="roleSelect">
-        <option value="">-- Chọn vai trò --</option>
-        @foreach ($roles as $role)
-            <option value="{{ $role->role_id }}"
-                data-role="{{ $role->role_id }}"
-                {{ old('role_id', $user->role_id) == $role->role_id ? 'selected' : '' }}>
-                {{ $role->name }}
-            </option>
-        @endforeach
-    </select>
-    @error('role_id')
-        <span class="invalid-feedback" role="alert">
-            <strong>{{ $message }}</strong>
-        </span>
-    @enderror
-</div>
-
-{{-- Chỉ định rạp --}}
-<div class="form-group" id="cinemaSelectBox" style="display: none;">
-    <label>Chỉ định rạp</label>
-    <select class="form-control @error('cinema_id') is-invalid @enderror" name="cinema_id">
-        <option value="">-- Chọn rạp --</option>
-        @foreach ($cinemas as $cinema)
-            <option value="{{ $cinema->cinema_id }}"
-                {{ old('cinema_id', $cinemaId ?? null) == $cinema->cinema_id ? 'selected' : '' }}>
-                {{ $cinema->name }}
-            </option>
-        @endforeach
-    </select>
-    @error('cinema_id')
-        <span class="invalid-feedback" role="alert">
-            <strong>{{ $message }}</strong>
-        </span>
-    @enderror
-</div>
+                            {{-- Chỉ định rạp --}}
+                            <div class="form-group" id="cinemaSelectBox" style="display: none;">
+                                <label>Chỉ định rạp</label>
+                                <select class="form-control @error('cinema_id') is-invalid @enderror" name="cinema_id">
+                                    <option value="">-- Chọn rạp --</option>
+                                    @foreach ($cinemas as $cinema)
+                                        <option value="{{ $cinema->cinema_id }}"
+                                            {{ old('cinema_id', $cinemaId ?? null) == $cinema->cinema_id ? 'selected' : '' }}>
+                                            {{ $cinema->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @error('cinema_id')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
 
 
 
-                            <div class="form-group">
+                            {{-- <div class="form-group">
                                 <div class="custom-control custom-switch">
                                     <input type="checkbox" class="custom-control-input" id="activeSwitch" name="status"
                                         value="1" {{ old('status', $user->status) == "active" ? 'checked' : '' }}>
 
                                     <label class="custom-control-label" for="activeSwitch">Kích hoạt tài khoản</label>
                                 </div>
-                            </div>
+                            </div> --}}
                         </div>
                         <div class="card-footer">
                             <button type="submit" class="btn btn-primary">Cập nhật</button>
@@ -169,32 +149,30 @@
     <script src="{{ asset('admin/plugins/select2/js/select2.full.min.js') }}"></script>
     <script>
         $(function() {
-            // Khởi tạo select2
+            
             $('.select2').select2({
                 theme: 'bootstrap4'
             });
 
-            // Xác nhận trước khi submit form
+           
             $('form').submit(function() {
                 return confirm('Bạn có chắc chắn muốn cập nhật thông tin người dùng này?');
             });
         });
     </script>
     <script>
-    function toggleCinemaSelect() {
-    let roleValue = document.getElementById('roleSelect').value;
-    let cinemaBox = document.getElementById('cinemaSelectBox');
-    if (roleValue == 2 || roleValue == 3) {   
-        cinemaBox.style.display = 'block';
-    } else {
-        cinemaBox.style.display = 'none';
-    }
-}
+        function toggleCinemaSelect() {
+            let roleValue = document.getElementById('roleSelect').value;
+            let cinemaBox = document.getElementById('cinemaSelectBox');
+            if (roleValue == 2 || roleValue == 3) {
+                cinemaBox.style.display = 'block';
+            } else {
+                cinemaBox.style.display = 'none';
+            }
+        }
 
-    // Gọi khi load trang và khi thay đổi
-    document.getElementById('roleSelect').addEventListener('change', toggleCinemaSelect);
-toggleCinemaSelect();
-</script>
-
-
+        
+        document.getElementById('roleSelect').addEventListener('change', toggleCinemaSelect);
+        toggleCinemaSelect();
+    </script>
 @endpush

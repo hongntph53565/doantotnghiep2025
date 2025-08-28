@@ -201,6 +201,12 @@ public function getCombos(Request $request)
     $cinemaId = $request->input('cinema_id');
     $sessionCinemaId = session('selected_cinema_id');
 
+     if (!Auth::check() || !Auth::user()) {
+        return redirect()->route('home')->with('error', 'Bạn không có quyền truy cập vào trang này.');
+    }
+
+    $user = Auth::user();
+
     // Nếu là nhân viên → mặc định cinemaId = rạp của họ
     if (Auth::user()->role_id == 3 && !$cinemaId) {
         $cinemaId = Auth::user()->cinema_id;
@@ -217,13 +223,13 @@ public function getCombos(Request $request)
 
     // Nếu có rạp → lọc combo theo rạp đó
     if ($cinemaId) {
-        $combos = Food::where('type', 'combo')
-            ->where('status', 'active')
-            ->where('cinema_id', $cinemaId)
-            ->get();
-    } else {
-        $combos = collect(); // không chọn rạp thì trả về rỗng
-    }
+    $combos = Food::whereIn('type', ['combo', 'food'])
+        ->where('status', 'active')
+        ->where('cinema_id', $cinemaId)
+        ->get();
+} else {
+    $combos = collect(); // không chọn rạp thì trả về rỗng
+}
 
     // Tính tổng số lượng sản phẩm trong giỏ
     $cart = session('cart', []);
@@ -233,24 +239,33 @@ public function getCombos(Request $request)
 }
 
 
-   public function showCombo(Request $request, $id)
+  public function showCombo(Request $request, $id)
 {
-    $combo = Food::where('type', 'combo')
+    $combo = Food::whereIn('type', ['combo', 'food']) 
         ->where('status', 'active')
         ->where('food_id', $id)
         ->firstOrFail();
 
-    $relatedCombos = Food::where('type', 'combo')
-        ->where('status', 'active')
-        ->where('food_id', '!=', $id)
-        ->get();
-
     $cart = session('cart', []);
     $totalQuantity = array_sum(array_column($cart, 'quantity'));
 
-    // Lấy lại danh sách rạp (để render dropdown nếu cần)
     $cinemas = Cinema::all();
     $cinemaId = $request->input('cinema_id');
+
+    // Query mặc định
+    $relatedQuery = Food::whereIn('type', ['combo', 'food'])
+        ->where('status', 'active')
+        ->where('food_id', '!=', $id);
+
+    // Nếu nhân viên → chỉ lấy theo rạp của họ
+    if (Auth::check() && Auth::user()->role_id == 3) {
+        $relatedQuery->where('cinema_id', Auth::user()->cinema_id);
+    } elseif ($cinemaId) {
+        // Nếu có chọn cinema → lọc theo cinema đó
+        $relatedQuery->where('cinema_id', $cinemaId);
+    }
+
+    $relatedCombos = $relatedQuery->get();
 
     return view('staff.cart.show', compact(
         'combo',
@@ -260,6 +275,8 @@ public function getCombos(Request $request)
         'cinemaId'
     ));
 }
+
+
   public function addToCart(Request $request)
 {
     $productId = $request->input('food_id');
@@ -267,7 +284,7 @@ public function getCombos(Request $request)
     $action = $request->input('action');
     $cinemaId = $request->input('cinema_id'); // Lấy từ form
 
-    $product = Food::where('type', 'combo')
+    $product = Food::whereIn('type', ['combo', 'food'])
         ->where('status', 'active')
         ->findOrFail($productId);
 

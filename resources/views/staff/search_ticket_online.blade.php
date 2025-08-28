@@ -84,6 +84,9 @@
         <input type="text" name="query" placeholder="Nhập mã vé, tên khách hàng hoặc ngày chiếu..."
             value="{{ request('query') }}">
         <button type="submit">Tìm kiếm</button>
+         <a href="{{ route('staff.scan') }}" class="btn btn-secondary">
+    <i class="bi bi-qr-code-scan"></i>
+</a>
     </form>
 
     @if ($bookings->count())

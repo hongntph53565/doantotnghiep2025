@@ -11,9 +11,9 @@
         @else
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <h6 class="fw-bold">Danh sách phòng chiếu</h6>
-                <a href="{{ route('manager.rooms.create') }}" class="btn btn-success">
+                {{-- <a href="{{ route('manager.rooms.create') }}" class="btn btn-success">
                     <i class="bi bi-plus-circle me-1"></i> Thêm Phòng chiếu
-                </a>
+                </a> --}}
             </div>
 
             <form action="{{ route('rooms.index') }}" method="GET" class="d-flex mb-3">
@@ -34,7 +34,7 @@
                             <th>Định dạng</th>
                             <th>Số ghế</th>
                             <th>Ngày tạo</th>
-                            <th>Thao tác</th>
+                            
                         </tr>
                     </thead>
                     <tbody>
@@ -46,16 +46,7 @@
                                 <td>{{ $room->format ?? 'Không xác định' }}</td>
                                 <td>{{ $room->total_seats }}</td>
                                 <td>{{ $room->created_at->format('d/m/Y') }}</td>
-                                <td>
-                                    <a href="{{ route('manager.rooms.edit', ['id' => $room->room_id]) }}"
-                                       class="btn btn-outline-primary btn-sm">
-                                        <i class="bi bi-pencil-fill"></i>
-                                    </a>
-                                    <a href="{{ route('manager.rooms.show', ['id' => $room->room_id]) }}"
-                                       class="btn btn-outline-primary btn-sm">
-                                        <i class="bi bi-eye-fill"></i>
-                                    </a>
-                                </td>
+                               
                             </tr>
                         @endforeach
                     </tbody>

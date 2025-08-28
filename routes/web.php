@@ -32,6 +32,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Staff\StaffMovieController;
 use App\Http\Controllers\Staff\StaffBookingController;
 use App\Http\Controllers\Staff\BookingSearchController;
+use App\Http\Controllers\Staff\StaffScanController;
 use App\Http\Controllers\Staff\BookingController as StaffBooking;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Manager\DashboardController as ManagerDashboardController;
@@ -259,9 +260,11 @@ Route::prefix('staff')->name('staff.')->group(function () {
     Route::get('/cart', [StaffBookingController::class, 'showCart'])->name('cart');
     Route::post('/cart/add', [StaffBookingController::class, 'addToCart'])->name('cart.addCart');
     Route::get('/clear-cart-and-search', function () {
-        session()->forget('cart'); // Xoá giỏ hàng
+        session()->forget('cart'); 
         return redirect()->route('staff.search_ticket_online');
     })->name('cart.clearAndRedirect');
+    Route::get('/scan', [StaffScanController::class, 'index'])->name('scan');
+    Route::post('/scan/find', [StaffScanController::class, 'find'])->name('scan.find');
 
 
 });
@@ -431,6 +434,7 @@ Route::prefix('manager')
             Route::get('/show/{id}', [ManagerShowtimeController::class, 'show'])->name('show');
             Route::delete('/delete/{id}', [ManagerShowtimeController::class, 'delete'])->name('delete');
             Route::post('/search', [ManagerShowtimeController::class, 'search'])->name('search');
+            Route::post('/restore/{id}', [ManagerShowtimeController::class, 'restore'])->name('restore');
         });
 
         Route::prefix('genre')->name('genres.')->group(function () {

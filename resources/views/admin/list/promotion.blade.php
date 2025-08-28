@@ -13,15 +13,15 @@
 @endsection
 
 @section('content')
-@if (session('success'))
-    <div class="alert alert-success alert-dismissible fade show" role="alert">
-        {{ session('success') }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-@endif
+    @if (session('success'))
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {{ session('success') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <button class="btn btn-primary btn-sm me-2" id="toggleDrawer">☰</button>
+            
             <h4 class="mb-0">Quản lý Khuyến mãi</h4>
         </div>
         <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#promoModal" id="btnAddPromo">
@@ -85,19 +85,20 @@
                                                     data-min-order="{{ $value->min_order_value }}"
                                                     data-start="{{ $value->start_date }}"
                                                     data-end="{{ $value->end_date }}" data-status="{{ $value->status }}"
+                                                    data-card-type="{{ $value->card_type }}"
                                                     data-bs-toggle="modal" data-bs-target="#promoModal">
                                                     <i class="bi bi-pencil"></i>
                                                 </button>
-                                                <form action="{{ route('promotions.destroy', ['id' => $value->promo_id]) }}"
-      method="POST"
-      class="d-inline"
-      onsubmit="return confirm('Bạn có chắc chắn muốn xoá mã này?')">
-    @csrf
-    @method('DELETE')
-    <button class="btn btn-sm btn-danger">
-        <i class="bi bi-trash"></i>
-    </button>
-</form>
+                                                <form
+                                                    action="{{ route('promotions.destroy', ['id' => $value->promo_id]) }}"
+                                                    method="POST" class="d-inline"
+                                                    onsubmit="return confirm('Bạn có chắc chắn muốn xoá mã này?')">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button class="btn btn-sm btn-danger">
+                                                        <i class="bi bi-trash"></i>
+                                                    </button>
+                                                </form>
 
                                             </td>
                                         </tr>
@@ -111,27 +112,27 @@
         </div>
     </div>
     </div>
- 
+
     <div class="modal fade" id="promoModal" tabindex="-1" aria-hidden="true">
 
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
-                           @if ($errors->any())
-    <div class="alert alert-danger">
-        <ul class="mb-0">
-            @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
-            @endforeach
-        </ul>
-    </div>
-@endif
+                @if ($errors->any())
+                    <div class="alert alert-danger">
+                        <ul class="mb-0">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
                 <form id="promoForm" method="POST" action="{{ route('promotions.store') }}">
                     @csrf
                     <input type="hidden" name="_method" id="formMethod" value="POST">
 
-              
 
-                    
+
+
                     <div class="modal-header bg-primary text-white">
                         <h5 class="modal-title" id="promoModalTitle">Thêm khuyến mãi mới</h5>
                         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
@@ -146,7 +147,7 @@
 
                             <div class="col-md-6">
                                 <label class="form-label">Loại giảm giá <span class="text-danger">*</span></label>
-                                <select class="form-select" id="discountType" name="type_discount" >
+                                <select class="form-select" id="discountType" name="type_discount">
                                     <option value="">-- Chọn loại --</option>
                                     <option value="percent">Phần trăm</option>
                                     <option value="amount">Số tiền cố định</option>
@@ -156,8 +157,8 @@
                             <div class="col-md-6" id="percentField" style="display: none;">
                                 <label class="form-label">Phần trăm giảm</label>
                                 <div class="input-group">
-                                    <input type="number" class="form-control" id="discountPercent" name="discount_percent"
-                                        min="1" >
+                                    <input type="number" class="form-control" id="discountPercent"
+                                        name="discount_percent" min="1">
                                     <span class="input-group-text">%</span>
                                 </div>
                             </div>
@@ -187,14 +188,15 @@
                             </div>
 
                             <div class="col-md-6">
-    <label class="form-label fw-semibold">Loại thẻ áp dụng <span class="text-danger">*</span></label>
-    <select class="form-select" name="card_type" id="cardType" >
-        <option value="normal">Normal</option>
-        <option value="silver">Silver</option>
-        <option value="gold">Gold</option>
-        <option value="platinum">Platinum</option>
-    </select>
-</div>
+                                <label class="form-label fw-semibold">Loại thẻ áp dụng <span
+                                        class="text-danger">*</span></label>
+                                <select class="form-select" name="card_type" id="cardType">
+                                    <option value="normal">Normal</option>
+                                    <option value="silver">Silver</option>
+                                    <option value="gold">Gold</option>
+                                    <option value="platinum">Platinum</option>
+                                </select>
+                            </div>
 
                             <div class="col-md-6">
                                 <label class="form-label">Đơn hàng tối thiểu</label>
@@ -207,12 +209,12 @@
 
                             <div class="col-md-6">
                                 <label class="form-label">Ngày bắt đầu</label>
-                                <input type="date" class="form-control" id="startDate" name="start_date" >
+                                <input type="date" class="form-control" id="startDate" name="start_date">
                             </div>
 
                             <div class="col-md-6">
                                 <label class="form-label">Ngày kết thúc</label>
-                                <input type="date" class="form-control" id="endDate" name="end_date" >
+                                <input type="date" class="form-control" id="endDate" name="end_date">
                             </div>
 
                             <div class="col-12">
@@ -284,138 +286,141 @@
 @endsection
 
 @push('scripts')
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const promoModalEl = document.getElementById('promoModal');
-    const promoModal = new bootstrap.Modal(promoModalEl);
-    const promoForm = document.getElementById('promoForm');
-    const title = document.getElementById('promoModalTitle');
-    const typeSelect = document.getElementById('discountType');
-    const percentField = document.getElementById('percentField');
-    const amountField = document.getElementById('amountField');
-    const maxDiscountField = document.getElementById('maxDiscount').closest('.col-md-6');
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const promoModalEl = document.getElementById('promoModal');
+            const promoModal = new bootstrap.Modal(promoModalEl);
+            const promoForm = document.getElementById('promoForm');
+            const title = document.getElementById('promoModalTitle');
+            const typeSelect = document.getElementById('discountType');
+            const percentField = document.getElementById('percentField');
+            const amountField = document.getElementById('amountField');
+            const maxDiscountField = document.getElementById('maxDiscount').closest('.col-md-6');
 
-    function toggleFields(type) {
-        if (type === 'percent') {
-            percentField.style.display = 'block';
-            amountField.style.display = 'none';
-            maxDiscountField.style.display = 'block';
-        } else if (type === 'amount') {
-            percentField.style.display = 'none';
-            amountField.style.display = 'block';
-            maxDiscountField.style.display = 'none';
-        } else {
-            percentField.style.display = 'none';
-            amountField.style.display = 'none';
-            maxDiscountField.style.display = 'none';
-        }
-    }
-
-    function fillForm(data, isEdit = false) {
-        promoForm.reset();
-
-        if (isEdit) {
-            promoForm.action = `{{ route('promotions.update', ':id') }}`.replace(':id', data.id);
-
-            // thêm hoặc cập nhật _method = PUT
-            let methodInput = promoForm.querySelector('input[name="_method"]');
-            if (!methodInput) {
-                methodInput = document.createElement('input');
-                methodInput.type = 'hidden';
-                methodInput.name = '_method';
-                promoForm.appendChild(methodInput);
+            function toggleFields(type) {
+                if (type === 'percent') {
+                    percentField.style.display = 'block';
+                    amountField.style.display = 'none';
+                    maxDiscountField.style.display = 'block';
+                } else if (type === 'amount') {
+                    percentField.style.display = 'none';
+                    amountField.style.display = 'block';
+                    maxDiscountField.style.display = 'none';
+                } else {
+                    percentField.style.display = 'none';
+                    amountField.style.display = 'none';
+                    maxDiscountField.style.display = 'none';
+                }
             }
-            methodInput.value = 'PUT';
 
-            title.textContent = "Chỉnh sửa khuyến mãi";
-        } else {
-            promoForm.action = `{{ route('promotions.store') }}`;
+            function fillForm(data, isEdit = false) {
+                promoForm.reset();
 
-            // xoá _method nếu có
-            const methodInput = promoForm.querySelector('input[name="_method"]');
-            if (methodInput) methodInput.remove();
+                if (isEdit) {
+                    promoForm.action = `{{ route('promotions.update', ':id') }}`.replace(':id', data.id);
 
-            title.textContent = "Thêm khuyến mãi mới";
-        }
+                    // thêm hoặc cập nhật _method = PUT
+                    let methodInput = promoForm.querySelector('input[name="_method"]');
+                    if (!methodInput) {
+                        methodInput = document.createElement('input');
+                        methodInput.type = 'hidden';
+                        methodInput.name = '_method';
+                        promoForm.appendChild(methodInput);
+                    }
+                    methodInput.value = 'PUT';
 
-        document.getElementById('discountCode').value = data.code || '';
-        document.getElementById('discountType').value = data.type || 'percent';
-        document.getElementById('discountPercent').value = data.percent || '';
-        document.getElementById('discountAmount').value = data.amount || '';
-        document.getElementById('maxUses').value = data.maxUses || '';
-        document.getElementById('maxDiscount').value = data.maxDiscount || '';
-        document.getElementById('minOrder').value = data.minOrder || '';
-        document.getElementById('startDate').value = data.start || '';
-        document.getElementById('endDate').value = data.end || '';
-        document.getElementById('activeStatus').checked = data.status == 1 || data.status === 'active';
+                    title.textContent = "Chỉnh sửa khuyến mãi";
+                } else {
+                    promoForm.action = `{{ route('promotions.store') }}`;
 
-        toggleFields(data.type || 'percent');
-    }
+                    // xoá _method nếu có
+                    const methodInput = promoForm.querySelector('input[name="_method"]');
+                    if (methodInput) methodInput.remove();
 
-    // Khi chọn loại giảm giá
-    typeSelect.addEventListener('change', function() {
-        toggleFields(this.value);
-    });
+                    title.textContent = "Thêm khuyến mãi mới";
+                }
 
-    // Thêm mới
-    document.getElementById('btnAddPromo').addEventListener('click', function() {
-        fillForm({}, false);
-    });
+                document.getElementById('discountCode').value = data.code || '';
+                document.getElementById('discountType').value = data.type || 'percent';
+                document.getElementById('discountPercent').value = data.percent || '';
+                document.getElementById('discountAmount').value = data.amount || '';
+                document.getElementById('maxUses').value = data.maxUses || '';
+                document.getElementById('maxDiscount').value = data.maxDiscount || '';
+                document.getElementById('minOrder').value = data.minOrder || '';
+                document.getElementById('startDate').value = data.start || '';
+                document.getElementById('endDate').value = data.end || '';
+                document.getElementById('activeStatus').checked = data.status == 1 || data.status === 'active';
+                document.getElementById('cardType').value = data.cardType || 'normal';
 
-    // Chỉnh sửa
-    document.querySelectorAll('.edit-btn').forEach(button => {
-        button.addEventListener('click', function() {
-            const data = this.dataset;
-            fillForm({
-                id: data.id,
-                code: data.code,
-                type: data.type,
-                percent: data.percent,
-                amount: data.amount,
-                maxUses: data.maxUses,
-                maxDiscount: data.maxDiscount,
-                minOrder: data.minOrder,
-                start: data.start,
-                end: data.end,
-                status: data.status,
-            }, true);
+                toggleFields(data.type || 'percent');
+            }
 
-            promoModal.show();
+            // Khi chọn loại giảm giá
+            typeSelect.addEventListener('change', function() {
+                toggleFields(this.value);
+            });
+
+            // Thêm mới
+            document.getElementById('btnAddPromo').addEventListener('click', function() {
+                fillForm({}, false);
+            });
+
+            // Chỉnh sửa
+            document.querySelectorAll('.edit-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const data = this.dataset;
+                    fillForm({
+                        id: data.id,
+                        code: data.code,
+                        type: data.type,
+                        percent: data.percent,
+                        amount: data.amount,
+                        maxUses: data.maxUses,
+                        maxDiscount: data.maxDiscount,
+                        minOrder: data.minOrder,
+                        start: data.start,
+                        end: data.end,
+                        status: data.status,
+                        cardType: data.cardType,
+                    }, true);
+
+                    promoModal.show();
+                });
+            });
+
+            // Nếu có lỗi validate thì mở modal lại
+            @if ($errors->any())
+                promoModal.show();
+                @if (session('edit_mode'))
+                    fillForm({
+                        id: "{{ session('edit_id') }}",
+                        code: "{{ old('discount_code') }}",
+                        type: "{{ old('type_discount') }}",
+                        percent: "{{ old('discount_percent') }}",
+                        amount: "{{ old('discount_amount') }}",
+                        maxUses: "{{ old('max_uses') }}",
+                        maxDiscount: "{{ old('max_discount') }}",
+                        minOrder: "{{ old('min_order_value') }}",
+                        start: "{{ old('start_date') }}",
+                        end: "{{ old('end_date') }}",
+                        status: "{{ old('status') }}",
+                    }, true);
+                @else
+                    fillForm({
+                        code: "{{ old('discount_code') }}",
+                        type: "{{ old('type_discount') }}",
+                        percent: "{{ old('discount_percent') }}",
+                        amount: "{{ old('discount_amount') }}",
+                        maxUses: "{{ old('max_uses') }}",
+                        maxDiscount: "{{ old('max_discount') }}",
+                        minOrder: "{{ old('min_order_value') }}",
+                        start: "{{ old('start_date') }}",
+                        end: "{{ old('end_date') }}",
+                        status: "{{ old('status') }}",
+                        
+                    }, false);
+                @endif
+            @endif
         });
-    });
-
-    // Nếu có lỗi validate thì mở modal lại
-    @if ($errors->any())
-        promoModal.show();
-        @if (session('edit_mode'))
-            fillForm({
-                id: "{{ session('edit_id') }}",
-                code: "{{ old('discount_code') }}",
-                type: "{{ old('type_discount') }}",
-                percent: "{{ old('discount_percent') }}",
-                amount: "{{ old('discount_amount') }}",
-                maxUses: "{{ old('max_uses') }}",
-                maxDiscount: "{{ old('max_discount') }}",
-                minOrder: "{{ old('min_order_value') }}",
-                start: "{{ old('start_date') }}",
-                end: "{{ old('end_date') }}",
-                status: "{{ old('status') }}",
-            }, true);
-        @else
-            fillForm({
-                code: "{{ old('discount_code') }}",
-                type: "{{ old('type_discount') }}",
-                percent: "{{ old('discount_percent') }}",
-                amount: "{{ old('discount_amount') }}",
-                maxUses: "{{ old('max_uses') }}",
-                maxDiscount: "{{ old('max_discount') }}",
-                minOrder: "{{ old('min_order_value') }}",
-                start: "{{ old('start_date') }}",
-                end: "{{ old('end_date') }}",
-                status: "{{ old('status') }}",
-            }, false);
-        @endif
-    @endif
-});
-</script>
+    </script>
 @endpush

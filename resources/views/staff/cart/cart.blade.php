@@ -657,100 +657,104 @@
 @push('scripts')
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-    const dateInput = document.getElementById('delivery-date');
-    const today = new Date().toISOString().split('T')[0];
-    if (dateInput) {
-        dateInput.setAttribute('min', today);
-        if (!dateInput.value) {
-            dateInput.value = today;
-        }
-    }
-
-    // Tăng / Giảm số lượng
-    document.querySelectorAll('.btn-increase, .btn-decrease').forEach(button => {
-        button.addEventListener('click', async function() {
-            const wrapper = this.closest('.quantity-control');
-            const input = wrapper.querySelector('.qty-input');
-            const foodId = input.dataset.foodId;
-            const price = parseInt(input.dataset.price);
-            let quantity = parseInt(input.value);
-
-            if (this.classList.contains('btn-increase')) {
-                quantity++;
-            } else {
-                quantity = Math.max(0, quantity - 1);
+            const dateInput = document.getElementById('delivery-date');
+            const today = new Date().toISOString().split('T')[0];
+            if (dateInput) {
+                dateInput.setAttribute('min', today);
+                if (!dateInput.value) {
+                    dateInput.value = today;
+                }
             }
 
-            const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-            const response = await fetch("{{ route('cart.update') }}", {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': token
-                },
-                body: JSON.stringify({
-                    food_id: foodId,
-                    quantity: quantity
-                })
-            });
+            // Tăng / Giảm số lượng
+            document.querySelectorAll('.btn-increase, .btn-decrease').forEach(button => {
+                button.addEventListener('click', async function() {
+                    const wrapper = this.closest('.quantity-control');
+                    const input = wrapper.querySelector('.qty-input');
+                    const foodId = input.dataset.foodId;
+                    const price = parseInt(input.dataset.price);
+                    let quantity = parseInt(input.value);
 
-            const result = await response.json();
-
-            if (result.success) {
-                if (result.removed) {
-                    wrapper.closest('.order-item').remove();
-                    if (document.querySelectorAll('.order-item').length === 0) {
-                        location.reload();
+                    if (this.classList.contains('btn-increase')) {
+                        quantity++;
+                    } else {
+                        quantity = Math.max(0, quantity - 1);
                     }
-                } else {
-                    input.value = quantity;
-                    const priceEl = wrapper.closest('.order-item').querySelector('.price');
-                    priceEl.textContent = (price * quantity).toLocaleString('vi-VN') + ' VND';
-                }
 
-                document.querySelector('.total-row .price').textContent = result.totalAll;
-
-                const cartBadge = document.querySelector('.cart-badge');
-                if (cartBadge && result.totalQuantity !== undefined) {
-                    cartBadge.textContent = result.totalQuantity;
-                }
-            }
-        });
-    });
-
-    // ✅ Đặt hàng
-    const confirmBtn = document.querySelector('.confirm-btn');
-    if (confirmBtn) {
-        confirmBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-
-            const selectedPayment = document.querySelector('input[name="payment"]:checked');
-            if (!selectedPayment) {
-                alert('Vui lòng chọn phương thức thanh toán');
-                return;
-            }
-            document.getElementById('payment_method').value = selectedPayment.value;
-
-            const foodData = [];
-            document.querySelectorAll('.qty-input').forEach(input => {
-                const qty = parseInt(input.value);
-                if (qty > 0) {
-                    foodData.push({
-                        food_id: input.dataset.foodId,
-                        qty: qty
+                    const token = document.querySelector('meta[name="csrf-token"]')
+                        .getAttribute('content');
+                    const response = await fetch("{{ route('cart.update') }}", {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': token
+                        },
+                        body: JSON.stringify({
+                            food_id: foodId,
+                            quantity: quantity
+                        })
                     });
-                }
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        if (result.removed) {
+                            wrapper.closest('.order-item').remove();
+                            if (document.querySelectorAll('.order-item').length === 0) {
+                                location.reload();
+                            }
+                        } else {
+                            input.value = quantity;
+                            const priceEl = wrapper.closest('.order-item').querySelector(
+                                '.price');
+                            priceEl.textContent = (price * quantity).toLocaleString('vi-VN') +
+                                ' VND';
+                        }
+
+                        document.querySelector('.total-row .price').textContent = result
+                            .totalAll;
+
+                        const cartBadge = document.querySelector('.cart-badge');
+                        if (cartBadge && result.totalQuantity !== undefined) {
+                            cartBadge.textContent = result.totalQuantity;
+                        }
+                    }
+                });
             });
-            document.getElementById('selected_foods_input').value = JSON.stringify(foodData);
 
-            const totalText = document.querySelector('.total-row .price').textContent.replace(/[^\d]/g, '');
-            document.getElementById('total_price_hidden').value = parseInt(totalText);
+            // ✅ Đặt hàng
+            const confirmBtn = document.querySelector('.confirm-btn');
+            if (confirmBtn) {
+                confirmBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
 
-            document.getElementById('food-only-form').submit();
+                    const selectedPayment = document.querySelector('input[name="payment"]:checked');
+                    if (!selectedPayment) {
+                        alert('Vui lòng chọn phương thức thanh toán');
+                        return;
+                    }
+                    document.getElementById('payment_method').value = selectedPayment.value;
+
+                    const foodData = [];
+                    document.querySelectorAll('.qty-input').forEach(input => {
+                        const qty = parseInt(input.value);
+                        if (qty > 0) {
+                            foodData.push({
+                                food_id: input.dataset.foodId,
+                                qty: qty
+                            });
+                        }
+                    });
+                    document.getElementById('selected_foods_input').value = JSON.stringify(foodData);
+
+                    const totalText = document.querySelector('.total-row .price').textContent.replace(
+                        /[^\d]/g, '');
+                    document.getElementById('total_price_hidden').value = parseInt(totalText);
+
+                    document.getElementById('food-only-form').submit();
+                });
+            }
         });
-    }
-});
-
     </script>
     <!-- SwiperJS CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
@@ -785,46 +789,53 @@
 @section('content')
     <div class="container">
         <hr>
-              @if (session('success_cash'))
-    <!-- Modal -->
-    <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content text-center p-4">
-                <div class="modal-body">
-                    <i class="fa-solid fa-circle-check fa-3x text-success mb-3"></i>
-                    <h5 class="mb-3">Đặt đồ ăn thành công</h5>
-                    <a href="{{ route('staff.cart.clearAndRedirect') }}" class="btn btn-success fw-bold">Lấy vé</a>
+        @if (session('success_cash'))
+            <!-- Modal -->
+            <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content text-center p-4">
+                        <div class="modal-body">
+                            <i class="fa-solid fa-circle-check fa-3x text-success mb-3"></i>
+                            <h5 class="mb-3">Đặt đồ ăn thành công</h5>
+                            <a href="{{ route('staff.cart.clearAndRedirect') }}" class="btn btn-success fw-bold">Lấy vé</a>
 
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
 
-    <!-- Auto show modal -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const successModal = new bootstrap.Modal(document.getElementById('successModal'));
-            successModal.show();
-        });
-    </script>
-@endif
+            <!-- Auto show modal -->
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    const successModal = new bootstrap.Modal(document.getElementById('successModal'));
+                    successModal.show();
+                });
+            </script>
+        @endif
         <div class="content-top">
             <form method="GET" action="{{ route('staff.combo') }}">
-                <select class="cinema-select" name="cinema_id" onchange="this.form.submit()">
-                    <option value="">Chọn rạp</option>
-                    @foreach ($cinemas as $cinema)
-                        <option value="{{ $cinema->cinema_id }}" {{ $cinemaId == $cinema->cinema_id ? 'selected' : '' }}>
-                            {{ $cinema->name }}
-                        </option>
-                    @endforeach
-                </select>
+                @if (auth()->user()->role_id == 3)
+                    {{-- Nhân viên đã gắn với cinema sẵn --}}
+                    <input type="hidden" name="cinema_id" value="{{ auth()->user()->cinema_id }}">
+                @else
+                    {{-- Admin hoặc role khác thì mới được chọn rạp --}}
+                    <select class="cinema-select" name="cinema_id" onchange="this.form.submit()">
+                        <option value="">Chọn rạp</option>
+                        @foreach ($cinemas as $cinema)
+                            <option value="{{ $cinema->cinema_id }}"
+                                {{ request('cinema_id') == $cinema->cinema_id ? 'selected' : '' }}>
+                                {{ $cinema->name }}
+                            </option>
+                        @endforeach
+                    </select>
+                @endif
             </form>
             <div class="cart-wrapper">
                 <a href="{{ route('staff.combo') }}" class="back-btn">
                     ← TRỞ LẠI
                 </a>
                 <div class="cart-link">
-                    <a href="{{ route('cart', ['cinema_id' => $cinemaId]) }}">
+                    <a href="{{ route('staff.cart', ['cinema_id' => $cinemaId]) }}">
                         <div class="cart-icon">
                             <img src="{{ asset('images/cart.svg') }}" alt="">
                         </div>
@@ -905,10 +916,10 @@
                 <section class="cart-checkout">
                     <div class="checkout-box">
 
-                      
+
 
                         <div class="customer-info">
-                    
+
                             @if ($selectedCinema)
                                 <p><span class="field-label"><i class="fa-solid fa-location-dot"
                                             style="color: #75be43;"></i>
@@ -937,17 +948,17 @@
                                     <img src="{{ asset('images/vnpay.png') }}" alt="VNPay" />
                                     <span style="font-size: 14px;">Thanh toán qua VNPAY</span>
                                 </label>
-                                <label><input type="radio" name="payment" value="payos" id="payos">
+                                {{-- <label><input type="radio" name="payment" value="payos" id="payos">
                                     <img src="{{ asset('images/momo.png') }}" alt="PayOS" /> Thanh toán bằng PayOS
-                                </label>
+                                </label> --}}
                                 <label><input type="radio" name="payment" value="zalopay" id="zalopay">
                                     <img src="{{ asset('images/zalopay.png') }}" alt="ZaloPay" /> Zalopay QR đa năng
                                 </label>
-                                 <label>
-            <input type="radio" name="payment" value="cash" id="cash">
-            <i class="fa-solid fa-money-bill-wave" style="font-size: 20px; color: #75be43;"></i>
-            <span style="font-size: 14px;">Thanh toán tiền mặt</span>
-        </label>
+                                <label>
+                                    <input type="radio" name="payment" value="cash" id="cash">
+                                    <i class="fa-solid fa-money-bill-wave" style="font-size: 20px; color: #75be43;"></i>
+                                    <span style="font-size: 14px;">Thanh toán tiền mặt</span>
+                                </label>
                             </div>
                         </div>
                         <hr>

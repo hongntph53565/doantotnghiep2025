@@ -61,7 +61,7 @@
                                     <th>Email</th>
                                     <th>Vai trò</th>
                                     <th>Ngày tạo</th>
-                                    <th>Trạng thái</th>
+                                    {{-- <th>Trạng thái</th> --}}
                                     <th>Thao tác</th>
                                 </tr>
                             </thead>
@@ -79,11 +79,11 @@
                                             @endif
                                         </td>
                                         <td>{{ $user->created_at->format('d/m/Y H:i') }}</td>
-                                        <td>
+                                        {{-- <td>
                                             <span class="badge {{ $user->is_active ? 'bg-success' : 'bg-secondary' }}">
                                                 {{ $user->status ? 'Hoạt động' : 'Khóa' }}
                                             </span>
-                                        </td>
+                                        </td> --}}
                                         <td>
                                             <a href="{{ route('users.edit', $user->user_id) }}" 
                                                class="btn btn-outline-primary btn-sm me-1"
@@ -128,7 +128,7 @@
                                     <th>Họ tên</th>
                                     <th>Email</th>
                                     <th>Ngày tạo</th>
-                                    <th>Trạng thái</th>
+                                    {{-- <th>Trạng thái</th> --}}
                                     <th>Thao tác</th>
                                 </tr>
                             </thead>
@@ -143,11 +143,11 @@
                                         <td>{{ $user->full_name }}</td>
                                         <td>{{ $user->email }}</td>
                                         <td>{{ $user->created_at->format('d/m/Y H:i') }}</td>
-                                        <td>
+                                        {{-- <td>
                                             <span class="badge {{ $user->is_active ? 'bg-success' : 'bg-secondary' }}">
                                                 {{ $user->is_active ? 'Hoạt động' : 'Khóa' }}
                                             </span>
-                                        </td>
+                                        </td> --}}
                                         <td>
                                             <a href="{{ route('users.edit', $user->user_id) }}" 
                                                class="btn btn-outline-primary btn-sm me-1">

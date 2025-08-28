@@ -1,5 +1,17 @@
 @extends('layouts.admin')
 
+@section('title2')
+    Tổng quan
+@endsection
+
+@section('title1')
+    Tổng quan
+@endsection
+
+@section('title')
+    Tổng quan
+@endsection
+
 @section('content')
     <div class="d-flex justify-content-between align-items-center mb-4 ms-2">
         <div>
